@@ -27,10 +27,8 @@ public class MainMenu extends JFrame {
 	private JMenu menuEntry4 = new JMenu("Einstellungen");
 	private JPanel contentPane;
 
-	private int columnNumbers = 20;
-
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final JTable table = new JTable(200, columnNumbers);
+	private final JTable table;
 
 	// JScrollPane scrollPane = new JScrollPane(table);
 
@@ -107,6 +105,7 @@ public class MainMenu extends JFrame {
 		contentPane.setLayout(null);
 		scrollPane.setBounds(10, 11, (int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - taskBarSize - 75);
 
+		table = new JTable(200, ListManager.getColumnNameCount());
 		contentPane.add(scrollPane);
 		table.setRowHeight(30);
 		table.setFillsViewportHeight(true);
@@ -114,54 +113,48 @@ public class MainMenu extends JFrame {
 		// Table HEADER
 		JTableHeader th = table.getTableHeader();
 		TableColumnModel tcm = th.getColumnModel();
-		
-		//Table row alignment of text
+
+		// Table row alignment of text
 		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
 		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
 		DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
 		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		for (int i = 0; i < 7; i++) {
+
+		for (int i = 0; i < ListManager.getColumnNameCount(); i++) {
 			TableColumn tc = tcm.getColumn(i);
+			tc.setHeaderValue(ListManager.getColumnNameElement(i));
 			switch (i) {
 			case 0:
-				tc.setHeaderValue("#ID");	
 				table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
-				table.getColumnModel().getColumn(0).setPreferredWidth(25);
+				table.getColumnModel().getColumn(0).setPreferredWidth(ListManager.getColumnWidthElement(0));
 				break;
 			case 1:
-				tc.setHeaderValue("Datum");
 				table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 				break;
 			case 2:
-				tc.setHeaderValue("Uhrzeit");
 				table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 				break;
 			case 3:
-				tc.setHeaderValue("Name");
 				table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
 				break;
 			case 4:
-				tc.setHeaderValue("Zugabe");
 				table.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
 				break;
 			case 5:
-				tc.setHeaderValue("Stoff");
 				table.getColumnModel().getColumn(5).setCellRenderer(leftRenderer);
 				break;
 			case 6:
-				tc.setHeaderValue("Begründung");
 				table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
-				table.getColumnModel().getColumn(6).setPreferredWidth(200);
+				table.getColumnModel().getColumn(6).setPreferredWidth(ListManager.getColumnWidthElement(6));
 				break;
 			default:
-				break;
+				break;	
 			}
 		}
-		th.repaint();		
-		table.setRowHeight(25);	
+		th.repaint();
+		table.setRowHeight(25);
 
 		scrollPane.setViewportView(table);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
