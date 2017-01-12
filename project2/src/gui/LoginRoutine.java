@@ -11,6 +11,8 @@ public class LoginRoutine {
 	
 	public void start(){
 		
+		//check username and password
+		
 		passCheck = true;
 		
 		System.out.println("Example name: " + xamplN);
@@ -54,8 +56,6 @@ public class LoginRoutine {
 		}else{
 			System.out.println("password not identical!");
 		}
-		
-		//check username and password
 		
 		//assign login info to mainmenu data (name, profilerights)
 		
