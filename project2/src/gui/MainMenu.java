@@ -38,6 +38,8 @@ public class MainMenu extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
+        
+        System.out.println("lul");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, (int) screenSize.getWidth(), (int) screenSize.getHeight()-taskBarSize);
