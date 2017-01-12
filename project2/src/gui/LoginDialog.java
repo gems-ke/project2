@@ -11,30 +11,26 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JProgressBar;
-import java.awt.GridLayout;
-import javax.swing.BoxLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.FormSpecs;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
 
-public class Login extends JDialog {
+public class LoginDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JPasswordField passwordField;
 	private JTextField textField;
+	private JButton okButton = new JButton("Login");
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			Login dialog = new Login();
+			LoginDialog dialog = new LoginDialog();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -43,7 +39,7 @@ public class Login extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public Login() {
+	public LoginDialog() {
 		setBounds(100, 100, 319, 256);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -77,24 +73,23 @@ public class Login extends JDialog {
 		textField.setColumns(10);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		setTitle("Login");
-		{
+		setTitle("Login");	{
 			JPanel buttonPane = new JPanel();
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-			{
-				JButton okButton = new JButton("Login");
+			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));{
+
 				okButton.setActionCommand("Ok");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
-				
+				//old on click listener
 				okButton.addActionListener(new ActionListener(){
-				  public void actionPerformed(ActionEvent e)  {
-					  new Main().setVisible(true);
-					  dispose();
-				  }
+					  public void actionPerformed(ActionEvent e)  {
+						  new MainMenu().setVisible(true);
+						  dispose();
+					  }
 				});
 			}
 		}
+
 	}
 }
