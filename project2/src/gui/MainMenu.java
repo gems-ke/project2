@@ -103,7 +103,6 @@ public class MainMenu extends JFrame {
 		// Table HEADER
 		th = table.getTableHeader();
 		tcm = th.getColumnModel();
-		MainMenu.tableRepaint();
 
 		// Table row alignment of text
 		rightRenderer = new DefaultTableCellRenderer();
@@ -112,6 +111,8 @@ public class MainMenu extends JFrame {
 		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		MainMenu.tableRepaint();
 
 		scrollPane.setViewportView(table);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
