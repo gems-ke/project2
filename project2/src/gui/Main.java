@@ -36,6 +36,7 @@ public class Main extends JFrame {
 	 * Create the frame.
 	 */
 	public Main() {
+		//Screen Sizes etc
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
