@@ -52,6 +52,8 @@ public class LoginRoutine {
 			
 			System.out.println("PassCheck: " + passCheck);
 			
+			if(passCheck)
+				this.loginStatus = 1;
 			
 		}else{
 			System.out.println("password not identical!");

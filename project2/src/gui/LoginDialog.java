@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import javax.swing.JTextField;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
@@ -101,6 +100,5 @@ public class LoginDialog extends JDialog {
 				});
 			}
 		}
-
 	}
 }
