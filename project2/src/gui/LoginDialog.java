@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import javax.swing.JTextField;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
@@ -18,9 +19,11 @@ import javax.swing.SwingConstants;
 public class LoginDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JPasswordField passwordField;
-	private JTextField textField;
+	static JPasswordField passwordField;
+	static JTextField textField;
 	private JButton okButton = new JButton("Login");
+	
+	private LoginRoutine loginp = new LoginRoutine();
 
 	/**
 	 * Launch the application.
@@ -84,8 +87,16 @@ public class LoginDialog extends JDialog {
 				//old on click listener
 				okButton.addActionListener(new ActionListener(){
 					  public void actionPerformed(ActionEvent e)  {
-						  new MainMenu().setVisible(true);
-						  dispose();
+						  
+						  loginp.start();
+						  
+						  if(loginp.getLoginStatus() == 1){
+							  new MainMenu().setVisible(true);
+							  dispose();
+						  }else if(loginp.getLoginStatus() == 0){
+							  
+						  }
+						  
 					  }
 				});
 			}
