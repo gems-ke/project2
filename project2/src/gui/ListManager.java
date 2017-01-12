@@ -2,6 +2,9 @@ package gui;
 
 import java.util.ArrayList;
 
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+
 /**
  * Handles the column and row stuff. Saves Data as ArrayLists
  */
@@ -17,6 +20,8 @@ public class ListManager {
 	static ArrayList<Integer> columnWidth = new ArrayList<Integer>();
 	
 	// 	static ArrayList<String> status = new ArrayList<String>();
+	
+	//static ArrayList<DefaultTableCellRenderer> columnAlignment = new ArrayList<DefaultTableCellRenderer>();
 	
 	// -------------------------- Definition Done -------------------------- //
 	
@@ -45,6 +50,7 @@ public class ListManager {
 		for(int i = 0; i < columnNames.size();++i){
 			columnWidth.add(75);
 		}
+
 		//change width of #id and 'Begründung'
 		columnWidth.set(0,25);
 		columnWidth.set(6,200);
