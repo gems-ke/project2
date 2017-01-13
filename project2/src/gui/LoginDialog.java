@@ -33,6 +33,8 @@ public class LoginDialog extends JDialog {
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 			
+			ListManager.firstCall();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,7 +89,11 @@ public class LoginDialog extends JDialog {
 				okButton.addActionListener(new ActionListener(){
 					  public void actionPerformed(ActionEvent e)  {
 						  
-						  loginp.start();
+						  new MainMenu().setVisible(true);
+						  dispose();
+					  }
+						  
+						 /* loginp.start();
 						  
 						  if(loginp.getLoginStatus() == 1){
 							  new MainMenu().setVisible(true);
@@ -96,7 +102,7 @@ public class LoginDialog extends JDialog {
 							  
 						  }
 						  
-					  }
+					  }*/
 				});
 			}
 		}

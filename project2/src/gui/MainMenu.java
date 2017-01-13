@@ -27,12 +27,11 @@ public class MainMenu extends JFrame {
 	private JMenu menuEntry4 = new JMenu("Einstellungen");
 	private JPanel contentPane;
 
-	private int columnNumbers = 20;
-
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final JTable table = new JTable(200, columnNumbers);
-
-	// JScrollPane scrollPane = new JScrollPane(table);
+	private static JTable table;
+	private static TableColumnModel tcm;
+	private static JTableHeader th;
+	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 
 	/**
 	 * Create the frame.
@@ -58,48 +57,36 @@ public class MainMenu extends JFrame {
 		setJMenuBar(menuBar);
 		menuBar.add(menuEntry1);
 
+		// Setting up Menu Entries
 		JMenuItem mntmNewMenuItem = new JMenuItem("Eintrag hinzuf\u00FCgen");
 		menuEntry1.add(mntmNewMenuItem);
-
 		JMenuItem mntmEintragBearbeiten = new JMenuItem("Eintrag bearbeiten");
 		menuEntry1.add(mntmEintragBearbeiten);
-
 		JSeparator separator_1 = new JSeparator();
 		menuEntry1.add(separator_1);
-
 		JMenuItem mntmnderungenHochladen = new JMenuItem("\u00C4nderungen hochladen");
 		menuEntry1.add(mntmnderungenHochladen);
-
 		JSeparator separator = new JSeparator();
 		menuEntry1.add(separator);
-
 		JMenuItem mntmAusloggen = new JMenuItem("Ausloggen");
 		menuEntry1.add(mntmAusloggen);
-
 		JMenuItem mntmAusloggenUndBeenden = new JMenuItem("Ausloggen und Beenden");
 		menuEntry1.add(mntmAusloggenUndBeenden);
 		menuBar.add(menuEntry2);
-
 		JMenuItem mntmTabelleFormatieren = new JMenuItem("Tabelle formatieren");
 		menuEntry2.add(mntmTabelleFormatieren);
-
 		JMenuItem mntmTabelleBereinigen = new JMenuItem("Tabelle bereinigen");
 		menuEntry2.add(mntmTabelleBereinigen);
 		menuBar.add(menuEntry3);
-
 		JMenuItem mntmBenutzerkontrolle = new JMenuItem("Benutzerkontrolle");
 		menuEntry3.add(mntmBenutzerkontrolle);
-
 		JMenuItem mntmKostenrechnung = new JMenuItem("Kostenrechnung");
 		menuEntry3.add(mntmKostenrechnung);
-
 		JMenuItem mntmnderungsverlauf = new JMenuItem("\u00C4nderungsverlauf");
 		menuEntry3.add(mntmnderungsverlauf);
-
 		JMenuItem mntmBackup = new JMenuItem("Backup");
 		menuEntry3.add(mntmBackup);
 		menuBar.add(menuEntry4);
-
 		JMenuItem mntmFenstereinstellungen = new JMenuItem("Fenstereinstellungen");
 		menuEntry4.add(mntmFenstereinstellungen);
 
@@ -107,63 +94,50 @@ public class MainMenu extends JFrame {
 		contentPane.setLayout(null);
 		scrollPane.setBounds(10, 11, (int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - taskBarSize - 75);
 
+		table = new JTable(200, ListManager.getColumnNameCount());
 		contentPane.add(scrollPane);
 		table.setRowHeight(30);
 		table.setFillsViewportHeight(true);
+		table.setRowHeight(25);
 
 		// Table HEADER
-		JTableHeader th = table.getTableHeader();
-		TableColumnModel tcm = th.getColumnModel();
-		
-		//Table row alignment of text
-		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+		th = table.getTableHeader();
+		tcm = th.getColumnModel();
+
+		// Table row alignment of text
+		rightRenderer = new DefaultTableCellRenderer();
 		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-		DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+		leftRenderer = new DefaultTableCellRenderer();
 		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		for (int i = 0; i < 7; i++) {
-			TableColumn tc = tcm.getColumn(i);
-			switch (i) {
-			case 0:
-				tc.setHeaderValue("#ID");	
-				table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
-				table.getColumnModel().getColumn(0).setPreferredWidth(25);
-				break;
-			case 1:
-				tc.setHeaderValue("Datum");
-				table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-				break;
-			case 2:
-				tc.setHeaderValue("Uhrzeit");
-				table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-				break;
-			case 3:
-				tc.setHeaderValue("Name");
-				table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-				break;
-			case 4:
-				tc.setHeaderValue("Zugabe");
-				table.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
-				break;
-			case 5:
-				tc.setHeaderValue("Stoff");
-				table.getColumnModel().getColumn(5).setCellRenderer(leftRenderer);
-				break;
-			case 6:
-				tc.setHeaderValue("Begründung");
-				table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
-				table.getColumnModel().getColumn(6).setPreferredWidth(200);
-				break;
-			default:
-				break;
-			}
-		}
-		th.repaint();		
-		table.setRowHeight(25);	
+		MainMenu.tableRepaint();
 
 		scrollPane.setViewportView(table);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+	}
+
+	/**
+	 * Use this function after you changed values in the ListManager class.
+	 * It repaints the table and deletes all data.
+	 * SAVE it before call this function.
+	 */
+	public static void tableRepaint() {
+		// Main Table Routine
+		for (int i = 0; i < ListManager.getColumnNameCount(); i++) {
+			TableColumn tc = tcm.getColumn(i);
+			tc.setHeaderValue(ListManager.getColumnNameElement(i));
+			
+			//Set the width of the columns
+			table.getColumnModel().getColumn(i).setPreferredWidth(ListManager.getColumnWidthElement(i));
+			
+			//Set the Alignment of the columns
+			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+			table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
+			table.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+			table.getColumnModel().getColumn(5).setCellRenderer(leftRenderer);
+		}
+		th.repaint();
 	}
 }
