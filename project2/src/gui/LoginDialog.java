@@ -17,13 +17,12 @@ import javax.swing.SwingConstants;
 
 public class LoginDialog extends JDialog {
 
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	static JPasswordField passwordField;
 	static JTextField textField;
 	private JButton okButton = new JButton("Login");
 	
-	private LoginRoutine loginp = new LoginRoutine();
-
 	/**
 	 * Launch the application.
 	 */
@@ -91,8 +90,7 @@ public class LoginDialog extends JDialog {
 						  
 						  new MainMenu().setVisible(true);
 						  dispose();
-					  }
-						  
+					  }  
 						 /* loginp.start();
 						  
 						  if(loginp.getLoginStatus() == 1){

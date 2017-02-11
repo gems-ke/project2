@@ -17,9 +17,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.JTree;
 
 public class MainMenu extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenu menuEntry1 = new JMenu("Aktion");
 	private JMenu menuEntry2 = new JMenu("Tabelle");
@@ -92,7 +94,7 @@ public class MainMenu extends JFrame {
 
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 		contentPane.setLayout(null);
-		scrollPane.setBounds(10, 11, (int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - taskBarSize - 75);
+		scrollPane.setBounds(217, 11, 1693, 965);
 
 		table = new JTable(200, ListManager.getColumnNameCount());
 		contentPane.add(scrollPane);
@@ -115,6 +117,10 @@ public class MainMenu extends JFrame {
 		MainMenu.tableRepaint();
 
 		scrollPane.setViewportView(table);
+		
+		JTree tree = new JTree();
+		tree.setBounds(10, 11, 197, 965);
+		contentPane.add(tree);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 	}
 
