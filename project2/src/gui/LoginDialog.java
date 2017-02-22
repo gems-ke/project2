@@ -9,6 +9,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import gui.Client;
+
 import javax.swing.JTextField;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
@@ -21,23 +24,10 @@ public class LoginDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	static JPasswordField passwordField;
 	static JTextField textField;
-	private JButton okButton = new JButton("Login");
+	static JButton okButton = new JButton("Login");
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			LoginDialog dialog = new LoginDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-			
-			ListManager.firstCall();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	JProgressBar progressBar = new JProgressBar();
+	
 
 	/**
 	 * Create the dialog.
@@ -49,7 +39,6 @@ public class LoginDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
-		JProgressBar progressBar = new JProgressBar();
 		progressBar.setBounds(10, 149, 293, 24);
 		contentPanel.add(progressBar);
 		
@@ -85,12 +74,7 @@ public class LoginDialog extends JDialog {
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 				//old on click listener
-				okButton.addActionListener(new ActionListener(){
-					  public void actionPerformed(ActionEvent e)  {
-						  
-						  new MainMenu().setVisible(true);
-						  dispose();
-					  }  
+				
 						 /* loginp.start();
 						  
 						  if(loginp.getLoginStatus() == 1){
@@ -101,8 +85,12 @@ public class LoginDialog extends JDialog {
 						  }
 						  
 					  }*/
-				});
+
 			}
 		}
+	}
+	
+	public void setProgress(int percent){
+		progressBar.setValue(percent);
 	}
 }
