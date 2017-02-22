@@ -63,11 +63,10 @@ public class InterfaceThread extends Thread{
 	
 	private void mainState(String currentUser){
 		
+		ListManager.firstCall();
 		mainmenu = new MainMenu();
 		mainmenu.setTitle("Benchmarking v. " + version + " - " + currentUser);
 		mainmenu.setVisible(true);
-		
-		ListManager.firstCall();
 		
 	}
 	
