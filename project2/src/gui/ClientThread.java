@@ -27,8 +27,8 @@ public class ClientThread extends Thread{
 		String response = ("nul");
 		
 		if(expectation.equals("login")){
-			if(!client.currentUser.equals("nul")){
-				response = client.currentUser;
+			if(!client.currentUserName.equals("nul")){
+				response = client.currentUserName + " - " + client.currentUserStatus;
 			}
 		}
 		

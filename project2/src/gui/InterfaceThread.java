@@ -46,9 +46,11 @@ public class InterfaceThread extends Thread{
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
+				  String adminRequest = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
+				  
 				  String pass = new String(dialog.passwordField.getPassword());
 				  
-				  String message = "!login " + dialog.textField.getText() + " " + pass;
+				  String message = adminRequest + dialog.textField.getText() + " " + pass;
 				  
 				  dialog.progressBar.setString("Übermittle Daten...");
 				  dialog.progressBar.setValue(30);
@@ -88,13 +90,13 @@ public class InterfaceThread extends Thread{
 					timeStart = System.currentTimeMillis();
 					progress++;
 					
-					String checkUp = Main.ct.checkResponse("login");
+					String[] checkUp = Main.ct.checkResponse("login").split(" ");
 					
-					if(!checkUp.equals("nul")){
-						if(checkUp.equals("invalidUser")){
+					if(!checkUp[0].equals("nul")){
+						if(checkUp[0].equals("invalidUser")){
 							System.out.println("client: invalid user!");
 							break;
-						}else if(checkUp.equals("wrongPass")){
+						}else if(checkUp[0].equals("wrongPass")){
 							System.out.println("client: wrong pass!");
 							break;
 						}else{
