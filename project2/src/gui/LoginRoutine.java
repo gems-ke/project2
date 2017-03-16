@@ -59,8 +59,6 @@ public class LoginRoutine {
 			System.out.println("password not identical!");
 		}
 		
-		//assign login info to mainmenu data (name, profilerights)
-		
 		//update local database
 		
 		//finish login

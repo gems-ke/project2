@@ -80,8 +80,8 @@ public class Server extends JFrame{
 	
 	private void setupDatabase(){
 		showMessage("Database-check initiated. \n");
-		dbhandler.getPort();
 		dbhandler.callData();
+		dbhandler.getPort();
 		if(dbhandler.gotData && !dbhandler.postProcessDefPath.equals("lulpath") ){
 			showMessage("Server found existing Database-data at: " + dbhandler.postProcessDefPath + "! \n");
 		}else if(dbhandler.postProcessDefPath.equals("lulpath")){

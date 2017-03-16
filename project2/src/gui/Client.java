@@ -18,7 +18,8 @@ public class Client extends JFrame{
 	private Socket connection;
 	
 	static int messageCount = 0;
-	static String currentUser = "nul";
+	static String currentUserName = "nul";
+	static String currentUserStatus = "nul";
 	
 	private int decodeKey = 44651;
 	private int[] decodeFragment = {6,7,2,5,8,9,0,6,7,5,6,2,0,3,3,6,5,1,6,7};
@@ -61,7 +62,7 @@ public class Client extends JFrame{
 	}
 	private void connectToServer() throws IOException{
 		showMessage("Attempting connection \n");
-		connection = new Socket(InetAddress.getByName(serverIP), 3456);
+		connection = new Socket(InetAddress.getByName(serverIP), 5000);
 		showMessage("Connected to:" + connection.getInetAddress().getHostName());
 	}
 	
@@ -112,6 +113,7 @@ public class Client extends JFrame{
 			if(message.startsWith("!")){
 				String command = operateCommand(message);
 				output.writeObject(command);
+				System.out.println("command sent:" + command);
 				output.flush();
 			}else{
 				output.writeObject("CLIENT - " + message);
@@ -155,7 +157,7 @@ public class Client extends JFrame{
 		
 	}
 	
-	public void responseReceived(String message){
+	/*public void responseReceived(String message){
 			
 			System.out.println("response received: " + message);
 			
@@ -168,15 +170,19 @@ public class Client extends JFrame{
 				
 			}else if(messageDefract[0].startsWith("SERVER - Diese")){
 				
-				
+				Main.it.dialog.progressBar.setValue(0);
+				Thread popup = new Thread(new PopupWindow("Dieser Benutzer existiert nicht."));
 				
 			}else if(messageDefract[0].startsWith("SERVER - Passwor")){
+				
+				Main.it.dialog.progressBar.setValue(0);
+				Thread popup = new Thread(new PopupWindow("Das eingegebene Passwort ist inkorrekt."));
 				
 			}else{
 				System.out.println("CHEATER");
 			}
 		
-	}
+	}*/
 	
 	private String decode(int code[]){
 		String decodedString;
@@ -234,7 +240,7 @@ public class Client extends JFrame{
 			}
 		
 			System.out.println(encryptedPassword);
-			encryptedCommand = ("!login " + preperationString[1] + encryptedPassword);
+			encryptedCommand = ("!login " + preperationString[1] + " admin" + encryptedPassword);
 		}
 		
 		if(command.startsWith("!createAdmin")){
@@ -249,7 +255,14 @@ public class Client extends JFrame{
 			}
 		
 			System.out.println(encryptedPassword);
-			encryptedCommand = ("!createUser " + preperationString[1] + encryptedPassword);
+			encryptedCommand = ("!createUser " + preperationString[1] + " admin" + encryptedPassword);
+		}
+		
+		if(command.startsWith("!login")){
+			encryptedCommand = "";
+			String[] preperationString = command.split(" ");
+			
+			encryptedCommand = ("!login " + preperationString[1] + " user " + preperationString[2]);
 		}
 
 		return encryptedCommand;
@@ -259,23 +272,27 @@ public class Client extends JFrame{
 		
 		if(response.startsWith("!SuccessfulAdminLogin")){
 			String[] preperationString = response.split(" ");
-			currentUser = preperationString[1];
+			currentUserName = preperationString[1];
+			currentUserStatus = "Admin";
 		}
 		
 		if(response.startsWith("!SuccessfulUserLogin")){
 			String[] preperationString = response.split(" ");
-			currentUser = preperationString[1];
+			currentUserName = preperationString[1];
+			currentUserStatus = "Nutzer";
 		}
 		
 		if(response.startsWith("!wrongPass")){
+			Main.it.dialog.progressBar.setValue(0);
+			Thread popup = new Thread(new PopupWindow("Das eingegebene Passwort ist inkorrekt."));
 			System.out.println("wrongpass triggered");
-			String[] preperationString = response.split(" ");
-			currentUser = "wrongPass";
+			currentUserName = "wrongPass";
 		}
 		
 		if(response.startsWith("!invalidUser")){
-			String[] preperationString = response.split(" ");
-			currentUser = "invalidUser";
+			Main.it.dialog.progressBar.setValue(0);
+			Thread popup = new Thread(new PopupWindow("Dieser Benutzer existiert nicht."));
+			currentUserName = "invalidUser";
 		}
 		
 	}
