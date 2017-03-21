@@ -11,6 +11,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
+import javax.swing.JCheckBox;
 
 public class Login extends JDialog {
 
@@ -56,6 +57,10 @@ public class Login extends JDialog {
 		textField.setBounds(10, 36, 293, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
+
+		JCheckBox chckbxAdmin = new JCheckBox("Admin");
+		chckbxAdmin.setBounds(10, 119, 97, 23);
+		contentPanel.add(chckbxAdmin);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setTitle("Login");

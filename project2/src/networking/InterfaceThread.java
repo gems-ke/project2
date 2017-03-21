@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
-import gui.ListManager;
+import data.ListManager;
 import gui.Login;
 import gui.Menu;
 import main.Main;
