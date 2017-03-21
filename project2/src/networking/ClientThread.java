@@ -1,4 +1,4 @@
-package gui;
+package networking;
 
 import javax.swing.JDialog;
 

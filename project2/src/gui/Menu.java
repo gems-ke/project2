@@ -19,7 +19,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
 
-public class MainMenu extends JFrame {
+public class Menu extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JMenuBar menuBar = new JMenuBar();
@@ -38,7 +38,7 @@ public class MainMenu extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainMenu() {
+	public Menu() {
 		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -114,7 +114,7 @@ public class MainMenu extends JFrame {
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		MainMenu.tableRepaint();
+		Menu.tableRepaint();
 
 		scrollPane.setViewportView(table);
 		
