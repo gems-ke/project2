@@ -51,7 +51,7 @@ public class InterfaceThread extends Thread{
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
-				  String adminRequest = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
+				  /*String adminRequest = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
 				  
 				  String pass = new String(dialog.passwordField.getPassword());
 				  
@@ -60,9 +60,9 @@ public class InterfaceThread extends Thread{
 				  dialog.progressBar.setString("Übermittle Daten...");
 				  dialog.progressBar.setValue(30);
 				  
-				  Main.ct.transmit(message);
+				  Main.ct.transmit(message);*/
 				  
-				  requestStateChange(2);
+				  requestStateChange(4);
 				  
 			  } 
 		});
