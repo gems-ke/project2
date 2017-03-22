@@ -15,11 +15,17 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
+import data.ListManager;
+
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
+import java.awt.Color;
+import javax.swing.JTextArea;
+import javax.swing.JTabbedPane;
 
-public class MainMenu extends JFrame {
+public class Menu extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JMenuBar menuBar = new JMenuBar();
@@ -38,7 +44,7 @@ public class MainMenu extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainMenu() {
+	public Menu() {
 		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -94,16 +100,6 @@ public class MainMenu extends JFrame {
 
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 		contentPane.setLayout(null);
-		scrollPane.setBounds(217, 11, 1693, 965);
-
-		table = new JTable(200, ListManager.getColumnNameCount());
-		contentPane.add(scrollPane);
-		table.setRowHeight(30);
-		table.setFillsViewportHeight(true);
-		table.setRowHeight(25);
-
-		// Table HEADER
-		th = table.getTableHeader();
 		tcm = th.getColumnModel();
 
 		// Table row alignment of text
@@ -114,13 +110,41 @@ public class MainMenu extends JFrame {
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		MainMenu.tableRepaint();
-
-		scrollPane.setViewportView(table);
+		Menu.tableRepaint();
 		
 		JTree tree = new JTree();
-		tree.setBounds(10, 11, 197, 965);
+		tree.setBounds(10, 11, 197, 643);
 		contentPane.add(tree);
+		
+		JTextArea txtrUser = new JTextArea();
+		txtrUser.setText("User1");
+		txtrUser.setBounds(10, 665, 197, 282);
+		contentPane.add(txtrUser);
+		
+		JTextArea txtrText = new JTextArea();
+		txtrText.setEditable(false);
+		txtrText.setRows(1);
+		txtrText.setText("Text");
+		txtrText.setBounds(10, 958, 1884, 22);
+		contentPane.add(txtrText);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(217, 0, 1677, 947);
+		contentPane.add(tabbedPane);
+		
+				table = new JTable(200, ListManager.getColumnNameCount());
+				table.setRowHeight(30);
+				table.setFillsViewportHeight(true);
+				table.setRowHeight(25);
+				
+						// Table HEADER
+						th = table.getTableHeader();
+								tabbedPane.addTab("New tab", null, scrollPane, null);
+						
+								scrollPane.setViewportView(table);
+								
+								JScrollPane scrollPane_1 = new JScrollPane();
+								tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 	}
 

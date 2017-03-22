@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 
-public class PopupWindow extends JFrame implements Runnable{
+public class Popup extends JFrame implements Runnable{
 
 	private JPanel contentPane;
 
@@ -25,7 +25,7 @@ public class PopupWindow extends JFrame implements Runnable{
 	/**
 	 * Create the frame.
 	 */
-	public PopupWindow(String message) {
+	public Popup(String message) {
 		setBounds(100, 100, 333, 195);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
