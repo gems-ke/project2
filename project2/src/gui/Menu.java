@@ -1,8 +1,11 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +20,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import data.ListManager;
+import main.Main;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -34,6 +38,13 @@ public class Menu extends JFrame {
 	private JMenu menuEntry3 = new JMenu("Admin");
 	private JMenu menuEntry4 = new JMenu("Einstellungen");
 	private JPanel contentPane;
+	
+	public static JTextArea txtrUser;
+	public static JTree tree;
+	
+	public static String activeUser = "";
+	
+	public static ArrayList<String> onlineUsers = new ArrayList<String>();
 
 	private final JScrollPane scrollPane = new JScrollPane();
 	private static JTable table;
@@ -44,7 +55,8 @@ public class Menu extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Menu() {
+	public Menu(String currentUser) {
+		activeUser = currentUser;
 		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -100,7 +112,7 @@ public class Menu extends JFrame {
 
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 		contentPane.setLayout(null);
-		tcm = th.getColumnModel();
+		//tcm = th.getColumnModel();
 
 		// Table row alignment of text
 		rightRenderer = new DefaultTableCellRenderer();
@@ -110,16 +122,18 @@ public class Menu extends JFrame {
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		Menu.tableRepaint();
+		//Menu.tableRepaint();
 		
-		JTree tree = new JTree();
+		tree = new JTree();
 		tree.setBounds(10, 11, 197, 643);
 		contentPane.add(tree);
 		
-		JTextArea txtrUser = new JTextArea();
-		txtrUser.setText("User1");
+		txtrUser = new JTextArea();
+		txtrUser.setText(activeUser);
 		txtrUser.setBounds(10, 665, 197, 282);
 		contentPane.add(txtrUser);
+		
+		//request onlineuserpull
 		
 		JTextArea txtrText = new JTextArea();
 		txtrText.setEditable(false);
@@ -146,6 +160,17 @@ public class Menu extends JFrame {
 								JScrollPane scrollPane_1 = new JScrollPane();
 								tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		
+		Main.ct.transmit("!requestUserlistUpdate");
+		
+        /*EventQueue.invokeLater(new Runnable() {
+            public void run() {
+            	while(true){
+            		txtrUser.repaint();
+
+            	}
+            }
+        });*/
 	}
 
 	/**
@@ -170,4 +195,57 @@ public class Menu extends JFrame {
 		}
 		th.repaint();
 	}
+	
+	public static void updateUserList(String[] userlist){
+		
+		onlineUsers = new ArrayList<String>();
+		
+		System.out.println("updateuserlist requested!");
+		
+		ArrayList<String> admins = new ArrayList<String>();
+		ArrayList<String> users = new ArrayList<String>();
+		
+		String adminString = "-Admins-";
+		String userString = "\n -Benutzer-";
+		
+		String finalString = "";
+		
+		for(int i = 0; i < userlist.length - 1; i++){
+			onlineUsers.add(userlist[i+1]);
+		}
+		
+		
+		for(int i = 0; i < onlineUsers.size(); i = i + 2){
+			if(onlineUsers.get(i+1).equals("Admin")){
+				admins.add(onlineUsers.get(i));
+			}else{
+				users.add(onlineUsers.get(i));
+			}
+		}
+		
+		for(int i = 0; i < admins.size(); i++){
+			System.out.println("current admin add: " + adminString);
+			adminString = adminString + "\n" + admins.get(i);
+		}
+		
+		for(int i = 0; i < users.size(); i++){
+			userString = userString + "\n" + users.get(i);
+			System.out.println("current user add: " + userString);
+		}
+		
+		finalString = adminString + "\n" + userString;
+		
+		activeUser = finalString;
+		
+		System.out.println("finalString: " + finalString);
+		
+		txtrUser.setText(finalString);
+		txtrUser.repaint();
+		
+	}
+	
+	public void updateTree(){
+		
+	}
+	
 }
