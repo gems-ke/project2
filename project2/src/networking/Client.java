@@ -314,6 +314,12 @@ public class Client extends JFrame {
 			String[] userlist = response.split(" ");
 			Main.it.mainmenu.updateUserList(userlist);
 		}
+		
+		if (response.startsWith("!updateDirectory")) {
+			System.out.println("updatedirectory gets triggered!");
+			String[] userlist = response.split(" ");
+			Main.it.mainmenu.updateTree(userlist);
+		}
 
 	}
 

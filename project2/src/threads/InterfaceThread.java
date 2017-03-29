@@ -67,11 +67,13 @@ public class InterfaceThread extends Thread{
 				  dialog.progressBar.setString("‹bermittle Daten...");
 				  dialog.progressBar.setValue(30);
 				  
-				  Main.ct.transmit(message);
+				  //nicht auskommentiert, auﬂer du bist kevin
+				  //Main.ct.transmit(message);
 				  
 				  dialog.progressBar.setValue(50);
 				  
-				  requestStateChange(2);
+				  //if kevin then do 4, if not then do 2
+				  requestStateChange(4);
 				  
 			  } 
 		});

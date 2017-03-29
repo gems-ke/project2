@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import data.ListManager;
 import main.Main;
@@ -161,7 +162,12 @@ public class Menu extends JFrame {
 								tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		
-		Main.ct.transmit("!requestUserlistUpdate");
+		//für kevin auskommentiert
+		//Main.ct.transmit("!requestUserlistUpdate");
+		//Main.ct.transmit("!requestDirectoryUpdate");
+		
+		//auskommentieren, wenn du kein kevin bist
+		simulateTransmissions();
 		
         /*EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -244,8 +250,47 @@ public class Menu extends JFrame {
 		
 	}
 	
-	public void updateTree(){
+	public void updateTree(String[] directoryData){
 		
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Tabellen");
+		DefaultMutableTreeNode node;
+		DefaultMutableTreeNode subNode;
+		
+		for(int i = 1; i < directoryData.length; i++){
+			if(directoryData[i].equals("*")){
+				node = new DefaultMutableTreeNode(directoryData[i+1]);
+				int whileIterator = i+2;
+				boolean whileBool = true;
+				while(whileBool){
+					if(!directoryData[whileIterator].equals("*") && !directoryData[whileIterator].equals("**")){
+						subNode = new DefaultMutableTreeNode(directoryData[whileIterator]);
+						node.add(subNode);
+					}else{
+						whileBool = false;
+					}
+					whileIterator++;
+				}
+				root.add(node);
+			}
+		}
+		contentPane.remove(tree);
+		System.out.println("leafcount of root: " + root.getLeafCount());
+		tree = new JTree(root);
+		tree.setRootVisible(true);
+		tree.setShowsRootHandles(true);
+		contentPane.add(tree);
+		contentPane.repaint();
+		
+	}
+	
+	public void simulateTransmissions(){
+		String response = "!updateOnlineUsers tolu Admin";
+		String[] userlist = response.split(" ");
+		updateUserList(userlist);
+		
+		String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
+		String[] userlist2 = response2.split(" ");
+		updateTree(userlist2);
 	}
 	
 }
