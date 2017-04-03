@@ -172,7 +172,7 @@ public class Menu extends JFrame {
 		topTable.add(new DefaultMutableTreeNode("Third"));
 		first.add(new DefaultMutableTreeNode("First Child"));
 		//REFRESH!!!
-		this.refreshTree();
+		model.reload(topTable);
 	}
 	
 	/**
