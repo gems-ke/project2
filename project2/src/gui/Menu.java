@@ -15,13 +15,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 import data.ListManager;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
-import java.awt.Color;
 import javax.swing.JTextArea;
 import javax.swing.JTabbedPane;
 
@@ -34,23 +35,24 @@ public class Menu extends JFrame {
 	private JMenu menuEntry3 = new JMenu("Admin");
 	private JMenu menuEntry4 = new JMenu("Einstellungen");
 	private JPanel contentPane;
-
+	private JTree tree = new JTree();
+	private DefaultTreeModel model;
+	private DefaultMutableTreeNode topTable;
+	
 	private final JScrollPane scrollPane = new JScrollPane();
 	private static JTable table;
-	private static TableColumnModel tcm;
-	private static JTableHeader th;
+	private static TableColumnModel tableColumnModel;
+	private static JTableHeader tableHead;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 
 	/**
-	 * Create the frame.
+	 * Create the frame from the Constructor.
 	 */
 	public Menu() {
 		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
 		int taskBarSize = scnMax.bottom;
-
-		System.out.println("lul");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, (int) screenSize.getWidth(), (int) screenSize.getHeight() - taskBarSize);
@@ -100,7 +102,6 @@ public class Menu extends JFrame {
 
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 		contentPane.setLayout(null);
-		tcm = th.getColumnModel();
 
 		// Table row alignment of text
 		rightRenderer = new DefaultTableCellRenderer();
@@ -109,23 +110,20 @@ public class Menu extends JFrame {
 		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		Menu.tableRepaint();
-		
-		JTree tree = new JTree();
+
 		tree.setBounds(10, 11, 197, 643);
 		contentPane.add(tree);
 		
 		JTextArea txtrUser = new JTextArea();
 		txtrUser.setText("User1");
-		txtrUser.setBounds(10, 665, 197, 282);
+		txtrUser.setBounds(10, 665, 197, 315);
 		contentPane.add(txtrUser);
 		
 		JTextArea txtrText = new JTextArea();
 		txtrText.setEditable(false);
 		txtrText.setRows(1);
 		txtrText.setText("Text");
-		txtrText.setBounds(10, 958, 1884, 22);
+		txtrText.setBounds(217, 958, 1677, 22);
 		contentPane.add(txtrText);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -138,7 +136,7 @@ public class Menu extends JFrame {
 				table.setRowHeight(25);
 				
 						// Table HEADER
-						th = table.getTableHeader();
+						tableHead = table.getTableHeader();
 								tabbedPane.addTab("New tab", null, scrollPane, null);
 						
 								scrollPane.setViewportView(table);
@@ -146,6 +144,42 @@ public class Menu extends JFrame {
 								JScrollPane scrollPane_1 = new JScrollPane();
 								tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		
+		tableColumnModel = tableHead.getColumnModel();
+		Menu.tableRepaint();
+		
+		//prepare tree stuff
+		this.prepareTreeStuff();
+	}
+	
+	/**
+	 * Create the Standard JTree Components
+	 */
+	public void prepareTreeStuff(){
+		//The default Tree model to !!! UPDATE !!! the JTree
+		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();	
+		//HEADER - Connect the header to the JTree
+		DefaultMutableTreeNode topTable = (DefaultMutableTreeNode)model.getRoot();
+		tree = new JTree(topTable);		
+		//Title of the First Table Content
+		topTable.setUserObject("Benchmark Tree");	
+		//Remove all standard children first
+		topTable.removeAllChildren();	
+		//NODES / LEAFS	
+		DefaultMutableTreeNode first = new DefaultMutableTreeNode("First");
+		topTable.add(first);
+		topTable.add(new DefaultMutableTreeNode("Second"));
+		topTable.add(new DefaultMutableTreeNode("Third"));
+		first.add(new DefaultMutableTreeNode("First Child"));
+		//REFRESH!!!
+		this.refreshTree();
+	}
+	
+	/**
+	 * Call it to refresh the JTree Components
+	 */
+	public void refreshTree(){
+		model.reload(topTable);
 	}
 
 	/**
@@ -156,9 +190,10 @@ public class Menu extends JFrame {
 	public static void tableRepaint() {
 		// Main Table Routine
 		for (int i = 0; i < ListManager.getColumnNameCount(); i++) {
-			TableColumn tc = tcm.getColumn(i);
-			tc.setHeaderValue(ListManager.getColumnNameElement(i));
-			
+			if(tableColumnModel != null){
+				TableColumn tc = tableColumnModel.getColumn(i);
+				tc.setHeaderValue(ListManager.getColumnNameElement(i));
+			}	
 			//Set the width of the columns
 			table.getColumnModel().getColumn(i).setPreferredWidth(ListManager.getColumnWidthElement(i));
 			
@@ -168,6 +203,6 @@ public class Menu extends JFrame {
 			table.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
 			table.getColumnModel().getColumn(5).setCellRenderer(leftRenderer);
 		}
-		th.repaint();
+		tableHead.repaint();
 	}
 }

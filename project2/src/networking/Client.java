@@ -109,6 +109,8 @@ public class Client extends JFrame {
 			connection.close();
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
+		} catch (NullPointerException e){
+			e.printStackTrace();
 		}
 	}
 
