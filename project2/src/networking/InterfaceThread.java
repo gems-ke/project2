@@ -1,17 +1,22 @@
-package gui;
+package networking;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
+import data.ListManager;
+import gui.Login;
+import gui.Menu;
+import main.Main;
+
 public class InterfaceThread extends Thread{
 	
 	static int state = 0;
 	static String version = ("0.0.1");
 	
-	LoginDialog dialog;
-	MainMenu mainmenu;
+	public Login dialog;
+	Menu mainmenu;
 	
 	public void run(){
 		
@@ -39,14 +44,14 @@ public class InterfaceThread extends Thread{
 	
 	private void loginState(){
 		
-		dialog = new LoginDialog();
+		dialog = new Login();
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 		
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
-				  String adminRequest = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
+				  /*String adminRequest = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
 				  
 				  String pass = new String(dialog.passwordField.getPassword());
 				  
@@ -55,9 +60,9 @@ public class InterfaceThread extends Thread{
 				  dialog.progressBar.setString("Übermittle Daten...");
 				  dialog.progressBar.setValue(30);
 				  
-				  Main.ct.transmit(message);
+				  Main.ct.transmit(message);*/
 				  
-				  requestStateChange(2);
+				  requestStateChange(4);
 				  
 			  } 
 		});
@@ -66,7 +71,7 @@ public class InterfaceThread extends Thread{
 	private void mainState(String currentUser){
 		
 		ListManager.firstCall();
-		mainmenu = new MainMenu();
+		mainmenu = new Menu();
 		mainmenu.setTitle("Benchmarking v. " + version + " - " + currentUser);
 		mainmenu.setVisible(true);
 		

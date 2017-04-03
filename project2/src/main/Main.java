@@ -1,6 +1,9 @@
-package gui;
+package main;
 
 import javax.swing.JDialog;
+
+import networking.ClientThread;
+import networking.InterfaceThread;
 
 public class Main {
 	
