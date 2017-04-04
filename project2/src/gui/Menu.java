@@ -1,11 +1,11 @@
 package gui;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,9 +20,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-
 import data.ListManager;
-import main.Main;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -41,14 +39,14 @@ public class Menu extends JFrame {
 	private JPanel contentPane;
 
 	public static JTextArea txtrUser;
-	
+
 	public static String activeUser = "";
-	
+
 	public static ArrayList<String> onlineUsers = new ArrayList<String>();
 
 	private JTree tree = new JTree();
-	private DefaultTreeModel model;
-	private DefaultMutableTreeNode topTable;
+	private DefaultTreeModel model = new DefaultTreeModel(null);
+	private DefaultMutableTreeNode topTable = new DefaultMutableTreeNode(null);
 
 	private final JScrollPane scrollPane = new JScrollPane();
 	private static JTable table;
@@ -56,11 +54,13 @@ public class Menu extends JFrame {
 	private static JTableHeader tableHead;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 
+	String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
+	String[] userlist2 = response2.split(" ");
+
 	/**
 	 * Create the frame from the Constructor.
 	 */
 	public Menu(String currentUser) {
-		txtrUser = new JTextArea();
 		activeUser = currentUser;
 		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -125,108 +125,127 @@ public class Menu extends JFrame {
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
 		tree.setBounds(10, 11, 197, 643);
+		tree.setBorder(BorderFactory.createEtchedBorder());
 		contentPane.add(tree);
-		
+
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(10, 665, 197, 315);
+		contentPane.add(scrollPane_2);
+		txtrUser = new JTextArea();
+		scrollPane_2.setViewportView(txtrUser);
+		txtrUser.setEditable(false);
+
 		txtrUser.setText("User1");
-		txtrUser.setBounds(10, 665, 197, 315);
-		contentPane.add(txtrUser);
-		
-		//request onlineuserpull
-		
+		txtrUser.setBorder(BorderFactory.createEtchedBorder());
+
 		JTextArea txtrText = new JTextArea();
 		txtrText.setEditable(false);
 		txtrText.setRows(1);
 		txtrText.setText("Text");
 		txtrText.setBounds(217, 958, 1677, 22);
+		txtrText.setBorder(BorderFactory.createEtchedBorder());
 		contentPane.add(txtrText);
-		
+
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(217, 0, 1677, 947);
 		contentPane.add(tabbedPane);
-		
-				table = new JTable(200, ListManager.getColumnNameCount());
-				table.setRowHeight(30);
-				table.setFillsViewportHeight(true);
-				table.setRowHeight(25);
-				
-						// Table HEADER
-						tableHead = table.getTableHeader();
-								tabbedPane.addTab("New tab", null, scrollPane, null);
-						
-								scrollPane.setViewportView(table);
-								
-								JScrollPane scrollPane_1 = new JScrollPane();
-								tabbedPane.addTab("New tab", null, scrollPane_1, null);
-		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		
-		//für kevin auskommentiert
-		//Main.ct.transmit("!requestUserlistUpdate");
-		//Main.ct.transmit("!requestDirectoryUpdate");
-		
-		//auskommentieren, wenn du kein kevin bist
-		simulateTransmissions();
-		
-        /*EventQueue.invokeLater(new Runnable() {
-            public void run() {
-            	while(true){
-            		txtrUser.repaint();
 
-            	}
-            }
-        });*/
+		table = new JTable(200, ListManager.getColumnNameCount());
+		table.setRowHeight(30);
+		table.setFillsViewportHeight(true);
+		table.setRowHeight(25);
+
+		// Table HEADER
+		tableHead = table.getTableHeader();
+		tabbedPane.addTab("New tab", null, scrollPane, null);
+
+		scrollPane.setViewportView(table);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		tabbedPane.addTab("New tab", null, scrollPane_1, null);
+		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+		// JTREE UPDATE STUFF
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
-		
-		//prepare tree stuff
 		this.prepareTreeStuff();
+
+		// für kevin auskommentiert
+		// Main.ct.transmit("!requestUserlistUpdate");
+		// Main.ct.transmit("!requestDirectoryUpdate");
+
+		// auskommentieren, wenn du kein kevin bist
+		simulateTransmissions();
+
+		/*
+		 * EventQueue.invokeLater(new Runnable() { public void run() {
+		 * while(true){ txtrUser.repaint();
+		 * 
+		 * } } });
+		 */
 	}
-	
+
 	/**
 	 * Create the Standard JTree Components
 	 */
-	public void prepareTreeStuff(){
-		//The default Tree model to !!! UPDATE !!! the JTree
-		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();	
-		//HEADER - Connect the header to the JTree
-		DefaultMutableTreeNode topTable = (DefaultMutableTreeNode)model.getRoot();
-		tree = new JTree(topTable);		
-		//Title of the First Table Content
-		topTable.setUserObject("Benchmark Tree");	
-		//Remove all standard children first
-		topTable.removeAllChildren();	
-		//NODES / LEAFS	
+	public void prepareTreeStuff() {
+		// The default Tree model to !!! UPDATE !!! the JTree
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		// HEADER - Connect the header to the JTree
+		DefaultMutableTreeNode topTable = (DefaultMutableTreeNode) model.getRoot();
+		tree = new JTree(topTable);
+		// Title of the First Table Content
+		topTable.setUserObject("Benchmark Tree");
+		// Remove all standard children first
+		topTable.removeAllChildren();
+		// NODES / LEAFS
 		DefaultMutableTreeNode first = new DefaultMutableTreeNode("First");
-		topTable.add(first);
-		topTable.add(new DefaultMutableTreeNode("Second"));
-		topTable.add(new DefaultMutableTreeNode("Third"));
-		first.add(new DefaultMutableTreeNode("First Child"));
-		//REFRESH!!!
-		model.reload(topTable);
-	}
-	
-	/**
-	 * Call it to refresh the JTree Components
-	 */
-	public void refreshTree(){
+		// topTable.add(first);
+		// topTable.add(new DefaultMutableTreeNode("Second"));
+		// topTable.add(new DefaultMutableTreeNode("Third"));
+		// first.add(new DefaultMutableTreeNode("First Child"));
+		// REFRESH!!!
+
+		DefaultMutableTreeNode node = null;
+		DefaultMutableTreeNode subNode = null;
+		boolean whileBool = true;
+
+		for (int i = 1; i < userlist2.length; i++) {
+			if (userlist2[i].equals("*")) {
+				node = new DefaultMutableTreeNode(userlist2[i + 1]);
+				int whileIterator = i + 2;
+				whileBool = true;
+				while (whileBool) {
+					if (!userlist2[whileIterator].equals("*") && !userlist2[whileIterator].equals("**")) {
+						subNode = new DefaultMutableTreeNode(userlist2[whileIterator]);
+						node.add(subNode);
+					} else {
+						whileBool = false;
+					}
+					whileIterator++;
+				}
+				topTable.add(node);
+			}
+		}
 		model.reload(topTable);
 	}
 
 	/**
-	 * Use this function after you changed values in the ListManager class.
-	 * It repaints the table and deletes all data.
-	 * SAVE it before call this function.
+	 * Use this function after you changed values in the ListManager class. It
+	 * repaints the table and deletes all data. SAVE it before call this
+	 * function.
 	 */
 	public static void tableRepaint() {
 		// Main Table Routine
 		for (int i = 0; i < ListManager.getColumnNameCount(); i++) {
-			if(tableColumnModel != null){
+			if (tableColumnModel != null) {
 				TableColumn tc = tableColumnModel.getColumn(i);
 				tc.setHeaderValue(ListManager.getColumnNameElement(i));
-			}	
-			//Set the width of the columns
+			}
+			// Set the width of the columns
 			table.getColumnModel().getColumn(i).setPreferredWidth(ListManager.getColumnWidthElement(i));
-			
-			//Set the Alignment of the columns
+
+			// Set the Alignment of the columns
 			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 			table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
 			table.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
@@ -234,95 +253,55 @@ public class Menu extends JFrame {
 		}
 		tableHead.repaint();
 	}
-	
-	public static void updateUserList(String[] userlist){
-		
+
+	public static void updateUserList(String[] userlist) {
+
 		onlineUsers = new ArrayList<String>();
-		
-		System.out.println("updateuserlist requested!");
-		
+
 		ArrayList<String> admins = new ArrayList<String>();
 		ArrayList<String> users = new ArrayList<String>();
-		
+
 		String adminString = "-Admins-";
 		String userString = "\n -Benutzer-";
-		
+
 		String finalString = "";
-		
-		for(int i = 0; i < userlist.length - 1; i++){
-			onlineUsers.add(userlist[i+1]);
+
+		for (int i = 0; i < userlist.length - 1; i++) {
+			onlineUsers.add(userlist[i + 1]);
 		}
-		
-		
-		for(int i = 0; i < onlineUsers.size(); i = i + 2){
-			if(onlineUsers.get(i+1).equals("Admin")){
+
+		for (int i = 0; i < onlineUsers.size(); i = i + 2) {
+			if (onlineUsers.get(i + 1).equals("Admin")) {
 				admins.add(onlineUsers.get(i));
-			}else{
+			} else {
 				users.add(onlineUsers.get(i));
 			}
 		}
-		
-		for(int i = 0; i < admins.size(); i++){
+
+		for (int i = 0; i < admins.size(); i++) {
 			System.out.println("current admin add: " + adminString);
 			adminString = adminString + "\n" + admins.get(i) + "\n";
 		}
-		
-		for(int i = 0; i < users.size(); i++){
+
+		for (int i = 0; i < users.size(); i++) {
 			userString = userString + "\n" + users.get(i) + "\n";
 			System.out.println("current user add: " + userString);
 		}
-		
+
 		finalString = adminString + "\n" + userString;
-		
+
 		activeUser = finalString;
-		
+
 		System.out.println("finalString: " + finalString);
-		
+
 		txtrUser.setText(finalString);
 		txtrUser.repaint();
-		
+
 	}
-	
-	public void updateTree(String[] directoryData){
-		
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Tabellen");
-		DefaultMutableTreeNode node;
-		DefaultMutableTreeNode subNode;
-		
-		for(int i = 1; i < directoryData.length; i++){
-			if(directoryData[i].equals("*")){
-				node = new DefaultMutableTreeNode(directoryData[i+1]);
-				int whileIterator = i+2;
-				boolean whileBool = true;
-				while(whileBool){
-					if(!directoryData[whileIterator].equals("*") && !directoryData[whileIterator].equals("**")){
-						subNode = new DefaultMutableTreeNode(directoryData[whileIterator]);
-						node.add(subNode);
-					}else{
-						whileBool = false;
-					}
-					whileIterator++;
-				}
-				root.add(node);
-			}
-		}
-		/*contentPane.remove(tree);
-		System.out.println("leafcount of root: " + root.getLeafCount());
-		tree = new JTree(root);
-		tree.setRootVisible(true);
-		tree.setShowsRootHandles(true);
-		contentPane.add(tree);*/
-		
-	}
-	
-	public void simulateTransmissions(){
+
+	public void simulateTransmissions() {
 		String response = "!updateOnlineUsers tolu Admin";
 		String[] userlist = response.split(" ");
 		updateUserList(userlist);
-		
-		String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
-		String[] userlist2 = response2.split(" ");
-		updateTree(userlist2);
 	}
-	
 }
