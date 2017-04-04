@@ -1,6 +1,8 @@
-package networking;
+package threads;
 
 import javax.swing.JDialog;
+
+import networking.Client;
 
 public class ClientThread extends Thread{
 	

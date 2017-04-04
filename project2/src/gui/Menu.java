@@ -1,8 +1,11 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import data.ListManager;
+import main.Main;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -35,10 +39,17 @@ public class Menu extends JFrame {
 	private JMenu menuEntry3 = new JMenu("Admin");
 	private JMenu menuEntry4 = new JMenu("Einstellungen");
 	private JPanel contentPane;
+
+	public static JTextArea txtrUser;
+	
+	public static String activeUser = "";
+	
+	public static ArrayList<String> onlineUsers = new ArrayList<String>();
+
 	private JTree tree = new JTree();
 	private DefaultTreeModel model;
 	private DefaultMutableTreeNode topTable;
-	
+
 	private final JScrollPane scrollPane = new JScrollPane();
 	private static JTable table;
 	private static TableColumnModel tableColumnModel;
@@ -48,7 +59,9 @@ public class Menu extends JFrame {
 	/**
 	 * Create the frame from the Constructor.
 	 */
-	public Menu() {
+	public Menu(String currentUser) {
+		txtrUser = new JTextArea();
+		activeUser = currentUser;
 		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -114,10 +127,11 @@ public class Menu extends JFrame {
 		tree.setBounds(10, 11, 197, 643);
 		contentPane.add(tree);
 		
-		JTextArea txtrUser = new JTextArea();
 		txtrUser.setText("User1");
 		txtrUser.setBounds(10, 665, 197, 315);
 		contentPane.add(txtrUser);
+		
+		//request onlineuserpull
 		
 		JTextArea txtrText = new JTextArea();
 		txtrText.setEditable(false);
@@ -145,6 +159,21 @@ public class Menu extends JFrame {
 								tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		
+		//für kevin auskommentiert
+		//Main.ct.transmit("!requestUserlistUpdate");
+		//Main.ct.transmit("!requestDirectoryUpdate");
+		
+		//auskommentieren, wenn du kein kevin bist
+		simulateTransmissions();
+		
+        /*EventQueue.invokeLater(new Runnable() {
+            public void run() {
+            	while(true){
+            		txtrUser.repaint();
+
+            	}
+            }
+        });*/
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
 		
@@ -205,4 +234,95 @@ public class Menu extends JFrame {
 		}
 		tableHead.repaint();
 	}
+	
+	public static void updateUserList(String[] userlist){
+		
+		onlineUsers = new ArrayList<String>();
+		
+		System.out.println("updateuserlist requested!");
+		
+		ArrayList<String> admins = new ArrayList<String>();
+		ArrayList<String> users = new ArrayList<String>();
+		
+		String adminString = "-Admins-";
+		String userString = "\n -Benutzer-";
+		
+		String finalString = "";
+		
+		for(int i = 0; i < userlist.length - 1; i++){
+			onlineUsers.add(userlist[i+1]);
+		}
+		
+		
+		for(int i = 0; i < onlineUsers.size(); i = i + 2){
+			if(onlineUsers.get(i+1).equals("Admin")){
+				admins.add(onlineUsers.get(i));
+			}else{
+				users.add(onlineUsers.get(i));
+			}
+		}
+		
+		for(int i = 0; i < admins.size(); i++){
+			System.out.println("current admin add: " + adminString);
+			adminString = adminString + "\n" + admins.get(i) + "\n";
+		}
+		
+		for(int i = 0; i < users.size(); i++){
+			userString = userString + "\n" + users.get(i) + "\n";
+			System.out.println("current user add: " + userString);
+		}
+		
+		finalString = adminString + "\n" + userString;
+		
+		activeUser = finalString;
+		
+		System.out.println("finalString: " + finalString);
+		
+		txtrUser.setText(finalString);
+		txtrUser.repaint();
+		
+	}
+	
+	public void updateTree(String[] directoryData){
+		
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Tabellen");
+		DefaultMutableTreeNode node;
+		DefaultMutableTreeNode subNode;
+		
+		for(int i = 1; i < directoryData.length; i++){
+			if(directoryData[i].equals("*")){
+				node = new DefaultMutableTreeNode(directoryData[i+1]);
+				int whileIterator = i+2;
+				boolean whileBool = true;
+				while(whileBool){
+					if(!directoryData[whileIterator].equals("*") && !directoryData[whileIterator].equals("**")){
+						subNode = new DefaultMutableTreeNode(directoryData[whileIterator]);
+						node.add(subNode);
+					}else{
+						whileBool = false;
+					}
+					whileIterator++;
+				}
+				root.add(node);
+			}
+		}
+		/*contentPane.remove(tree);
+		System.out.println("leafcount of root: " + root.getLeafCount());
+		tree = new JTree(root);
+		tree.setRootVisible(true);
+		tree.setShowsRootHandles(true);
+		contentPane.add(tree);*/
+		
+	}
+	
+	public void simulateTransmissions(){
+		String response = "!updateOnlineUsers tolu Admin";
+		String[] userlist = response.split(" ");
+		updateUserList(userlist);
+		
+		String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
+		String[] userlist2 = response2.split(" ");
+		updateTree(userlist2);
+	}
+	
 }

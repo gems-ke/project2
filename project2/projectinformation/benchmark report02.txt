@@ -1,0 +1,151 @@
+Autonomus Chemical Benchmarking Database
+
+Project Definition:
+- Admin-based usermanagement
+- Local Server - Clientsided communication
+- Database with changelog
+- Automated functions for Evaluation of gathered Data
+
+Project Sidenotes:
+- Project starting date: 26.11.2016
+- Coding starting date: 05.03.2017
+
+--------------------------------------------------------------------
+ACTIVE:
+--------------------------------------------------------------------
+BUGS:
+
+----------------------------------
+OPTIMIZE:
+
+high prio:
+
+- 27.03.2017/04:17, rethink and redesign public/static/private access, especially those of variables.
+
+- 27.03.2017/03:42, add comments to ALL classes. really need to do that.
+
+mid prio:
+
+- 27.03.2017/23:57, dbhandler line 187 sporadical nullpointer exception. Likely to be cause by slow batchfile creation.
+
+- 14.03.2017/18:53, batch- and textfile cleanup in userfolder.
+
+- 20.03.2017/21:03, code placement is visually a mess, specially in DBHandler.
+
+- 22.03.2017/11:30, data structure of many DBHandler functions are completely obsolete and inefficient.
+  They work without massive efficiency decrease, but might cause bugs and stagnation in further development,
+  as code is undynamic and not perfectly sealed up against errors.
+
+- 25.03.2017/13:10, server interacts to every message but worked around by client writing 2 msgs - might collide with other clients,
+  even though clients get handled on different threads so it's unlikely.
+  But the cause of every 2nd line ignored might not be static, if suddenly a line doesnt get skipped,
+  the flushmessage will render the communication impossible, forcing to restart client/maybe even server.
+  @Serverv2 - run()? , Client - sendMessage(). Stated in FILE 0003.
+
+low prio:
+
+- 22.03.2017/19:03, fix failed permission request to give wrong response. FILE 0002.
+
+- 27.03.2017/03:47, converting current projectstructure to a delegation pattern. much work, small efficiency increase.
+
+- 24.03.2017/15:13, at DBHandler - loginAdmin() throws wrongpass even if user is just not an admin. ignore until close enough to finishing.
+
+- 27.03.2017/09:22, implement thread pools/ worker threads. Generally high prio, recommended to implement not now though.
+  General program functionality remains core, as on first use only 2-digit amount of clients are to be handled.
+  a MUST-DO if having more companies to use this program, specially bigger ones.
+
+- 14.03.2017/08:48, proper server shutdown handling to enable restarting server without restarting programm
+  @probably entirely new function for easier cleanup purposes.
+
+- 18.03.2017/06:08, create dynamic user creation function for multiple user permission variables
+  @DBHandler - createUser() & createAdmin() to createDynamicUser(name, pass, permissions), consider FILE 0001.
+
+----------------------------------
+TO ADD:
+
+- 27.03.2017/17:05, add push of bottomline message possibly, consider FILE 0005.
+
+- 19.03.2017/09:22, tabledata management concept, Merge vs. update. Mind changelog implementation simultaneously.
+
+- 19.03.2017/09:37, proper server shutdown handling => lowprio opt
+  @Serverv2
+
+- 29.03.2017/21:06, proper client online status handling => mid opt
+  @Serverv2
+-> 29.03.2017/21:56, onlineUser array works. now need to push change and information to all clients to update.
+   suggest implementation of !updateOnlineUser pushmessage.
+-> 29.03.2017/22:12, preferably dynamic, server should send two-dimensional data, 
+   containing the username AND their permission-level-identifier (further PLI),
+   client should dynamically add a new category if a new PLI is given by admin.
+   categorization is key, more professional look and enhanced overview,
+   also to initially support custom PLIs.
+-> 29.03.2017/22:14, requires a sendToAll(). Implementing in progress.
+-> 29.03.2017/22:50, telling everyone works, sending proper array, implementing ui update for new online user string array.
+
+--------------------------------------------------------------------
+COMPLETED/FILED:
+--------------------------------------------------------------------
+BUGS:
+
+FILE 0001:
+- 17.03.2017/13:37, createUser only for admins
+-x 17.03.2017/15:12, solved, still 2 different nondynamic functions => possible low prio optimize
+
+FILE 0002:
+- 22.03.2017/18:23, user admin login seems to break after several tries.
+  coms sent: !encryptedlogin tolu garen123 - on first programm, on second: !encryptedlogin tolu garen123 - 3x,
+               !encryptedlogin spahiton random, !login spahiton random -break
+-> 22.03.2017/18:31, issue seems to be a serversided misinterpreted admin login. Sysouts:
+/*
+message received:!login spahiton admin 44771 44755 44763 44756 44770 44769
+command triggered
+admin login triggered with message recieved:!login spahiton admin 44771 44755 44763 44756 44770 44769
+44771
+admin login triggered with message recieved:!login spahiton admin 44771 44755 44763 44756 44770 44769
+44755
+admin login triggered with message recieved:!login spahiton admin 44771 44755 44763 44756 44770 44769
+44763
+admin login triggered with message recieved:!login spahiton admin 44771 44755 44763 44756 44770 44769
+44756
+admin login triggered with message recieved:!login spahiton admin 44771 44755 44763 44756 44770 44769
+44770
+admin login triggered with message recieved:!login spahiton admin 44771 44755 44763 44756 44770 44769
+44769
+spahiton random
+*/
+-x 22.03.2017/19:01, DBHandler - first assumption was correct, loginAdmin(), tried to read the encoded integer from an admin data savefile,
+   but since user wasnt admin instead it read the string of the available nonadmin userfile in database. fixed.
+   signing in as an admin while being a user throws an incorrect pass error, instead of wrong user or wrong
+   permission request => very low prio opt, optimize if program about to reach endline.
+
+FILE 0003:
+- 25.03.2017/11:42, server interacts to first, then every 2nd message
+-> tried changing inputstream checkloop from do...while to while,
+   now every second message read starting at the second message.
+-x solved, but poor workaround => midrange optimization.
+
+FILE 0004:
+- 27.03.2017/10:21, admin login returns wrongpass, mind FILE002.
+-x 27.03.2017/14:09, @DBHandler - line 644, corrected using wrong method to get first char (from indexOf to charAt).
+
+FILE 0005:
+- 27.03.2017/10:24, Menu no UI responsiveness, related to userlist update function.
+-> 27.03.2017/16:27, client now requests an update that will ultimately update all clients.
+    the String for the userlist array is anyhow still bugged, adding the command parameter and PLI name to it.
+-x 27.03.2017/16:57, fixed, together with the usernamelist stacking up with redundant information.
+
+- 27.03.2017/03:33, online user update request before even main creation... maybe update eligibility check?
+-> Fixed with FILE 0005.
+
+----------------------------------
+OPTIMIZE:
+
+FILE 0006:
+- 28.03.2017/5:06, custom LabledObjectOutputStreams. Seems to be the best solution for proper streampipe handling,
+  when it comes to security and performance. Nessecarity in doubt so far, but with great potencial.
+  better optimize functions for passing userdata through the streams. 
+-x 28.03.2017/7:45, seems like passing objectstreams, the biggest project so far, isn't properly supported by Java sockets. mission aborted.
+
+----------------------------------
+TO ADD:
+

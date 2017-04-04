@@ -21,8 +21,8 @@ public class Client extends JFrame {
 	private Socket connection;
 
 	static int messageCount = 0;
-	static String currentUserName = "nul";
-	static String currentUserStatus = "nul";
+	public static String currentUserName = "nul";
+	public static String currentUserStatus = "nul";
 
 	private int decodeKey = 44651;
 	private int[] decodeFragment = { 6, 7, 2, 5, 8, 9, 0, 6, 7, 5, 6, 2, 0, 3, 3, 6, 5, 1, 6, 7 };
@@ -117,12 +117,19 @@ public class Client extends JFrame {
 	public void sendMessage(String message) {
 		try {
 			if (message.startsWith("!")) {
+				output.writeObject("flushmessage");
+				System.out.println("flush sent:");
+				output.flush();
 				String command = operateCommand(message);
 				output.writeObject(command);
 				System.out.println("command sent:" + command);
 				output.flush();
 			} else {
+				output.writeObject("flushmessage");
+				System.out.println("flush sent:");
+				output.flush();
 				output.writeObject("CLIENT - " + message);
+				System.out.println("message sent:" + message);
 				output.flush();
 			}
 			showMessage("\nCLIENT - " + message);
@@ -266,6 +273,7 @@ public class Client extends JFrame {
 
 			encryptedCommand = ("!login " + preperationString[1] + " user " + preperationString[2]);
 		}
+		
 
 		return encryptedCommand;
 	}
@@ -295,6 +303,24 @@ public class Client extends JFrame {
 			Main.it.dialog.progressBar.setValue(0);
 			Thread popup = new Thread(new Popup("Dieser Benutzer existiert nicht."));
 			currentUserName = "invalidUser";
+		}
+		
+		if (response.startsWith("!isOnline")) {
+			Main.it.dialog.progressBar.setValue(0);
+			Thread popup = new Thread(new Popup("Dieser Benutzer ist bereits eingeloggt."));
+			currentUserName = "invalidUser";
+		}
+		
+		if (response.startsWith("!updateOnlineUsers")) {
+			System.out.println("onlineusers gets triggered!1");
+			String[] userlist = response.split(" ");
+			Main.it.mainmenu.updateUserList(userlist);
+		}
+		
+		if (response.startsWith("!updateDirectory")) {
+			System.out.println("updatedirectory gets triggered!");
+			String[] userlist = response.split(" ");
+			Main.it.mainmenu.updateTree(userlist);
 		}
 
 	}

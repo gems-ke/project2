@@ -1,4 +1,4 @@
-package networking;
+package threads;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +16,7 @@ public class InterfaceThread extends Thread{
 	static String version = ("0.0.1");
 	
 	public Login dialog;
-	Menu mainmenu;
+	public Menu mainmenu;
 	
 	public void run(){
 		
@@ -32,13 +32,16 @@ public class InterfaceThread extends Thread{
 		
 		if(requestedState == 2){
 			state = 3;
+			dialog.progressBar.setValue(70);
 			waitForResponse("login");
 		}
 		
 		if(requestedState == 4){
+			dialog.progressBar.setValue(100);
 			state = 5;
 			dialog.dispose();
 			mainState(Main.ct.checkResponse("login"));
+			System.out.println("jetzt würde das hauptprogramm aufpoppen...");
 		}
 	}
 	
@@ -51,17 +54,25 @@ public class InterfaceThread extends Thread{
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
-				  /*String adminRequest = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
+				  String loginParameter = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
+				  
+				  if(Login.chckbxAdmin.isSelected()){
+					  loginParameter = "!encryptedlogin ";
+				  }
 				  
 				  String pass = new String(dialog.passwordField.getPassword());
 				  
-				  String message = adminRequest + dialog.textField.getText() + " " + pass;
+				  String message = loginParameter + dialog.textField.getText() + " " + pass;
 				  
 				  dialog.progressBar.setString("Übermittle Daten...");
 				  dialog.progressBar.setValue(30);
 				  
-				  Main.ct.transmit(message);*/
+				  //nicht auskommentiert, außer du bist kevin!
+				  //Main.ct.transmit(message);
 				  
+				  dialog.progressBar.setValue(50);
+				  
+				  //if kevin then do 4, if not then do 2
 				  requestStateChange(4);
 				  
 			  } 
@@ -71,7 +82,7 @@ public class InterfaceThread extends Thread{
 	private void mainState(String currentUser){
 		
 		ListManager.firstCall();
-		mainmenu = new Menu();
+		mainmenu = new Menu(currentUser);
 		mainmenu.setTitle("Benchmarking v. " + version + " - " + currentUser);
 		mainmenu.setVisible(true);
 		
@@ -88,6 +99,8 @@ public class InterfaceThread extends Thread{
 			int progress = 30;
 			
 			frequencyMS = 50;
+			
+			dialog.progressBar.setValue(80);
 			
 			while(true){
 				

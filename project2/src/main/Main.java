@@ -2,8 +2,8 @@ package main;
 
 import javax.swing.JDialog;
 
-import networking.ClientThread;
-import networking.InterfaceThread;
+import threads.ClientThread;
+import threads.InterfaceThread;
 
 public class Main {
 	

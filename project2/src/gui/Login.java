@@ -20,6 +20,7 @@ public class Login extends JDialog {
 	public static JPasswordField passwordField;
 	public static JTextField textField;
 	public static JButton okButton = new JButton("Login");
+	public static JCheckBox chckbxAdmin;
 
 	public JProgressBar progressBar = new JProgressBar();
 
@@ -58,7 +59,7 @@ public class Login extends JDialog {
 		contentPanel.add(textField);
 		textField.setColumns(10);
 
-		JCheckBox chckbxAdmin = new JCheckBox("Admin");
+		chckbxAdmin = new JCheckBox("Admin");
 		chckbxAdmin.setBounds(10, 119, 97, 23);
 		contentPanel.add(chckbxAdmin);
 		setLocationRelativeTo(null);
