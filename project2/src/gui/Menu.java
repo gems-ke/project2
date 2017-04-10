@@ -21,6 +21,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import data.ListManager;
+import main.Main;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -54,8 +55,8 @@ public class Menu extends JFrame {
 	private static JTableHeader tableHead;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 
-	String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
-	String[] userlist2 = response2.split(" ");
+	private String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
+	private String[] directorylist2 = response2.split(" ");
 
 	/**
 	 * Create the frame from the Constructor.
@@ -171,11 +172,11 @@ public class Menu extends JFrame {
 		this.prepareTreeStuff();
 
 		// für kevin auskommentiert
-		// Main.ct.transmit("!requestUserlistUpdate");
-		// Main.ct.transmit("!requestDirectoryUpdate");
+		Main.ct.transmit("!requestUserlistUpdate");
+		Main.ct.transmit("!requestDirectoryUpdate");
 
 		// auskommentieren, wenn du kein kevin bist
-		simulateTransmissions();
+		//simulateTransmissions();
 
 		/*
 		 * EventQueue.invokeLater(new Runnable() { public void run() {
@@ -189,6 +190,7 @@ public class Menu extends JFrame {
 	 * Create the Standard JTree Components
 	 */
 	public void prepareTreeStuff() {
+		System.out.println("prepare gets through");
 		// The default Tree model to !!! UPDATE !!! the JTree
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		// HEADER - Connect the header to the JTree
@@ -210,14 +212,14 @@ public class Menu extends JFrame {
 		DefaultMutableTreeNode subNode = null;
 		boolean whileBool = true;
 
-		for (int i = 1; i < userlist2.length; i++) {
-			if (userlist2[i].equals("*")) {
-				node = new DefaultMutableTreeNode(userlist2[i + 1]);
+		for (int i = 1; i < directorylist2.length; i++) {
+			if (directorylist2[i].equals("*")) {
+				node = new DefaultMutableTreeNode(directorylist2[i + 1]);
 				int whileIterator = i + 2;
 				whileBool = true;
 				while (whileBool) {
-					if (!userlist2[whileIterator].equals("*") && !userlist2[whileIterator].equals("**")) {
-						subNode = new DefaultMutableTreeNode(userlist2[whileIterator]);
+					if (!directorylist2[whileIterator].equals("*") && !directorylist2[whileIterator].equals("**")) {
+						subNode = new DefaultMutableTreeNode(directorylist2[whileIterator]);
 						node.add(subNode);
 					} else {
 						whileBool = false;
@@ -227,6 +229,7 @@ public class Menu extends JFrame {
 				topTable.add(node);
 			}
 		}
+		System.out.println("model should get updated with leafs: " +  tree.getModel().getChildCount(topTable));
 		model.reload(topTable);
 	}
 
@@ -303,5 +306,10 @@ public class Menu extends JFrame {
 		String response = "!updateOnlineUsers tolu Admin";
 		String[] userlist = response.split(" ");
 		updateUserList(userlist);
+	}
+	
+	public void updateTree(String[] data){
+		directorylist2 = data;
+		prepareTreeStuff();
 	}
 }

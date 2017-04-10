@@ -320,7 +320,7 @@ public class Client extends JFrame {
 		if (response.startsWith("!updateDirectory")) {
 			System.out.println("updatedirectory gets triggered!");
 			String[] userlist = response.split(" ");
-			//Main.it.mainmenu.updateTree(userlist);
+			Main.it.mainmenu.updateTree(userlist);
 		}
 
 	}
