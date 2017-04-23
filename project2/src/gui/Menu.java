@@ -190,6 +190,7 @@ public class Menu extends JFrame {
 	 * Create the Standard JTree Components
 	 */
 	public void prepareTreeStuff() {
+		this.contentPane.remove(tree);
 		System.out.println("prepare gets through");
 		// The default Tree model to !!! UPDATE !!! the JTree
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
@@ -229,7 +230,8 @@ public class Menu extends JFrame {
 				topTable.add(node);
 			}
 		}
-		System.out.println("model should get updated with leafs: " +  tree.getModel().getChildCount(topTable));
+		System.out.println("model should get updated with leafs: " +   tree.getModel().getChildCount(topTable));
+		this.contentPane.add(tree);
 		model.reload(topTable);
 	}
 
@@ -309,7 +311,10 @@ public class Menu extends JFrame {
 	}
 	
 	public void updateTree(String[] data){
+		System.out.println("upTreeCalled");
 		directorylist2 = data;
-		prepareTreeStuff();
+		topTable.removeAllChildren();
+		//model.reload(topTable);
+		//prepareTreeStuff();
 	}
 }
