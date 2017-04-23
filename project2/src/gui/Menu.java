@@ -3,9 +3,6 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -24,8 +21,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import data.ListManager;
 
@@ -39,7 +35,7 @@ import javax.swing.JTabbedPane;
  * Main Design Class of the Program. It holds all the Stuff to handle the
  * variables.
  */
-public class Menu extends JFrame {
+public class Menu extends JFrame implements TreeSelectionListener {
 	/**
 	 * Necessary serial ID
 	 */
@@ -64,10 +60,14 @@ public class Menu extends JFrame {
 	public static String activeUser = "";
 
 	public static ArrayList<String> onlineUsers = new ArrayList<String>();
+
+	// Create the nodes.
+	DefaultMutableTreeNode top = new DefaultMutableTreeNode("The NOOB Series");
+
 	/**
 	 * The JTree Object and the important child stuff
 	 */
-	private JTree tree = new JTree();
+	private JTree tree = null;
 	private final JScrollPane scrollPane = new JScrollPane();
 	private static JTable table;
 	private static TableColumnModel tableColumnModel;
@@ -152,10 +152,6 @@ public class Menu extends JFrame {
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
-		tree.setBounds(10, 11, 197, 643);
-		tree.setBorder(BorderFactory.createEtchedBorder());
-		contentPane.add(tree);
-
 		JScrollPane scrollPane_2 = new JScrollPane();
 		scrollPane_2.setBounds(10, 665, 197, 315);
 		contentPane.add(scrollPane_2);
@@ -206,7 +202,7 @@ public class Menu extends JFrame {
 		// JTREE UPDATE STUFF! Call it to handle JTree Updates and Adds/Deletes
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
-		this.prepareTreeStuff(); // !!
+		this.initTreeStuff();
 		// ------------------------------Wird später
 		// eingefügt---------------------------------- //
 		// für kevin auskommentiert
@@ -224,40 +220,39 @@ public class Menu extends JFrame {
 		// //
 	}
 
-	public void clickOnTreeEntry() {
+	/*
+	 * Use this method to define JTree Elements and the Object itself
+	 */
+	public void initTreeStuff() {
+		this.tree = new JTree(this.top);
+		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		this.tree.addTreeSelectionListener(this);
 
+		this.tree.setBounds(10, 11, 197, 643);
+		this.tree.setBorder(BorderFactory.createEtchedBorder());
+
+		this.contentPane.add(tree);
+		this.top.setUserObject("Benchmark Tree");
+
+		this.fillTree(userlist2);
 	}
 
 	/**
-	 * Create the Standard JTree Components
+	 * Reload this method to save new Tree elements
 	 */
-	public void prepareTreeStuff() {
-		// The default Tree model to !!! UPDATE !!! the JTree
-		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-		// HEADER - Connect the header to the JTree
-		DefaultMutableTreeNode topTable = (DefaultMutableTreeNode) model.getRoot();
-		tree = new JTree(topTable);
-		// Title of the First Table Content
-		topTable.setUserObject("Benchmark Tree");
-		// Remove all standard children first
-		topTable.removeAllChildren();
-		// topTable.add(first);
-		// topTable.add(new DefaultMutableTreeNode("Second"));
-		// topTable.add(new DefaultMutableTreeNode("Third"));
-		// first.add(new DefaultMutableTreeNode("First Child"));
-		// REFRESH!!!
+	public void fillTree(String[] list) {
 		DefaultMutableTreeNode node = null;
 		DefaultMutableTreeNode subNode = null;
 		boolean whileBool = true;
 
-		for (int i = 1; i < userlist2.length; i++) {
-			if (userlist2[i].equals("*")) {
-				node = new DefaultMutableTreeNode(userlist2[i + 1]);
+		for (int i = 1; i < list.length; i++) {
+			if (list[i].equals("*")) {
+				node = new DefaultMutableTreeNode(list[i + 1]);
 				int whileIterator = i + 2;
 				whileBool = true;
 				while (whileBool) {
-					if (!userlist2[whileIterator].equals("*") && !userlist2[whileIterator].equals("**")) {
-						subNode = new DefaultMutableTreeNode(userlist2[whileIterator]);
+					if (!list[whileIterator].equals("*") && !list[whileIterator].equals("**")) {
+						subNode = new DefaultMutableTreeNode(list[whileIterator]);
 						node.add(subNode);
 						subnodeListEntry.add(subNode);
 					} else {
@@ -266,27 +261,9 @@ public class Menu extends JFrame {
 					whileIterator++;
 				}
 				nodeListEntry.add(node);
-				topTable.add(node);
+				this.top.add(node);
 			}
 		}
-		model.reload(topTable);
-
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent e) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-				/* if nothing is selected */
-				if (node == null) {
-					System.err.println("NO");
-					return;
-				}
-				/* retrieve the node that was selected */
-				Object nodeInfo = node.getUserObject();
-				System.err.println(node.getUserObject());
-
-				/* React to the node selection. */
-				System.err.println("CLICK");
-			}
-		});
 	}
 
 	/**
@@ -356,5 +333,11 @@ public class Menu extends JFrame {
 		String response = "!updateOnlineUsers tolu Admin";
 		String[] userlist = response.split(" ");
 		updateUserList(userlist);
+	}
+
+	public void valueChanged(TreeSelectionEvent e) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		System.out.print("lol2");
+		Object nodeInfo = node.getUserObject();
 	}
 }
