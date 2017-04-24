@@ -62,7 +62,7 @@ public class Menu extends JFrame implements TreeSelectionListener {
 	public static ArrayList<String> onlineUsers = new ArrayList<String>();
 
 	// Create the nodes.
-	DefaultMutableTreeNode top = new DefaultMutableTreeNode("The NOOB Series");
+	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
 
 	/**
 	 * The JTree Object and the important child stuff
@@ -74,41 +74,37 @@ public class Menu extends JFrame implements TreeSelectionListener {
 	private static JTableHeader tableHead;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 
-	String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
-	String[] userlist2 = response2.split(" ");
+	private String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
+	private String[] userlist2 = response2.split(" ");
 	/**
 	 * Saved Instance objects of the (sub)nodes
 	 */
-	ArrayList<DefaultMutableTreeNode> nodeListEntry = new ArrayList<>();
-	ArrayList<DefaultMutableTreeNode> subnodeListEntry = new ArrayList<>();
+	private ArrayList<DefaultMutableTreeNode> nodeListEntry = new ArrayList<>();
+	private ArrayList<DefaultMutableTreeNode> subnodeListEntry = new ArrayList<>();
 
-	// -----------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------
 	// //
-
 	/**
 	 * Create the frame from the Constructor. ONLY VIEW STUFF ALLOWED
 	 */
 	public Menu(String currentUser) {
+		// --------------- INIT --------------- //
 		activeUser = currentUser;
-		// Screen Sizes etc
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
 		int taskBarSize = scnMax.bottom;
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, (int) screenSize.getWidth(), (int) screenSize.getHeight() - taskBarSize);
 		setTitle("Programm");
 		setLocationRelativeTo(null);
-
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
+		// --------------- MENU --------------- //
 		// Setting up the Menu + Items
 		setJMenuBar(menuBar);
 		menuBar.add(menuEntry1);
-
-		// Setting up Menu Entries
 		JMenuItem mntmNewMenuItem = new JMenuItem("Eintrag hinzuf\u00FCgen");
 		menuEntry1.add(mntmNewMenuItem);
 		JMenuItem mntmEintragBearbeiten = new JMenuItem("Eintrag bearbeiten");
@@ -140,11 +136,10 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		menuBar.add(menuEntry4);
 		JMenuItem mntmFenstereinstellungen = new JMenuItem("Fenstereinstellungen");
 		menuEntry4.add(mntmFenstereinstellungen);
-
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 		contentPane.setLayout(null);
 
-		// Table row alignment of text
+		// --------------- TABLE ROWS --------------- //
 		rightRenderer = new DefaultTableCellRenderer();
 		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
 		leftRenderer = new DefaultTableCellRenderer();
@@ -152,16 +147,17 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
+		// --------------- USER LIST --------------- //
 		JScrollPane scrollPane_2 = new JScrollPane();
 		scrollPane_2.setBounds(10, 665, 197, 315);
 		contentPane.add(scrollPane_2);
 		txtrUser = new JTextArea();
 		scrollPane_2.setViewportView(txtrUser);
 		txtrUser.setEditable(false);
-
 		txtrUser.setText("User1");
 		txtrUser.setBorder(BorderFactory.createEtchedBorder());
 
+		// --------------- INFO BAR --------------- //
 		JTextArea txtrText = new JTextArea();
 		txtrText.setEditable(false);
 		txtrText.setRows(1);
@@ -170,10 +166,10 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		txtrText.setBorder(BorderFactory.createEtchedBorder());
 		contentPane.add(txtrText);
 
+		// --------------- TABBED PANES --------------- //
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(217, 0, 1677, 947);
 		contentPane.add(tabbedPane);
-
 		table = new JTable(200, ListManager.getColumnNameCount());
 		table.setRowHeight(30);
 		table.setFillsViewportHeight(true);
@@ -181,17 +177,22 @@ public class Menu extends JFrame implements TreeSelectionListener {
 
 		// Table HEADER
 		tableHead = table.getTableHeader();
-		tabbedPane.addTab("New tab", null, scrollPane, null);
 
+		// ADD HERE THE FIRST TAB WITH SCROLLPANE
+		tabbedPane.addTab("New tab", null, scrollPane, null);
 		scrollPane.setViewportView(table);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 		tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		tabbedPane.setTitleAt(0, userlist2[3]); // Standard: first .txt (not
+												// dynamic!)
 
-		// TODO
-		tabbedPane.setTitleAt(0, "BLA");
+		// TODO Scrollpanes im tabbed panel einfügen = neues fenster und darin
+		// dann das table
+		// TABBEDPANE -> SCROLLPANE -> TABLE
 
+		// --------------- INITIALIZE MAIN CONTENT --------------- //
 		this.init();
 	}
 
@@ -203,37 +204,27 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
 		this.initTreeStuff();
-		// ------------------------------Wird später
-		// eingefügt---------------------------------- //
-		// für kevin auskommentiert
 		// Main.ct.transmit("!requestUserlistUpdate");
 		// Main.ct.transmit("!requestDirectoryUpdate");
-		// auskommentieren, wenn du kein kevin bist
 		simulateTransmissions();
-		/*
-		 * EventQueue.invokeLater(new Runnable() { public void run() {
-		 * while(true){ txtrUser.repaint();
-		 * 
-		 * } } });
-		 */
-		// -------------------------------------------------------------------------------------
-		// //
 	}
 
 	/*
 	 * Use this method to define JTree Elements and the Object itself
 	 */
 	public void initTreeStuff() {
+		// Create the JTree Object and the action listener
 		this.tree = new JTree(this.top);
 		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.tree.addTreeSelectionListener(this);
 
+		// Set view of tree object and add it to the pane
 		this.tree.setBounds(10, 11, 197, 643);
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
-
 		this.contentPane.add(tree);
 		this.top.setUserObject("Benchmark Tree");
 
+		// Fill the Tree with new content
 		this.fillTree(userlist2);
 	}
 
@@ -245,6 +236,7 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		DefaultMutableTreeNode subNode = null;
 		boolean whileBool = true;
 
+		// Load all Nodes/Leafs for the JTree Structure
 		for (int i = 1; i < list.length; i++) {
 			if (list[i].equals("*")) {
 				node = new DefaultMutableTreeNode(list[i + 1]);
@@ -263,6 +255,11 @@ public class Menu extends JFrame implements TreeSelectionListener {
 				nodeListEntry.add(node);
 				this.top.add(node);
 			}
+		}
+
+		// Expand the JTree folder structure
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
 		}
 	}
 
@@ -338,6 +335,8 @@ public class Menu extends JFrame implements TreeSelectionListener {
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		System.out.print("lol2");
-		Object nodeInfo = node.getUserObject();
+
+		// TODO Checken, ob die Datei eine .txt ist, wenn ja, in neuem Tab
+		// öffnen
 	}
 }
