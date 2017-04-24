@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JMenuBar;
@@ -81,6 +82,10 @@ public class Menu extends JFrame implements TreeSelectionListener {
 	 */
 	private ArrayList<DefaultMutableTreeNode> nodeListEntry = new ArrayList<>();
 	private ArrayList<DefaultMutableTreeNode> subnodeListEntry = new ArrayList<>();
+
+	// dynamic tabs to add from JTree
+	private ArrayList<JScrollPane> scrollPaneDynamic = new ArrayList<>();
+	private ArrayList<JTable> tableDynamic = new ArrayList<>();
 
 	// -------------------------------------------------------------------------------------------
 	// //
@@ -188,9 +193,17 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		tabbedPane.setTitleAt(0, userlist2[3]); // Standard: first .txt (not
 												// dynamic!)
 
-		// TODO Scrollpanes im tabbed panel einfügen = neues fenster und darin
-		// dann das table
-		// TABBEDPANE -> SCROLLPANE -> TABLE
+		// --------------- DYNAMIC TAB ADDITIOn --------------- //
+		for (int i = 0; i <= 5; i++) {
+			this.scrollPaneDynamic.add(i, new JScrollPane());
+			this.tableDynamic.add(i, new JTable());
+
+			this.tableDynamic.get(i).setFillsViewportHeight(true);
+			this.tableDynamic.get(i).setRowHeight(25);
+
+			tabbedPane.addTab("New tab", null, scrollPaneDynamic.get(i), null);
+			this.scrollPaneDynamic.get(i).setViewportView(tableDynamic.get(i));
+		}
 
 		// --------------- INITIALIZE MAIN CONTENT --------------- //
 		this.init();
