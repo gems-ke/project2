@@ -261,7 +261,6 @@ public class Menu extends JFrame implements MouseListener {
 				this.top.add(node);
 			}
 		}
-
 		// Expand the JTree folder structure
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
@@ -362,6 +361,9 @@ public class Menu extends JFrame implements MouseListener {
 			} else if (e.getClickCount() == 2) {
 				// --------------- DOUBLE CLICK HANDLER --------------- //
 				// Create a new Tab Element
+				
+				CHECK OB SCHON OFFEN IST
+				
 				this.scrollPaneDynamic.add(new JScrollPane());
 				this.tableDynamic.add(new JTable(200, ListManager.getColumnNameCount()));
 				// initialize this tab element
