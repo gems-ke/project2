@@ -3,6 +3,8 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -22,6 +24,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import data.ListManager;
@@ -36,7 +39,7 @@ import javax.swing.JTabbedPane;
  * Main Design Class of the Program. It holds all the Stuff to handle the
  * variables.
  */
-public class Menu extends JFrame implements TreeSelectionListener {
+public class Menu extends JFrame implements MouseListener {
 	/**
 	 * Necessary serial ID
 	 */
@@ -74,6 +77,7 @@ public class Menu extends JFrame implements TreeSelectionListener {
 	private static TableColumnModel tableColumnModel;
 	private static JTableHeader tableHead;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
+	private JTabbedPane tabbedPane;
 
 	private String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
 	private String[] userlist2 = response2.split(" ");
@@ -172,7 +176,7 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		contentPane.add(txtrText);
 
 		// --------------- TABBED PANES --------------- //
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(217, 0, 1677, 947);
 		contentPane.add(tabbedPane);
 		table = new JTable(200, ListManager.getColumnNameCount());
@@ -192,18 +196,6 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		tabbedPane.setTitleAt(0, userlist2[3]); // Standard: first .txt (not
 												// dynamic!)
-
-		// --------------- DYNAMIC TAB ADDITIOn --------------- //
-		for (int i = 0; i <= 5; i++) {
-			this.scrollPaneDynamic.add(i, new JScrollPane());
-			this.tableDynamic.add(i, new JTable());
-
-			this.tableDynamic.get(i).setFillsViewportHeight(true);
-			this.tableDynamic.get(i).setRowHeight(25);
-
-			tabbedPane.addTab("New tab", null, scrollPaneDynamic.get(i), null);
-			this.scrollPaneDynamic.get(i).setViewportView(tableDynamic.get(i));
-		}
 
 		// --------------- INITIALIZE MAIN CONTENT --------------- //
 		this.init();
@@ -229,7 +221,7 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		// Create the JTree Object and the action listener
 		this.tree = new JTree(this.top);
 		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		this.tree.addTreeSelectionListener(this);
+		this.tree.addMouseListener(this);
 
 		// Set view of tree object and add it to the pane
 		this.tree.setBounds(10, 11, 197, 643);
@@ -345,11 +337,45 @@ public class Menu extends JFrame implements TreeSelectionListener {
 		updateUserList(userlist);
 	}
 
-	public void valueChanged(TreeSelectionEvent e) {
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-		System.out.print("lol2");
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
 
-		// TODO Checken, ob die Datei eine .txt ist, wenn ja, in neuem Tab
-		// öffnen
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	/**
+	 * Called, when you (double) click on aJTree Element
+	 */
+	@Override
+	public void mousePressed(MouseEvent e) {
+		int selRow = tree.getRowForLocation(e.getX(), e.getY());
+		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+		if (selRow != -1) {
+			if (e.getClickCount() == 1) {
+				System.out.println("MOSUE CLICK 1");
+			} else if (e.getClickCount() == 2) {
+				// --------------- DOUBLE CLICK HANDLER --------------- //
+				// Create a new Tab Element
+				this.scrollPaneDynamic.add(new JScrollPane());
+				this.tableDynamic.add(new JTable(200, ListManager.getColumnNameCount()));
+				// initialize this tab element
+				this.tableDynamic.get(tableDynamic.size() - 1).setFillsViewportHeight(true);
+				this.tableDynamic.get(tableDynamic.size() - 1).setRowHeight(25);
+				// add this table element to the view
+				this.tabbedPane.addTab(selPath.toString(), null, scrollPaneDynamic.get(tableDynamic.size() - 1), null);
+				this.scrollPaneDynamic.get(tableDynamic.size() - 1)
+						.setViewportView(tableDynamic.get(tableDynamic.size() - 1));
+			}
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
 	}
 }
