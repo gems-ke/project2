@@ -24,10 +24,12 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import data.ListManager;
+import main.Main;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -91,6 +93,8 @@ public class Menu extends JFrame implements MouseListener {
 	private ArrayList<JScrollPane> scrollPaneDynamic = new ArrayList<>();
 	private ArrayList<JTable> tableDynamic = new ArrayList<>();
 
+	protected static UserControl userControl = null;
+
 	// -------------------------------------------------------------------------------------------
 	// //
 	/**
@@ -147,6 +151,15 @@ public class Menu extends JFrame implements MouseListener {
 		menuEntry4.add(mntmFenstereinstellungen);
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 		contentPane.setLayout(null);
+
+		// --------------- MENU ITEM ON CLICK --------------- //
+		mntmBenutzerkontrolle.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				if (userControl == null) {
+					userControl = new UserControl();
+				}
+			}
+		});
 
 		// --------------- TABLE ROWS --------------- //
 		rightRenderer = new DefaultTableCellRenderer();
@@ -209,9 +222,22 @@ public class Menu extends JFrame implements MouseListener {
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
 		this.initTreeStuff();
-		// Main.ct.transmit("!requestUserlistUpdate");
-		// Main.ct.transmit("!requestDirectoryUpdate");
-		simulateTransmissions();
+		// ------------------------------Wird sp�ter
+		// eingef�gt---------------------------------- //
+		// f�r kevin auskommentiert
+		Main.ct.transmit("!requestUserlistUpdate");
+		Main.ct.transmit("!requestDirectoryUpdate");
+		// auskommentieren, wenn du kein kevin bist
+		// simulateTransmissions();
+		/*
+		 * EventQueue.invokeLater(new Runnable() { public void run() {
+		 * while(true){ txtrUser.repaint();
+		 * 
+		 * } } });
+		 */
+		// -------------------------------------------------------------------------------------
+		// //
+		// simulateTransmissions();
 	}
 
 	/*
@@ -237,6 +263,8 @@ public class Menu extends JFrame implements MouseListener {
 	 * Reload this method to save new Tree elements
 	 */
 	public void fillTree(String[] list) {
+		this.contentPane.remove(tree);
+		this.top.removeAllChildren();
 		DefaultMutableTreeNode node = null;
 		DefaultMutableTreeNode subNode = null;
 		boolean whileBool = true;
@@ -261,7 +289,8 @@ public class Menu extends JFrame implements MouseListener {
 				this.top.add(node);
 			}
 		}
-		// Expand the JTree folder structure
+		this.contentPane.add(tree);
+		tree.updateUI();
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
 		}
@@ -355,22 +384,24 @@ public class Menu extends JFrame implements MouseListener {
 	public void mousePressed(MouseEvent e) {
 		int selRow = tree.getRowForLocation(e.getX(), e.getY());
 		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+
+		Object node = tree.getLastSelectedPathComponent();
+		TreeNode treeNode = (TreeNode) node;
+
 		if (selRow != -1) {
 			if (e.getClickCount() == 1) {
-				System.out.println("MOSUE CLICK 1");
-			} else if (e.getClickCount() == 2) {
+				System.out.println("MOUSE CLICK 1");
+			} else if (e.getClickCount() == 2 && treeNode.isLeaf()) {
 				// --------------- DOUBLE CLICK HANDLER --------------- //
 				// Create a new Tab Element
-				
-				CHECK OB SCHON OFFEN IST
-				
 				this.scrollPaneDynamic.add(new JScrollPane());
 				this.tableDynamic.add(new JTable(200, ListManager.getColumnNameCount()));
 				// initialize this tab element
 				this.tableDynamic.get(tableDynamic.size() - 1).setFillsViewportHeight(true);
 				this.tableDynamic.get(tableDynamic.size() - 1).setRowHeight(25);
 				// add this table element to the view
-				this.tabbedPane.addTab(selPath.toString(), null, scrollPaneDynamic.get(tableDynamic.size() - 1), null);
+				this.tabbedPane.addTab(selPath.getLastPathComponent().toString(), null,
+						scrollPaneDynamic.get(tableDynamic.size() - 1), null);
 				this.scrollPaneDynamic.get(tableDynamic.size() - 1)
 						.setViewportView(tableDynamic.get(tableDynamic.size() - 1));
 			}
