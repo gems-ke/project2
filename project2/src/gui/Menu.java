@@ -327,17 +327,17 @@ public class Menu extends JFrame implements MouseListener {
 			onlineUsers.add(userlist[i + 1]);
 		}
 		for (int i = 0; i < onlineUsers.size(); i = i + 2) {
-			if (onlineUsers.get(i + 1).equals("Admin")) {
+			if (onlineUsers.get(i + 1).equals("admin")) {
 				admins.add(onlineUsers.get(i));
 			} else {
 				users.add(onlineUsers.get(i));
 			}
 		}
 		for (int i = 0; i < admins.size(); i++) {
-			adminString = adminString + "\n" + admins.get(i) + "\n";
+			adminString = adminString + "\n" + admins.get(i);
 		}
 		for (int i = 0; i < users.size(); i++) {
-			userString = userString + "\n" + users.get(i) + "\n";
+			userString = userString + "\n" + users.get(i);
 		}
 		finalString = adminString + "\n" + userString;
 		activeUser = finalString;
