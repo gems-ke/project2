@@ -56,9 +56,6 @@ public class InterfaceThread extends Thread{
 				  
 				  String loginParameter = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
 				  
-				  if(Login.chckbxAdmin.isSelected()){
-					  loginParameter = "!encryptedlogin ";
-				  }
 				  
 				  String pass = new String(dialog.passwordField.getPassword());
 				  

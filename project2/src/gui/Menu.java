@@ -36,6 +36,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTree;
 import javax.swing.JTextArea;
 import javax.swing.JTabbedPane;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 /**
  * Main Design Class of the Program. It holds all the Stuff to handle the
@@ -58,10 +61,6 @@ public class Menu extends JFrame implements MouseListener {
 	 * The MAIN Content Panel
 	 */
 	private JPanel contentPane;
-	/**
-	 * the user box filled with users and admins (strings)
-	 */
-	public static JTextArea txtrUser;
 
 	public static String activeUser = "";
 
@@ -94,6 +93,9 @@ public class Menu extends JFrame implements MouseListener {
 	private ArrayList<JTable> tableDynamic = new ArrayList<>();
 
 	protected static UserControl userControl = null;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
 
 	// -------------------------------------------------------------------------------------------
 	// //
@@ -150,7 +152,6 @@ public class Menu extends JFrame implements MouseListener {
 		JMenuItem mntmFenstereinstellungen = new JMenuItem("Fenstereinstellungen");
 		menuEntry4.add(mntmFenstereinstellungen);
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
-		contentPane.setLayout(null);
 
 		// --------------- MENU ITEM ON CLICK --------------- //
 		mntmBenutzerkontrolle.addActionListener(new java.awt.event.ActionListener() {
@@ -168,29 +169,19 @@ public class Menu extends JFrame implements MouseListener {
 		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
 		centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-		// --------------- USER LIST --------------- //
-		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(10, 665, 197, 315);
-		contentPane.add(scrollPane_2);
-		txtrUser = new JTextArea();
-		scrollPane_2.setViewportView(txtrUser);
-		txtrUser.setEditable(false);
-		txtrUser.setText("User1");
-		txtrUser.setBorder(BorderFactory.createEtchedBorder());
+		contentPane.setLayout(null);
 
 		// --------------- INFO BAR --------------- //
 		JTextArea txtrText = new JTextArea();
+		txtrText.setBounds(217, 958, 1677, 22);
 		txtrText.setEditable(false);
 		txtrText.setRows(1);
-		txtrText.setText("Text");
-		txtrText.setBounds(217, 958, 1677, 22);
 		txtrText.setBorder(BorderFactory.createEtchedBorder());
 		contentPane.add(txtrText);
 
 		// --------------- TABBED PANES --------------- //
 		this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(217, 0, 1677, 947);
+		tabbedPane.setBounds(217, 0, 1365, 947);
 		contentPane.add(tabbedPane);
 		table = new JTable(200, ListManager.getColumnNameCount());
 		table.setRowHeight(30);
@@ -203,12 +194,8 @@ public class Menu extends JFrame implements MouseListener {
 		// ADD HERE THE FIRST TAB WITH SCROLLPANE
 		tabbedPane.addTab("New tab", null, scrollPane, null);
 		scrollPane.setViewportView(table);
-
-		JScrollPane scrollPane_1 = new JScrollPane();
-		tabbedPane.addTab("New tab", null, scrollPane_1, null);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		tabbedPane.setTitleAt(0, userlist2[3]); // Standard: first .txt (not
-												// dynamic!)
+		tabbedPane.setTitleAt(0, "Readme");
 
 		// --------------- INITIALIZE MAIN CONTENT --------------- //
 		this.init();
@@ -246,13 +233,58 @@ public class Menu extends JFrame implements MouseListener {
 	public void initTreeStuff() {
 		// Create the JTree Object and the action listener
 		this.tree = new JTree(this.top);
+		tree.setBounds(10, 11, 197, 969);
 		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.tree.addMouseListener(this);
-
-		// Set view of tree object and add it to the pane
-		this.tree.setBounds(10, 11, 197, 643);
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
 		this.contentPane.add(tree);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(1592, 652, 302, 295);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JButton btnSenden = new JButton("Senden");
+		btnSenden.setBounds(10, 250, 282, 34);
+		panel.add(btnSenden);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 36, 282, 20);
+		panel.add(textField);
+		textField.setColumns(10);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(10, 80, 282, 20);
+		panel.add(textField_1);
+		textField_1.setColumns(10);
+		
+		textField_2 = new JTextField();
+		textField_2.setBounds(10, 125, 282, 114);
+		panel.add(textField_2);
+		textField_2.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("Zugabe");
+		lblNewLabel.setBounds(10, 21, 282, 14);
+		panel.add(lblNewLabel);
+		
+		JLabel lblStoff = new JLabel("Stoff");
+		lblStoff.setBounds(10, 67, 282, 14);
+		panel.add(lblStoff);
+		
+		JLabel lblBegrndung = new JLabel("Begründung");
+		lblBegrndung.setBounds(10, 111, 282, 14);
+		panel.add(lblBegrndung);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setBounds(1592, 25, 302, 594);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setBounds(10, 21, 282, 562);
+		panel_1.add(textArea);
 		this.top.setUserObject("Benchmark Tree");
 
 		// Fill the Tree with new content
@@ -352,8 +384,6 @@ public class Menu extends JFrame implements MouseListener {
 		}
 		finalString = adminString + "\n" + userString;
 		activeUser = finalString;
-		txtrUser.setText(finalString);
-		txtrUser.repaint();
 	}
 
 	/**

@@ -2,9 +2,6 @@ package data;
 
 import java.util.ArrayList;
 
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
-
 /**
  * Handles the column and row stuff. Saves Data as ArrayLists
  */
@@ -34,20 +31,7 @@ public class ListManager {
 		columnNames.add("Zugabe");
 		columnNames.add("Stoff");
 		columnNames.add("Begründung");
-		columnNames.add("H");
-		columnNames.add("I");
-		columnNames.add("J");
-		columnNames.add("K");
-		columnNames.add("L");
-		columnNames.add("M");
-		columnNames.add("N");
-		columnNames.add("O");
-		columnNames.add("P");
-		columnNames.add("Q");
-		columnNames.add("R");
-		columnNames.add("S");
-		columnNames.add("T");
-
+		
 		for (int i = 0; i < columnNames.size(); ++i) {
 			columnWidth.add(75);
 		}
