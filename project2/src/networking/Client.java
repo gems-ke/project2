@@ -23,6 +23,7 @@ public class Client extends JFrame {
 	static int messageCount = 0;
 	public static String currentUserName = "nul";
 	public static String currentUserStatus = "nul";
+	public static boolean isConnected = false;
 
 	public Client(String host) {
 
@@ -85,7 +86,7 @@ public class Client extends JFrame {
 
 				System.out.println("message incoming:" + message + " " + message.startsWith("!"));
 
-				if (message.startsWith("!")) {
+				if (message.startsWith("!") || message.startsWith(" You are now Connected!")) {
 
 					operateResponse(message);
 
@@ -235,6 +236,7 @@ public class Client extends JFrame {
 		if (response.startsWith("!invalidUser")) {
 			Main.it.dialog.progressBar.setValue(0);
 			Thread popup = new Thread(new Popup("Dieser Benutzer existiert nicht."));
+			System.out.println("invaliduser triggered");
 			currentUserName = "invalidUser";
 		}
 		
@@ -254,6 +256,11 @@ public class Client extends JFrame {
 			System.out.println("updatedirectory gets triggered!");
 			String[] userlist = response.split(" ");
 			Main.it.mainmenu.fillTree(userlist);
+		}
+		
+		if (response.startsWith(" You are now Connected!")){
+			System.out.println("connected.");
+			isConnected = true;
 		}
 
 	}

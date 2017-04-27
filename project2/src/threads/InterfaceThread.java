@@ -2,6 +2,7 @@ package threads;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JDialog;
 
@@ -9,14 +10,19 @@ import data.ListManager;
 import gui.Login;
 import gui.Menu;
 import main.Main;
+import data.WinRegistry;
 
 public class InterfaceThread extends Thread{
+	
+	static WinRegistry regedit = new WinRegistry();
 	
 	static int state = 0;
 	static String version = ("0.0.1");
 	
 	public Login dialog;
 	public Menu mainmenu;
+	
+	private boolean ctIsRunning = false;
 	
 	public void run(){
 		
@@ -51,8 +57,26 @@ public class InterfaceThread extends Thread{
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 		
+		String defServerIP = "";
+		try {
+			defServerIP = regedit.readString(0x80000001, "SOFTWARE", "DefaultServerIP");
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(defServerIP == null){
+			
+		}
+		
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
+				  
+				  if(!ctIsRunning){
+					  Main.ct.start();
+					  ctIsRunning = true;
+				  }
+				  
+				  waitForResponse("connect");
 				  
 				  String loginParameter = "!login ";//encrypted, wenn checkbox für admin login aktiviert!
 				  
@@ -126,6 +150,43 @@ public class InterfaceThread extends Thread{
 				}
 				
 			}
+		}
+		
+		if(position.equals("connect")){
+			System.out.println("connect triggered!");
+			
+			int progress = 30;
+			
+			frequencyMS = 50;
+			
+			dialog.progressBar.setValue(80);
+			
+			while(true){
+				
+				if (timeStart - System.currentTimeMillis() <= - frequencyMS){
+					timeStart = System.currentTimeMillis();
+					progress++;
+					
+					String checkUp = Main.ct.checkResponse("connect");
+					
+					System.out.println(checkUp);
+					
+					if(!checkUp.equals("nul")){
+						
+						System.out.println(checkUp + ": second");
+						
+						if(checkUp.startsWith("true")){
+							System.out.println("connected!!!");
+							break;
+						}else{
+							System.out.println("cant connect lul");
+						}
+						
+					}
+				}
+				
+			}
+			
 		}
 		
 	}

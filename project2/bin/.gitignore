@@ -1,5 +1,4 @@
-/data/
-/gui/
 /main/
-/networking/
 /threads/
+/networking/
+/data/
