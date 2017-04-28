@@ -20,7 +20,6 @@ public class Login extends JDialog {
 	public static JPasswordField passwordField;
 	public static JTextField textField;
 	public static JButton okButton = new JButton("Login");
-	public static JCheckBox chckbxAdmin;
 
 	public JProgressBar progressBar = new JProgressBar();
 
@@ -28,19 +27,14 @@ public class Login extends JDialog {
 	 * Create the dialog.
 	 */
 	public Login() {
-		setBounds(100, 100, 319, 256);
+		setBounds(100, 100, 319, 228);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 
-		progressBar.setBounds(10, 149, 293, 24);
+		progressBar.setBounds(10, 126, 293, 24);
 		contentPanel.add(progressBar);
-
-		JLabel infoLabel = new JLabel("");
-		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoLabel.setBounds(10, 115, 293, 24);
-		contentPanel.add(infoLabel);
 
 		JLabel lblBenutzername = new JLabel("Benutzername");
 		lblBenutzername.setBounds(10, 17, 293, 20);
@@ -58,16 +52,10 @@ public class Login extends JDialog {
 		textField.setBounds(10, 36, 293, 20);
 		contentPanel.add(textField);
 		textField.setColumns(10);
-
-		chckbxAdmin = new JCheckBox("Admin");
-		chckbxAdmin.setBounds(10, 119, 97, 23);
-		contentPanel.add(chckbxAdmin);
-		setLocationRelativeTo(null);
-		setResizable(false);
-		setTitle("Login");
 		{
 			JPanel buttonPane = new JPanel();
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			buttonPane.setBounds(0, 161, 313, 33);
+			contentPanel.add(buttonPane);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 			{
 
@@ -90,6 +78,9 @@ public class Login extends JDialog {
 
 			}
 		}
+		setLocationRelativeTo(null);
+		setResizable(false);
+		setTitle("Login");
 	}
 
 	public void setProgress(int percent) {
