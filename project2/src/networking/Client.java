@@ -165,31 +165,31 @@ public class Client extends JFrame {
 
 	}
 
-	/*
-	 * public void responseReceived(String message){
-	 * 
-	 * System.out.println("response received: " + message);
-	 * 
-	 * String[] messageDefract = message.split(" ");
-	 * 
-	 * if(message.startsWith("SERVER - Benutzer")){
-	 * 
-	 * new MainMenu().setVisible(true); dispose();
-	 * 
-	 * }else if(messageDefract[0].startsWith("SERVER - Diese")){
-	 * 
-	 * Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
-	 * PopupWindow("Dieser Benutzer existiert nicht."));
-	 * 
-	 * }else if(messageDefract[0].startsWith("SERVER - Passwor")){
-	 * 
-	 * Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
-	 * PopupWindow("Das eingegebene Passwort ist inkorrekt."));
-	 * 
-	 * }else{ System.out.println("CHEATER"); }
-	 * 
-	 * }
-	 */
+	
+	  /*public void responseReceived(String message){
+	  
+	  System.out.println("response received: " + message);
+	  
+	  String[] messageDefract = message.split(" ");
+	  
+	  if(message.startsWith("SERVER - Benutzer")){
+	  
+	  new MainMenu().setVisible(true); dispose();
+	  
+	  }else if(messageDefract[0].startsWith("SERVER - Diese")){
+	  
+	  Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
+	  PopupWindow("Dieser Benutzer existiert nicht."));
+	  
+	  }else if(messageDefract[0].startsWith("SERVER - Passwor")){
+	  
+	  Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
+	  PopupWindow("Das eingegebene Passwort ist inkorrekt."));
+	  
+	  }else{ System.out.println("CHEATER"); }
+	  
+	  }*/
+	 
 
 	private String decode(int code[]) {
 		String decodedString = "";

@@ -15,7 +15,7 @@ public class ClientThread extends Thread{
 		
 		try {
 			
-			client = new Client(a);
+			client = new Client(b);
 			client.startRunning();
 			
 		} catch (Exception e) {
