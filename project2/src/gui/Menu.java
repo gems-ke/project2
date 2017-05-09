@@ -238,50 +238,51 @@ public class Menu extends JFrame implements MouseListener {
 		this.tree.addMouseListener(this);
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
 		this.contentPane.add(tree);
-		
+
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(null, "Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBorder(
+				new TitledBorder(null, "Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel.setBounds(1592, 652, 302, 295);
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+
 		JButton btnSenden = new JButton("Senden");
 		btnSenden.setBounds(10, 250, 282, 34);
 		panel.add(btnSenden);
-		
+
 		textField = new JTextField();
 		textField.setBounds(10, 36, 282, 20);
 		panel.add(textField);
 		textField.setColumns(10);
-		
+
 		textField_1 = new JTextField();
 		textField_1.setBounds(10, 80, 282, 20);
 		panel.add(textField_1);
 		textField_1.setColumns(10);
-		
+
 		textField_2 = new JTextField();
 		textField_2.setBounds(10, 125, 282, 114);
 		panel.add(textField_2);
 		textField_2.setColumns(10);
-		
+
 		JLabel lblNewLabel = new JLabel("Zugabe");
 		lblNewLabel.setBounds(10, 21, 282, 14);
 		panel.add(lblNewLabel);
-		
+
 		JLabel lblStoff = new JLabel("Stoff");
 		lblStoff.setBounds(10, 67, 282, 14);
 		panel.add(lblStoff);
-		
+
 		JLabel lblBegrndung = new JLabel("Begründung");
 		lblBegrndung.setBounds(10, 111, 282, 14);
 		panel.add(lblBegrndung);
-		
+
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_1.setBounds(1592, 25, 302, 594);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
-		
+
 		JTextArea textArea = new JTextArea();
 		textArea.setBounds(10, 21, 282, 562);
 		panel_1.add(textArea);
