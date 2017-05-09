@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class UserControl extends JDialog {
-
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
 	private JTextField textField_1;

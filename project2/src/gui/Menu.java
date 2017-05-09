@@ -17,12 +17,11 @@ import javax.swing.JMenu;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.MaskFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -40,6 +39,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.JComboBox;
 
 /**
  * Main Design Class of the Program. It holds all the Stuff to handle the
@@ -55,9 +57,7 @@ public class Menu extends JFrame implements MouseListener {
 	 */
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenu menuEntry1 = new JMenu("Aktion");
-	private JMenu menuEntry2 = new JMenu("Tabelle");
 	private JMenu menuEntry3 = new JMenu("Admin");
-	private JMenu menuEntry4 = new JMenu("Einstellungen");
 	/**
 	 * The MAIN Content Panel
 	 */
@@ -95,16 +95,15 @@ public class Menu extends JFrame implements MouseListener {
 
 	protected static UserControl userControl = null;
 	public JTextField textField;
-	public JTextField textField_1;
-	public JTextField textField_2;
-	
-    private static JTextArea textAreaUser;
-    
-    public static JButton btnSenden;
-    
-    ArrayList<TableData> tables = new ArrayList<TableData>();
 
-	// -------------------------------------------------------------------------------------------
+	private static JTextArea textAreaUser;
+
+	public static JButton btnSenden;
+
+	ArrayList<TableData> tables = new ArrayList<TableData>();
+	private JTextField textField_3;
+
+	// ---------------------------------------------------------------------------------------
 	// //
 	/**
 	 * Create the frame from the Constructor. ONLY VIEW STUFF ALLOWED
@@ -119,6 +118,7 @@ public class Menu extends JFrame implements MouseListener {
 		setBounds(100, 100, (int) screenSize.getWidth(), (int) screenSize.getHeight() - taskBarSize);
 		setTitle("Programm");
 		setLocationRelativeTo(null);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -127,37 +127,36 @@ public class Menu extends JFrame implements MouseListener {
 		// Setting up the Menu + Items
 		setJMenuBar(menuBar);
 		menuBar.add(menuEntry1);
-		JMenuItem mntmNewMenuItem = new JMenuItem("Eintrag hinzuf\u00FCgen");
-		menuEntry1.add(mntmNewMenuItem);
-		JMenuItem mntmEintragBearbeiten = new JMenuItem("Eintrag bearbeiten");
-		menuEntry1.add(mntmEintragBearbeiten);
 		JSeparator separator_1 = new JSeparator();
 		menuEntry1.add(separator_1);
-		JMenuItem mntmnderungenHochladen = new JMenuItem("\u00C4nderungen hochladen");
+		JMenuItem mntmnderungenHochladen = new JMenuItem("Änderungen speichern");
 		menuEntry1.add(mntmnderungenHochladen);
+
 		JSeparator separator = new JSeparator();
 		menuEntry1.add(separator);
 		JMenuItem mntmAusloggen = new JMenuItem("Ausloggen");
 		menuEntry1.add(mntmAusloggen);
 		JMenuItem mntmAusloggenUndBeenden = new JMenuItem("Ausloggen und Beenden");
 		menuEntry1.add(mntmAusloggenUndBeenden);
-		menuBar.add(menuEntry2);
-		JMenuItem mntmTabelleFormatieren = new JMenuItem("Tabelle formatieren");
-		menuEntry2.add(mntmTabelleFormatieren);
-		JMenuItem mntmTabelleBereinigen = new JMenuItem("Tabelle bereinigen");
-		menuEntry2.add(mntmTabelleBereinigen);
 		menuBar.add(menuEntry3);
-		JMenuItem mntmBenutzerkontrolle = new JMenuItem("Benutzerkontrolle");
+		JMenuItem mntmBenutzerkontrolle = new JMenuItem("Benutzerverwaltung");
 		menuEntry3.add(mntmBenutzerkontrolle);
-		JMenuItem mntmKostenrechnung = new JMenuItem("Kostenrechnung");
-		menuEntry3.add(mntmKostenrechnung);
+
+		JMenuItem mntmTabelleVerwalten = new JMenuItem("Tabellenverwaltung");
+		menuEntry3.add(mntmTabelleVerwalten);
+
+		JMenuItem mntmBackupVerwalten = new JMenuItem("Backupverwaltung");
+		menuEntry3.add(mntmBackupVerwalten);
+
+		JSeparator separator_2 = new JSeparator();
+		menuEntry3.add(separator_2);
+
+		JMenuItem mntmEintragZwischenschieben = new JMenuItem("Eintrag zwischenschieben");
+		menuEntry3.add(mntmEintragZwischenschieben);
 		JMenuItem mntmnderungsverlauf = new JMenuItem("\u00C4nderungsverlauf");
 		menuEntry3.add(mntmnderungsverlauf);
-		JMenuItem mntmBackup = new JMenuItem("Backup");
-		menuEntry3.add(mntmBackup);
-		menuBar.add(menuEntry4);
-		JMenuItem mntmFenstereinstellungen = new JMenuItem("Fenstereinstellungen");
-		menuEntry4.add(mntmFenstereinstellungen);
+		JMenuItem mntmKostenrechnung = new JMenuItem("Kostenrechnung");
+		menuEntry3.add(mntmKostenrechnung);
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 
 		// --------------- MENU ITEM ON CLICK --------------- //
@@ -188,6 +187,7 @@ public class Menu extends JFrame implements MouseListener {
 
 		// --------------- TABBED PANES --------------- //
 		this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		this.tabbedPane.addMouseListener(this);
 		tabbedPane.setBounds(217, 0, 1365, 947);
 		contentPane.add(tabbedPane);
 		table = new JTable(200, ListManager.getColumnNameCount());
@@ -214,7 +214,7 @@ public class Menu extends JFrame implements MouseListener {
 	public void init() {
 		// JTREE UPDATE STUFF! Call it to handle JTree Updates and Adds/Deletes
 		tableColumnModel = tableHead.getColumnModel();
-		Menu.tableRepaint();
+		Menu.columnSettings();
 		this.initTreeStuff();
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
@@ -226,9 +226,9 @@ public class Menu extends JFrame implements MouseListener {
 		 * 
 		 * } } });
 		 */
-		// -------------------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------------
 		// //
-		//simulateTransmissions();
+		// simulateTransmissions();
 	}
 
 	/*
@@ -255,39 +255,47 @@ public class Menu extends JFrame implements MouseListener {
 		panel.add(btnSenden);
 
 		textField = new JTextField();
-		textField.setBounds(10, 36, 282, 20);
+		textField.setBounds(10, 43, 142, 20);
 		panel.add(textField);
 		textField.setColumns(10);
 
-		textField_1 = new JTextField();
-		textField_1.setBounds(10, 80, 282, 20);
-		panel.add(textField_1);
-		textField_1.setColumns(10);
-
-		textField_2 = new JTextField();
-		textField_2.setBounds(10, 125, 282, 114);
-		panel.add(textField_2);
-		textField_2.setColumns(10);
-
 		JLabel lblNewLabel = new JLabel("Zugabe");
-		lblNewLabel.setBounds(10, 21, 282, 14);
+		lblNewLabel.setBounds(10, 28, 142, 14);
 		panel.add(lblNewLabel);
 
 		JLabel lblStoff = new JLabel("Stoff");
 		lblStoff.setBounds(10, 67, 282, 14);
 		panel.add(lblStoff);
 
-		JLabel lblBegrndung = new JLabel("BegrÃ¼ndung");
+		JLabel lblBegrndung = new JLabel("Begründung");
 		lblBegrndung.setBounds(10, 111, 282, 14);
 		panel.add(lblBegrndung);
+
+		JLabel lblEinheit = new JLabel("Einheit");
+		lblEinheit.setBounds(162, 28, 130, 14);
+		panel.add(lblEinheit);
+
+		textField_3 = new JTextField();
+		textField_3.setColumns(10);
+		textField_3.setBounds(162, 43, 130, 20);
+		panel.add(textField_3);
+
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(10, 80, 282, 20);
+		panel.add(comboBox);
+
+		JTextArea textArea = new JTextArea();
+		textArea.setBounds(10, 127, 282, 100);
+		panel.add(textArea);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_1.setBounds(1592, 25, 302, 594);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
-		
+
 		textAreaUser = new JTextArea();
+		textAreaUser.setEditable(false);
 		textAreaUser.setBounds(10, 21, 282, 562);
 		panel_1.add(textAreaUser);
 		this.top.setUserObject("Benchmark Tree");
@@ -314,10 +322,10 @@ public class Menu extends JFrame implements MouseListener {
 				whileBool = true;
 				while (whileBool) {
 					if (!list[whileIterator].equals("*") && !list[whileIterator].equals("**")) {
-						subNode = new DefaultMutableTreeNode(list[whileIterator].replaceAll("[^A-Za-z]", "").substring(0, 1).toUpperCase() + list[whileIterator].replaceAll("[^A-Za-z]", "").substring(1));
+						subNode = new DefaultMutableTreeNode(
+								list[whileIterator].replaceAll("[^A-Za-z]", "").substring(0, 1).toUpperCase()
+										+ list[whileIterator].replaceAll("[^A-Za-z]", "").substring(1));
 						node.add(subNode);
-						
-						//TODO extended subnode f�r get echten namen implementieren !!
 						subnodeListEntry.add(subNode);
 					} else {
 						whileBool = false;
@@ -331,7 +339,7 @@ public class Menu extends JFrame implements MouseListener {
 		this.contentPane.add(tree);
 		tree.updateUI();
 		for (int i = 0; i < tree.getRowCount(); i++) {
-		    tree.expandRow(i);
+			tree.expandRow(i);
 		}
 	}
 
@@ -340,7 +348,7 @@ public class Menu extends JFrame implements MouseListener {
 	 * repaints the table and deletes all data. SAVE it before call this
 	 * function.
 	 */
-	public static void tableRepaint() {
+	public static void columnSettings() {
 		// Main Table Routine
 		for (int i = 0; i < ListManager.getColumnNameCount(); i++) {
 			if (tableColumnModel != null) {
@@ -351,9 +359,8 @@ public class Menu extends JFrame implements MouseListener {
 			table.getColumnModel().getColumn(i).setPreferredWidth(ListManager.getColumnWidthElement(i));
 			// Set the Alignment of the columns
 			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-			table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
-			table.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
-			table.getColumnModel().getColumn(5).setCellRenderer(leftRenderer);
+			table.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+			table.getColumnModel().getColumn(6).setCellRenderer(leftRenderer);
 		}
 		tableHead.repaint();
 	}
@@ -403,7 +410,7 @@ public class Menu extends JFrame implements MouseListener {
 		String[] userlist = response.split(" ");
 		updateUserList(userlist);
 	}
-  
+
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	}
@@ -426,6 +433,11 @@ public class Menu extends JFrame implements MouseListener {
 
 		Object node = tree.getLastSelectedPathComponent();
 		TreeNode treeNode = (TreeNode) node;
+
+		//close the tab with MIDDLE mouse button
+		if(e.getButton() == 2){
+			tabbedPane.removeTabAt(tabbedPane.getSelectedIndex());
+		}
 
 		if (selRow != -1) {
 			if (e.getClickCount() == 1) {

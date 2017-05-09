@@ -29,8 +29,9 @@ public class ListManager {
 		columnNames.add("Datum");
 		columnNames.add("Uhrzeit");
 		columnNames.add("Name");
-		columnNames.add("Zugabe");
 		columnNames.add("Stoff");
+		columnNames.add("Zugabe");
+		columnNames.add("Einheit");
 		columnNames.add("Begründung");
 		
 		for (int i = 0; i < columnNames.size(); ++i) {
@@ -38,8 +39,8 @@ public class ListManager {
 		}
 
 		// change width of #id and 'Begründung'
-		columnWidth.set(0, 25);
-		columnWidth.set(6, 200);
+		columnWidth.set(0, 10);
+		columnWidth.set(7, 300);
 	}
 
 	/**
