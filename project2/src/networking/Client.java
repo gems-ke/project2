@@ -262,6 +262,16 @@ public class Client extends JFrame {
 			System.out.println("connected.");
 			isConnected = true;
 		}
+		
+		if (response.startsWith("!appendedLine")) {
+			Thread popup = new Thread(new Popup("Eintrag hinzugefügt!"));
+		}
+		
+		if (response.startsWith("!tableData")) {
+			System.out.println("onlineusers gets triggered!1");
+			String[] userlist = response.split(" ");
+			Main.it.mainmenu.updateUserList(userlist);
+		}
 
 	}
 

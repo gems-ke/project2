@@ -107,6 +107,14 @@ public class InterfaceThread extends Thread{
 		mainmenu.setTitle("Benchmarking v. " + version + " - " + currentUser);
 		mainmenu.setVisible(true);
 		
+		mainmenu.btnSenden.addActionListener(new ActionListener(){
+			  public void actionPerformed(ActionEvent e)  {
+				  
+				  String msg = "!appendTableLine*" + "benchmark1" + "*" + mainmenu.textField.getText() + "*" + mainmenu.textField_1.getText() + "*" + mainmenu.textField_2.getText();
+				  Main.ct.transmit(msg);
+				  
+			  } 
+		});
 	}
 	
 	private void waitForResponse(String position){
