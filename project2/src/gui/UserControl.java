@@ -7,7 +7,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.JTextField;
-import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class UserControl extends JDialog {
+
+	private static final long serialVersionUID = 1L;
 	private JTextField textField;
 	private JTextField textField_1;
 

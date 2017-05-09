@@ -93,7 +93,7 @@ public class Menu extends JFrame implements MouseListener {
 	private ArrayList<JScrollPane> scrollPaneDynamic = new ArrayList<>();
 	private ArrayList<JTable> tableDynamic = new ArrayList<>();
 
-	//protected static UserControl userControl = null;
+	protected static UserControl userControl = null;
 	public JTextField textField;
 	public JTextField textField_1;
 	public JTextField textField_2;
@@ -102,7 +102,7 @@ public class Menu extends JFrame implements MouseListener {
     
     public static JButton btnSenden;
     
-     ArrayList<TableData> tables = new ArrayList<TableData>();
+    ArrayList<TableData> tables = new ArrayList<TableData>();
 
 	// -------------------------------------------------------------------------------------------
 	// //
@@ -163,9 +163,9 @@ public class Menu extends JFrame implements MouseListener {
 		// --------------- MENU ITEM ON CLICK --------------- //
 		mntmBenutzerkontrolle.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				/*if (userControl == null) {
+				if (userControl == null) {
 					userControl = new UserControl();
-				}*/
+				}
 			}
 		});
 
