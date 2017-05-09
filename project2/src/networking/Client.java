@@ -264,7 +264,7 @@ public class Client extends JFrame {
 		}
 		
 		if (response.startsWith("!appendedLine")) {
-			Thread popup = new Thread(new Popup("Eintrag hinzugefügt!"));
+			Thread popup = new Thread(new Popup("Eintrag hinzugefï¿½gt!"));
 		}
 		
 		if (response.startsWith("!tableData")) {
@@ -272,7 +272,5 @@ public class Client extends JFrame {
 			String[] userlist = response.split(" ");
 			Main.it.mainmenu.updateUserList(userlist);
 		}
-
 	}
-
 }
