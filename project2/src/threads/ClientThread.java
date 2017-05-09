@@ -22,7 +22,7 @@ public class ClientThread extends Thread{
 	}
 	
 	public void transmit(String message){
-		client.sendMessage(message);
+		//client.sendMessage(message);
 	}
 
 	public String checkResponse(String expectation){
