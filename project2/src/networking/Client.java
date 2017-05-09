@@ -23,9 +23,7 @@ public class Client extends JFrame {
 	static int messageCount = 0;
 	public static String currentUserName = "nul";
 	public static String currentUserStatus = "nul";
-
-	private int decodeKey = 44651;
-	private int[] decodeFragment = { 6, 7, 2, 5, 8, 9, 0, 6, 7, 5, 6, 2, 0, 3, 3, 6, 5, 1, 6, 7 };
+	public static boolean isConnected = false;
 
 	public Client(String host) {
 
@@ -88,7 +86,7 @@ public class Client extends JFrame {
 
 				System.out.println("message incoming:" + message + " " + message.startsWith("!"));
 
-				if (message.startsWith("!")) {
+				if (message.startsWith("!") || message.startsWith(" You are now Connected!")) {
 
 					operateResponse(message);
 
@@ -167,105 +165,46 @@ public class Client extends JFrame {
 
 	}
 
-	/*
-	 * public void responseReceived(String message){
-	 * 
-	 * System.out.println("response received: " + message);
-	 * 
-	 * String[] messageDefract = message.split(" ");
-	 * 
-	 * if(message.startsWith("SERVER - Benutzer")){
-	 * 
-	 * new MainMenu().setVisible(true); dispose();
-	 * 
-	 * }else if(messageDefract[0].startsWith("SERVER - Diese")){
-	 * 
-	 * Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
-	 * PopupWindow("Dieser Benutzer existiert nicht."));
-	 * 
-	 * }else if(messageDefract[0].startsWith("SERVER - Passwor")){
-	 * 
-	 * Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
-	 * PopupWindow("Das eingegebene Passwort ist inkorrekt."));
-	 * 
-	 * }else{ System.out.println("CHEATER"); }
-	 * 
-	 * }
-	 */
+	
+	  /*public void responseReceived(String message){
+	  
+	  System.out.println("response received: " + message);
+	  
+	  String[] messageDefract = message.split(" ");
+	  
+	  if(message.startsWith("SERVER - Benutzer")){
+	  
+	  new MainMenu().setVisible(true); dispose();
+	  
+	  }else if(messageDefract[0].startsWith("SERVER - Diese")){
+	  
+	  Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
+	  PopupWindow("Dieser Benutzer existiert nicht."));
+	  
+	  }else if(messageDefract[0].startsWith("SERVER - Passwor")){
+	  
+	  Main.it.dialog.progressBar.setValue(0); Thread popup = new Thread(new
+	  PopupWindow("Das eingegebene Passwort ist inkorrekt."));
+	  
+	  }else{ System.out.println("CHEATER"); }
+	  
+	  }*/
+	 
 
 	private String decode(int code[]) {
-		String decodedString;
-		ArrayList<Integer> decodedInt = new ArrayList<Integer>();
-		ArrayList<Character> decodedCharList = new ArrayList<Character>();
-		// begin decoding - decode int array to readable charvalue array
-		for (int i = 0; i < code.length; i++) {
-			decodedInt.add(code[i] - decodeKey - decodeFragment[i]);
-			System.out.println(i + ": " + decodedInt.get(i));
-		}
-		// convert charvalue array stored in int array to char array
-
-		for (int i = 0; i < decodedInt.size(); i++) {
-			decodedCharList.add((char) (int) decodedInt.get(i));
-		}
-
-		Character[] decodedCharacter = new Character[decodedCharList.size()];
-		decodedCharList.toArray(decodedCharacter);
-
-		char[] decodedChar = new char[decodedCharacter.length];
-
-		for (int i = 0; i < decodedCharacter.length; i++) {
-			decodedChar[i] = (char) decodedCharacter[i];
-		}
-
-		decodedString = new String(decodedChar);
+		String decodedString = "";
 
 		return decodedString;
 	}
 
-	private int[] encode(String toCode) {
+	private String encode(String toCode) {
+		String encodedString = "";
 
-		char[] toCodeChars = toCode.toCharArray();
-		int[] encoded = new int[toCodeChars.length];
-
-		for (int i = 0; i < toCodeChars.length; i++) {
-			encoded[i] = (int) toCodeChars[i] + decodeKey + decodeFragment[i];
-		}
-
-		return encoded;
+		return encodedString;
 	}
 
 	public String operateCommand(String command) {
 		String encryptedCommand = command;
-
-		if (command.startsWith("!encryptedlogin")) {
-			encryptedCommand = "";
-			String[] preperationString = command.split(" ");
-
-			int[] encodedPassword = encode(preperationString[2]);
-			String encryptedPassword = new String();
-
-			for (int i = 0; i < encodedPassword.length; i++) {
-				encryptedPassword = encryptedPassword + " " + Integer.toString(encodedPassword[i]);
-			}
-
-			System.out.println(encryptedPassword);
-			encryptedCommand = ("!login " + preperationString[1] + " admin" + encryptedPassword);
-		}
-
-		if (command.startsWith("!createAdmin")) {
-			encryptedCommand = "";
-			String[] preperationString = command.split(" ");
-
-			int[] encodedPassword = encode(preperationString[2]);
-			String encryptedPassword = new String();
-
-			for (int i = 0; i < encodedPassword.length; i++) {
-				encryptedPassword = encryptedPassword + " " + Integer.toString(encodedPassword[i]);
-			}
-
-			System.out.println(encryptedPassword);
-			encryptedCommand = ("!createUser " + preperationString[1] + " admin" + encryptedPassword);
-		}
 
 		if (command.startsWith("!login")) {
 			encryptedCommand = "";
@@ -280,16 +219,11 @@ public class Client extends JFrame {
 
 	public void operateResponse(String response) {
 
-		if (response.startsWith("!SuccessfulAdminLogin")) {
-			String[] preperationString = response.split(" ");
-			currentUserName = preperationString[1];
-			currentUserStatus = "Admin";
-		}
-
 		if (response.startsWith("!SuccessfulUserLogin")) {
 			String[] preperationString = response.split(" ");
+			System.out.println("login response: " + response);
 			currentUserName = preperationString[1];
-			currentUserStatus = "Nutzer";
+			currentUserStatus = preperationString[2];
 		}
 
 		if (response.startsWith("!wrongPass")) {
@@ -302,6 +236,7 @@ public class Client extends JFrame {
 		if (response.startsWith("!invalidUser")) {
 			Main.it.dialog.progressBar.setValue(0);
 			Thread popup = new Thread(new Popup("Dieser Benutzer existiert nicht."));
+			System.out.println("invaliduser triggered");
 			currentUserName = "invalidUser";
 		}
 		
@@ -320,9 +255,22 @@ public class Client extends JFrame {
 		if (response.startsWith("!updateDirectory")) {
 			System.out.println("updatedirectory gets triggered!");
 			String[] userlist = response.split(" ");
-			Main.it.mainmenu.updateTree(userlist);
+			Main.it.mainmenu.fillTree(userlist);
 		}
-
+		
+		if (response.startsWith(" You are now Connected!")){
+			System.out.println("connected.");
+			isConnected = true;
+		}
+		
+		if (response.startsWith("!appendedLine")) {
+			Thread popup = new Thread(new Popup("Eintrag hinzugef�gt!"));
+		}
+		
+		if (response.startsWith("!tableData")) {
+			System.out.println("onlineusers gets triggered!1");
+			String[] userlist = response.split(" ");
+			Main.it.mainmenu.updateUserList(userlist);
+		}
 	}
-
 }

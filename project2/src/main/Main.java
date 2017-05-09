@@ -1,5 +1,7 @@
 package main;
 
+import javax.swing.JDialog;
+
 import threads.ClientThread;
 import threads.InterfaceThread;
 
@@ -11,6 +13,8 @@ public class Main {
 	public static void main(String[] args) {
 		
 		it.start();
-		//ct.start();	
+		//ct.start();
+		
 	}
+	
 }

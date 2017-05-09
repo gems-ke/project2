@@ -29,6 +29,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import data.ListManager;
+import data.TableData;
 import main.Main;
 
 import javax.swing.JMenuItem;
@@ -92,10 +93,16 @@ public class Menu extends JFrame implements MouseListener {
 	private ArrayList<JScrollPane> scrollPaneDynamic = new ArrayList<>();
 	private ArrayList<JTable> tableDynamic = new ArrayList<>();
 
-	protected static UserControl userControl = null;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	//protected static UserControl userControl = null;
+	public JTextField textField;
+	public JTextField textField_1;
+	public JTextField textField_2;
+	
+    private static JTextArea textAreaUser;
+    
+    public static JButton btnSenden;
+    
+     ArrayList<TableData> tables = new ArrayList<TableData>();
 
 	// -------------------------------------------------------------------------------------------
 	// //
@@ -156,9 +163,9 @@ public class Menu extends JFrame implements MouseListener {
 		// --------------- MENU ITEM ON CLICK --------------- //
 		mntmBenutzerkontrolle.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				if (userControl == null) {
+				/*if (userControl == null) {
 					userControl = new UserControl();
-				}
+				}*/
 			}
 		});
 
@@ -209,9 +216,6 @@ public class Menu extends JFrame implements MouseListener {
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
 		this.initTreeStuff();
-		// ------------------------------Wird spï¿½ter
-		// eingefï¿½gt---------------------------------- //
-		// fï¿½r kevin auskommentiert
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
 		// auskommentieren, wenn du kein kevin bist
@@ -224,7 +228,7 @@ public class Menu extends JFrame implements MouseListener {
 		 */
 		// -------------------------------------------------------------------------------------
 		// //
-		// simulateTransmissions();
+		//simulateTransmissions();
 	}
 
 	/*
@@ -246,7 +250,7 @@ public class Menu extends JFrame implements MouseListener {
 		contentPane.add(panel);
 		panel.setLayout(null);
 
-		JButton btnSenden = new JButton("Senden");
+		btnSenden = new JButton("Senden");
 		btnSenden.setBounds(10, 250, 282, 34);
 		panel.add(btnSenden);
 
@@ -282,10 +286,10 @@ public class Menu extends JFrame implements MouseListener {
 		panel_1.setBounds(1592, 25, 302, 594);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
-
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(10, 21, 282, 562);
-		panel_1.add(textArea);
+		
+		textAreaUser = new JTextArea();
+		textAreaUser.setBounds(10, 21, 282, 562);
+		panel_1.add(textAreaUser);
 		this.top.setUserObject("Benchmark Tree");
 
 		// Fill the Tree with new content
@@ -310,8 +314,10 @@ public class Menu extends JFrame implements MouseListener {
 				whileBool = true;
 				while (whileBool) {
 					if (!list[whileIterator].equals("*") && !list[whileIterator].equals("**")) {
-						subNode = new DefaultMutableTreeNode(list[whileIterator]);
+						subNode = new DefaultMutableTreeNode(list[whileIterator].replaceAll("[^A-Za-z]", "").substring(0, 1).toUpperCase() + list[whileIterator].replaceAll("[^A-Za-z]", "").substring(1));
 						node.add(subNode);
+						
+						//TODO extended subnode f�r get echten namen implementieren !!
 						subnodeListEntry.add(subNode);
 					} else {
 						whileBool = false;
@@ -325,7 +331,7 @@ public class Menu extends JFrame implements MouseListener {
 		this.contentPane.add(tree);
 		tree.updateUI();
 		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
+		    tree.expandRow(i);
 		}
 	}
 
@@ -371,20 +377,22 @@ public class Menu extends JFrame implements MouseListener {
 			onlineUsers.add(userlist[i + 1]);
 		}
 		for (int i = 0; i < onlineUsers.size(); i = i + 2) {
-			if (onlineUsers.get(i + 1).equals("Admin")) {
+			if (onlineUsers.get(i + 1).equals("admin")) {
 				admins.add(onlineUsers.get(i));
 			} else {
 				users.add(onlineUsers.get(i));
 			}
 		}
 		for (int i = 0; i < admins.size(); i++) {
-			adminString = adminString + "\n" + admins.get(i) + "\n";
+			adminString = adminString + "\n" + admins.get(i);
 		}
 		for (int i = 0; i < users.size(); i++) {
-			userString = userString + "\n" + users.get(i) + "\n";
+			userString = userString + "\n" + users.get(i);
 		}
 		finalString = adminString + "\n" + userString;
 		activeUser = finalString;
+		textAreaUser.setText(finalString);
+		textAreaUser.repaint();
 	}
 
 	/**
