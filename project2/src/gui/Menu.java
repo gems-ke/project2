@@ -209,9 +209,9 @@ public class Menu extends JFrame implements MouseListener {
 		tableColumnModel = tableHead.getColumnModel();
 		Menu.tableRepaint();
 		this.initTreeStuff();
-		// ------------------------------Wird sp�ter
-		// eingef�gt---------------------------------- //
-		// f�r kevin auskommentiert
+		// ------------------------------Wird spï¿½ter
+		// eingefï¿½gt---------------------------------- //
+		// fï¿½r kevin auskommentiert
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
 		// auskommentieren, wenn du kein kevin bist
@@ -273,7 +273,7 @@ public class Menu extends JFrame implements MouseListener {
 		lblStoff.setBounds(10, 67, 282, 14);
 		panel.add(lblStoff);
 
-		JLabel lblBegrndung = new JLabel("Begründung");
+		JLabel lblBegrndung = new JLabel("BegrÃ¼ndung");
 		lblBegrndung.setBounds(10, 111, 282, 14);
 		panel.add(lblBegrndung);
 
@@ -395,7 +395,7 @@ public class Menu extends JFrame implements MouseListener {
 		String[] userlist = response.split(" ");
 		updateUserList(userlist);
 	}
-
+  
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	}

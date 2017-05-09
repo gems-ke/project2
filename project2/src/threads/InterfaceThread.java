@@ -65,12 +65,12 @@ public class InterfaceThread extends Thread{
 				  dialog.progressBar.setValue(30);
 				  
 				  //nicht auskommentiert, auﬂer du bist kevin!
-				  //Main.ct.transmit(message);
+				  Main.ct.transmit(message);
 				  
 				  dialog.progressBar.setValue(50);
 				  
 				  //if kevin then do 4, if not then do 2
-				  requestStateChange(4);
+				  requestStateChange(2);
 				  
 			  } 
 		});
