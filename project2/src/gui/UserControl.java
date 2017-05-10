@@ -129,8 +129,8 @@ public class UserControl extends JDialog {
 				Menu.userControl = null;
 			}
 		});
-
 		setLocationRelativeTo(null);
 		setResizable(false);
+		setAlwaysOnTop(true);
 	}
 }

@@ -5,7 +5,10 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -18,10 +21,10 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.text.MaskFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -29,6 +32,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import data.ListManager;
 import data.TableData;
+import data.TableLine;
 import main.Main;
 
 import javax.swing.JMenuItem;
@@ -39,8 +43,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.JComboBox;
 
 /**
@@ -94,6 +96,7 @@ public class Menu extends JFrame implements MouseListener {
 	private ArrayList<JTable> tableDynamic = new ArrayList<>();
 
 	protected static UserControl userControl = null;
+	protected static TableControl tableControl = null;
 	public JTextField textField;
 
 	private static JTextArea textAreaUser;
@@ -102,6 +105,7 @@ public class Menu extends JFrame implements MouseListener {
 
 	ArrayList<TableData> tables = new ArrayList<TableData>();
 	private JTextField textField_3;
+	private DefaultTableModel model = new DefaultTableModel();
 
 	// ---------------------------------------------------------------------------------------
 	// //
@@ -168,6 +172,14 @@ public class Menu extends JFrame implements MouseListener {
 			}
 		});
 
+		mntmTabelleVerwalten.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				if (tableControl == null) {
+					tableControl = new TableControl();
+				}
+			}
+		});
+
 		// --------------- TABLE ROWS --------------- //
 		rightRenderer = new DefaultTableCellRenderer();
 		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -190,7 +202,11 @@ public class Menu extends JFrame implements MouseListener {
 		this.tabbedPane.addMouseListener(this);
 		tabbedPane.setBounds(217, 0, 1365, 947);
 		contentPane.add(tabbedPane);
-		table = new JTable(200, ListManager.getColumnNameCount());
+
+		for (int i = 0; i < 8; ++i) {
+			model.addColumn("");
+		}
+		table = new JTable(model);// 0, ListManager.getColumnNameCount());
 		table.setRowHeight(30);
 		table.setFillsViewportHeight(true);
 		table.setRowHeight(25);
@@ -199,10 +215,9 @@ public class Menu extends JFrame implements MouseListener {
 		tableHead = table.getTableHeader();
 
 		// ADD HERE THE FIRST TAB WITH SCROLLPANE
-		tabbedPane.addTab("New tab", null, scrollPane, null);
+		tabbedPane.addTab("Readme", null, scrollPane, null);
 		scrollPane.setViewportView(table);
 		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		tabbedPane.setTitleAt(0, "Readme");
 
 		// --------------- INITIALIZE MAIN CONTENT --------------- //
 		this.init();
@@ -250,43 +265,69 @@ public class Menu extends JFrame implements MouseListener {
 		contentPane.add(panel);
 		panel.setLayout(null);
 
-		btnSenden = new JButton("Senden");
-		btnSenden.setBounds(10, 250, 282, 34);
-		panel.add(btnSenden);
-
-		textField = new JTextField();
-		textField.setBounds(10, 43, 142, 20);
-		panel.add(textField);
-		textField.setColumns(10);
+		// --------------------- NEUER STOFF BEREICH ----------------- //
 
 		JLabel lblNewLabel = new JLabel("Zugabe");
 		lblNewLabel.setBounds(10, 28, 142, 14);
 		panel.add(lblNewLabel);
 
+		// ZUGABE textfeld
+		textField = new JTextField();
+		textField.setBounds(10, 43, 142, 20);
+		panel.add(textField);
+		textField.setColumns(10);
+
 		JLabel lblStoff = new JLabel("Stoff");
 		lblStoff.setBounds(10, 67, 282, 14);
 		panel.add(lblStoff);
+
+		String[] stoffe = { "Wasser", "Schinken", "Stoff", "Test1", "Test2" };
+		JComboBox comboBox = new JComboBox(stoffe);
+		comboBox.setBounds(10, 80, 282, 20);
+		panel.add(comboBox);
 
 		JLabel lblBegrndung = new JLabel("Begründung");
 		lblBegrndung.setBounds(10, 111, 282, 14);
 		panel.add(lblBegrndung);
 
+		JTextArea textArea = new JTextArea();
+		textArea.setBounds(10, 127, 282, 100);
+		panel.add(textArea);
+
 		JLabel lblEinheit = new JLabel("Einheit");
 		lblEinheit.setBounds(162, 28, 130, 14);
 		panel.add(lblEinheit);
 
+		// EINHEIT Textfeld
 		textField_3 = new JTextField();
 		textField_3.setColumns(10);
 		textField_3.setBounds(162, 43, 130, 20);
 		panel.add(textField_3);
 
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(10, 80, 282, 20);
-		panel.add(comboBox);
+		btnSenden = new JButton("Senden");
+		btnSenden.setBounds(10, 250, 282, 34);
+		panel.add(btnSenden);
 
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(10, 127, 282, 100);
-		panel.add(textArea);
+		btnSenden.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				// Send the stuff to a new table row
+				DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+				DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+				Date date = new Date();
+
+				// Increment the Index Number
+				TableLine.incrementIndex();
+				// Set new elements to the row
+				// TableLine.setLineDataAtPosition(TableLine.getIndex(), column,
+				// element); //TODO add elements to list
+
+				model.addRow(new Object[] { TableLine.getIndex(), dateFormat.format(date), timeFormat.format(date),
+						"Kevin", comboBox.getSelectedItem().toString(), textField.getText().toString(),
+						textField_3.getText().toString(), textArea.getText().toString() }); // TODO
+			}
+		});
+
+		// ----------------------------- ------------------------ //
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -411,18 +452,6 @@ public class Menu extends JFrame implements MouseListener {
 		updateUserList(userlist);
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
-
 	/**
 	 * Called, when you (double) click on aJTree Element
 	 */
@@ -434,15 +463,13 @@ public class Menu extends JFrame implements MouseListener {
 		Object node = tree.getLastSelectedPathComponent();
 		TreeNode treeNode = (TreeNode) node;
 
-		//close the tab with MIDDLE mouse button
-		if(e.getButton() == 2){
+		// close the tab with MIDDLE mouse button
+		if (e.getButton() == 2) {
 			tabbedPane.removeTabAt(tabbedPane.getSelectedIndex());
 		}
 
 		if (selRow != -1) {
-			if (e.getClickCount() == 1) {
-				System.out.println("MOUSE CLICK 1");
-			} else if (e.getClickCount() == 2 && treeNode.isLeaf()) {
+			if (e.getClickCount() == 2 && treeNode.isLeaf()) {
 				// --------------- DOUBLE CLICK HANDLER --------------- //
 				// Create a new Tab Element
 				this.scrollPaneDynamic.add(new JScrollPane());
@@ -457,6 +484,18 @@ public class Menu extends JFrame implements MouseListener {
 						.setViewportView(tableDynamic.get(tableDynamic.size() - 1));
 			}
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
 	}
 
 	@Override

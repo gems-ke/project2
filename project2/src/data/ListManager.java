@@ -39,8 +39,10 @@ public class ListManager {
 		}
 
 		// change width of #id and 'Begründung'
-		columnWidth.set(0, 10);
-		columnWidth.set(7, 300);
+		columnWidth.set(0, 1);
+		columnWidth.set(5, 10);
+		columnWidth.set(6, 10);
+		columnWidth.set(7, 350);
 	}
 
 	/**
