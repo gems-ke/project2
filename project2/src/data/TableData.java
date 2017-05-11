@@ -24,7 +24,6 @@ public class TableData {
 		for (int i = 1; i < tableData.length; i++) {
 			lineData = tableData[i].split("\\*");
 			line = new TableLine(columnDataArray);
-			line.setEntry(lineData);
 			lineList.add(line);
 		}
 	}

@@ -15,7 +15,7 @@ public class ListManager {
 	/**
 	 * The column ArrayList Width
 	 */
-	static ArrayList<Integer> columnWidth = new ArrayList<Integer>();
+	public static ArrayList<Integer> columnWidth = new ArrayList<Integer>();
 
 	// static ArrayList<String> status = new ArrayList<String>();
 
@@ -35,7 +35,7 @@ public class ListManager {
 		columnNames.add("Begründung");
 		
 		for (int i = 0; i < columnNames.size(); ++i) {
-			columnWidth.add(75);
+			columnWidth.add(50);
 		}
 	}
 

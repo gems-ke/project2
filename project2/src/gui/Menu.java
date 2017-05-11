@@ -44,6 +44,9 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.JComboBox;
+import javax.swing.UIManager;
+import java.awt.Color;
+import javax.swing.border.CompoundBorder;
 
 /**
  * Main Design Class of the Program. It holds all the Stuff to handle the
@@ -71,7 +74,7 @@ public class Menu extends JFrame implements MouseListener {
 
 	// Create the nodes.
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
-	
+
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
 	int taskBarSize = scnMax.bottom;
@@ -190,18 +193,11 @@ public class Menu extends JFrame implements MouseListener {
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPane.setLayout(null);
 
-		// --------------- INFO BAR --------------- //
-		JTextArea txtrText = new JTextArea();
-		txtrText.setBounds(217, 958, 1677, 22);
-		txtrText.setEditable(false);
-		txtrText.setRows(1);
-		txtrText.setBorder(BorderFactory.createEtchedBorder());
-		contentPane.add(txtrText);
-
 		// --------------- TABBED PANES --------------- //
 		this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		this.tabbedPane.addMouseListener(this);
-		tabbedPane.setBounds((int)(screenSize.getWidth()*0.1f)+15, 0, (int)(screenSize.getWidth()*0.71f), (int)(screenSize.getHeight()*0.877f-taskBarSize)); //1365 und 947 //pos 217
+		tabbedPane.setBounds((int) (screenSize.getWidth() * 0.1f) + 15, 0, (int) (screenSize.getWidth() * 0.71f),
+				(int) (screenSize.getHeight() * 0.9f - taskBarSize));
 		contentPane.add(tabbedPane);
 
 		for (int i = 0; i < 8; ++i) {
@@ -253,9 +249,10 @@ public class Menu extends JFrame implements MouseListener {
 	public void initTreeStuff() {
 		// Create the JTree Object and the action listener
 		this.tree = new JTree(this.top);
-		tree.setBounds(10, 11, (int)(screenSize.getWidth()*0.1f), (int)(screenSize.getHeight()*0.897f-taskBarSize)); //höhe normal: 969 //höhe neu: 0,10 und 0,89 breite
-		//1920 breite - 1080 höhe
-		//(int) screenSize.getWidth(), (int) screenSize.getHeight()	
+		tree.setBounds(10, 11, (int) (screenSize.getWidth() * 0.1f),
+				(int) (screenSize.getHeight() * 0.897f - taskBarSize));
+		// 1920 breite - 1080 höhe
+		// (int) screenSize.getWidth(), (int) screenSize.getHeight()
 		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.tree.addMouseListener(this);
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
@@ -263,52 +260,57 @@ public class Menu extends JFrame implements MouseListener {
 
 		JPanel panel = new JPanel();
 		panel.setBorder(
-				new TitledBorder(null, "Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds((int)(screenSize.getWidth()*0.83f), (int)(screenSize.getHeight()*0.55f), (int)(screenSize.getWidth()*0.157f),  (int)(screenSize.getHeight()*0.273f));
+				new TitledBorder(new CompoundBorder(null, UIManager.getBorder("TitledBorder.border")), "Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds((int) (screenSize.getWidth() * 0.83f), (int) (screenSize.getHeight() * 0.3f),
+				(int) (screenSize.getWidth() * 0.1567), (int) (screenSize.getHeight() * 0.555f)); 
+
 		contentPane.add(panel);
 		panel.setLayout(null);
 
 		// --------------------- NEUER STOFF BEREICH ----------------- //
+		
+		//(int) (panel.getWidth() * 0.9)
 
 		JLabel lblNewLabel = new JLabel("Zugabe");
-		lblNewLabel.setBounds(10, 28, 142, 14);
+		lblNewLabel.setBounds(10, 22, 142, 14);
 		panel.add(lblNewLabel);
 
 		// ZUGABE textfeld
 		textField = new JTextField();
-		textField.setBounds(10, 43, 142, 20);
+		textField.setBounds(10, 37, (int) (panel.getWidth() * 0.9), 20); // 281
+																			// breite
 		panel.add(textField);
 		textField.setColumns(10);
 
 		JLabel lblStoff = new JLabel("Stoff");
-		lblStoff.setBounds(10, 67, 282, 14);
+		lblStoff.setBounds(10, 114, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblStoff);
 
 		String[] stoffe = { "Wasser", "Schinken", "Stoff", "Test1", "Test2" };
 		JComboBox comboBox = new JComboBox(stoffe);
-		comboBox.setBounds(10, 80, 282, 20);
+		comboBox.setBounds(10, 127, (int) (panel.getWidth() * 0.9), 20);
 		panel.add(comboBox);
 
 		JLabel lblBegrndung = new JLabel("Begründung");
-		lblBegrndung.setBounds(10, 111, 282, 14);
+		lblBegrndung.setBounds(10, 158, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblBegrndung);
 
 		JTextArea textArea = new JTextArea();
-		textArea.setBounds(10, 127, 282, 100);
+		textArea.setBounds(10, 174, (int) (panel.getWidth() * 0.9), 100);
 		panel.add(textArea);
 
 		JLabel lblEinheit = new JLabel("Einheit");
-		lblEinheit.setBounds(162, 28, 130, 14);
+		lblEinheit.setBounds(10, 68, 130, 14);
 		panel.add(lblEinheit);
 
 		// EINHEIT Textfeld
 		textField_3 = new JTextField();
 		textField_3.setColumns(10);
-		textField_3.setBounds(162, 43, 130, 20);
+		textField_3.setBounds(10, 83, (int) (panel.getWidth() * 0.9), 20);
 		panel.add(textField_3);
 
 		btnSenden = new JButton("Senden");
-		btnSenden.setBounds(10, 250, 282, 34);
+		btnSenden.setBounds(10, 285, (int) (panel.getWidth() * 0.9), 34);
 		panel.add(btnSenden);
 
 		btnSenden.addActionListener(new java.awt.event.ActionListener() {
@@ -333,15 +335,18 @@ public class Menu extends JFrame implements MouseListener {
 		// ----------------------------- ------------------------ //
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder(null, "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds((int)(screenSize.getWidth()*0.83f), 25, (int)(screenSize.getWidth()*0.157), (int)(screenSize.getHeight()*0.55f-taskBarSize)); //302 und 594 // pos 1592
+		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBounds((int) (screenSize.getWidth() * 0.83f), 25, (int) (screenSize.getWidth() * 0.157),
+				(int) (screenSize.getHeight() * 0.3f - taskBarSize));
+
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
 
 		textAreaUser = new JTextArea();
 		textAreaUser.setEditable(false);
-		textAreaUser.setBounds((int) (screenSize.getWidth()*0.005), (int)(screenSize.getHeight()*0.025), 
-				(int) (panel_1.getWidth()*0.94f), (int) (panel_1.getHeight()*0.94f));
+		textAreaUser.setBounds((int) (screenSize.getWidth() * 0.005), (int) (screenSize.getHeight() * 0.02),
+				+(int) (panel_1.getWidth() * 0.94f), (int) (panel_1.getHeight() * 0.9f));
+
 		panel_1.add(textAreaUser);
 		this.top.setUserObject("Benchmark Tree");
 
