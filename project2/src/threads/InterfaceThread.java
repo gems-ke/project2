@@ -61,7 +61,6 @@ public class InterfaceThread extends Thread{
 		try {
 			defServerIP = regedit.readString(0x80000001, "SOFTWARE", "DefaultServerIP");
 		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		if(defServerIP == null){
@@ -71,7 +70,7 @@ public class InterfaceThread extends Thread{
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
-				  if(!ctIsRunning){
+				 /* if(!ctIsRunning){
 					  Main.ct.start();
 					  ctIsRunning = true;
 				  }
@@ -92,9 +91,11 @@ public class InterfaceThread extends Thread{
 				  Main.ct.transmit(message);
 				  
 				  dialog.progressBar.setValue(50);
-				  
+				  */
 				  //if kevin then do 4, if not then do 2
-				  requestStateChange(2);
+				  
+				  //TODO - änder zu 2
+				  requestStateChange(4);
 				  
 			  } 
 		});
@@ -110,8 +111,8 @@ public class InterfaceThread extends Thread{
 		mainmenu.btnSenden.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
-				  String msg = "!appendTableLine*" + "benchmark1" + "*" + mainmenu.textField.getText() + "*" + mainmenu.textField_1.getText() + "*" + mainmenu.textField_2.getText();
-				  Main.ct.transmit(msg);
+				  //String msg = "!appendTableLine*" + "benchmark1" + "*" + mainmenu.textField.getText() + "*" + mainmenu.textField_1.getText() + "*" + mainmenu.textField_2.getText();
+				  //Main.ct.transmit(msg);
 				  
 			  } 
 		});
