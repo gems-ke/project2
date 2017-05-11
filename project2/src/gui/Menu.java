@@ -71,6 +71,10 @@ public class Menu extends JFrame implements MouseListener {
 
 	// Create the nodes.
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
+	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
+	int taskBarSize = scnMax.bottom;
 
 	/**
 	 * The JTree Object and the important child stuff
@@ -115,9 +119,6 @@ public class Menu extends JFrame implements MouseListener {
 	public Menu(String currentUser) {
 		// --------------- INIT --------------- //
 		activeUser = currentUser;
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
-		int taskBarSize = scnMax.bottom;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, (int) screenSize.getWidth(), (int) screenSize.getHeight() - taskBarSize);
 		setTitle("Programm");
@@ -200,7 +201,7 @@ public class Menu extends JFrame implements MouseListener {
 		// --------------- TABBED PANES --------------- //
 		this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		this.tabbedPane.addMouseListener(this);
-		tabbedPane.setBounds(217, 0, 1365, 947);
+		tabbedPane.setBounds((int)(screenSize.getWidth()*0.1f)+15, 0, (int)(screenSize.getWidth()*0.71f), (int)(screenSize.getHeight()*0.877f-taskBarSize)); //1365 und 947 //pos 217
 		contentPane.add(tabbedPane);
 
 		for (int i = 0; i < 8; ++i) {
@@ -252,7 +253,9 @@ public class Menu extends JFrame implements MouseListener {
 	public void initTreeStuff() {
 		// Create the JTree Object and the action listener
 		this.tree = new JTree(this.top);
-		tree.setBounds(10, 11, 197, 969);
+		tree.setBounds(10, 11, (int)(screenSize.getWidth()*0.1f), (int)(screenSize.getHeight()*0.897f-taskBarSize)); //höhe normal: 969 //höhe neu: 0,10 und 0,89 breite
+		//1920 breite - 1080 höhe
+		//(int) screenSize.getWidth(), (int) screenSize.getHeight()	
 		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.tree.addMouseListener(this);
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
@@ -261,7 +264,7 @@ public class Menu extends JFrame implements MouseListener {
 		JPanel panel = new JPanel();
 		panel.setBorder(
 				new TitledBorder(null, "Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(1592, 652, 302, 295);
+		panel.setBounds((int)(screenSize.getWidth()*0.83f), (int)(screenSize.getHeight()*0.55f), (int)(screenSize.getWidth()*0.157f),  (int)(screenSize.getHeight()*0.273f));
 		contentPane.add(panel);
 		panel.setLayout(null);
 
@@ -331,13 +334,14 @@ public class Menu extends JFrame implements MouseListener {
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Benutzer", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(1592, 25, 302, 594);
+		panel_1.setBounds((int)(screenSize.getWidth()*0.83f), 25, (int)(screenSize.getWidth()*0.157), (int)(screenSize.getHeight()*0.55f-taskBarSize)); //302 und 594 // pos 1592
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
 
 		textAreaUser = new JTextArea();
 		textAreaUser.setEditable(false);
-		textAreaUser.setBounds(10, 21, 282, 562);
+		textAreaUser.setBounds((int) (screenSize.getWidth()*0.005), (int)(screenSize.getHeight()*0.025), 
+				(int) (panel_1.getWidth()*0.94f), (int) (panel_1.getHeight()*0.94f));
 		panel_1.add(textAreaUser);
 		this.top.setUserObject("Benchmark Tree");
 

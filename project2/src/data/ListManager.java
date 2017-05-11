@@ -37,12 +37,6 @@ public class ListManager {
 		for (int i = 0; i < columnNames.size(); ++i) {
 			columnWidth.add(75);
 		}
-
-		// change width of #id and 'Begründung'
-		columnWidth.set(0, 1);
-		columnWidth.set(5, 10);
-		columnWidth.set(6, 10);
-		columnWidth.set(7, 350);
 	}
 
 	/**
