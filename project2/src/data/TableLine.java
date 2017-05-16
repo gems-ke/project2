@@ -1,5 +1,7 @@
 package data;
 
+import java.util.ArrayList;
+
 public class TableLine {
 
 	/**
@@ -7,9 +9,20 @@ public class TableLine {
 	 */
 	static String[][] lineData;
 
-	static int id = 0;
+	static ArrayList<Integer> indexes = new ArrayList<Integer>();
 
 	String[] columnNames;
+	
+	// -------------------------------------------------------- //
+	
+	/**
+	 * FIRST CALL THIS
+	 */
+	public static void initIndexArray(){	
+		for(int i = 0; i < 300; i++){
+			indexes.add(i, 0);
+		}
+	}
 
 	public TableLine(String[] columnNames) {
 		this.columnNames = columnNames;
@@ -17,7 +30,7 @@ public class TableLine {
 	}
 
 	public void setEntry(String[][] data) {
-		this.lineData = data;
+		TableLine.lineData = data;
 	}
 
 	/**
@@ -37,15 +50,15 @@ public class TableLine {
 	 * 
 	 * @return
 	 */
-	public static int getIndex(){
-		return id;
+	public static int getIndexValue(int position){
+		return indexes.get(position);
 	}
 	
 	/**
 	 * 
 	 */
-	public static void incrementIndex(){
-		id++;
+	public static void incrementIndexValue(int position){
+		indexes.set(position, indexes.get(position)+1);
 	}
 
 	/**
