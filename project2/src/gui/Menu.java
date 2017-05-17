@@ -538,7 +538,6 @@ public class Menu extends JFrame implements MouseListener {
 				// tableColumnModel = tableHead.getColumnModel();
 
 				Menu.columnSettings(tableDynamic.get(tableDynamic.size() - 1));
-
 			}
 		}
 	}

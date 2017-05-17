@@ -6,7 +6,10 @@ public class TableData {
 
 	String tableName = "";
 	ArrayList<String> columnNames = new ArrayList<String>();
-	ArrayList<TableLine> lineList = new ArrayList<TableLine>();
+	static ArrayList<TableLine> lineList = new ArrayList<TableLine>();
+	
+	//größe abfragen
+	//addrows und columns nach doppelklick
 
 	public TableData(String tableDataMessage) {
 		convert(tableDataMessage);
