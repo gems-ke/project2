@@ -14,17 +14,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 public class UserControl extends JDialog {
-
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
 	private JTextField textField_1;
 
 	/**
-	 * Important User ArrayList 
-	 * 1. Place: Name of User 
-	 * 2. admin oder user => state
+	 * Important User ArrayList 1. Place: Name of User 2. admin oder user =>
+	 * state
 	 */
 	ArrayList<String> userList = new ArrayList<>();
 
@@ -56,8 +55,7 @@ public class UserControl extends JDialog {
 				lblPasswort.setBounds(10, 99, 232, 14);
 				panel.add(lblPasswort);
 
-				JTextPane txtpnLegenSieHier = new JTextPane();
-				txtpnLegenSieHier.setEditable(false);
+				JLabel txtpnLegenSieHier = new JLabel();
 				txtpnLegenSieHier.setText("Legen Sie hier einen neuen Benutzer / Admin an.");
 				txtpnLegenSieHier.setBounds(10, 11, 346, 20);
 				panel.add(txtpnLegenSieHier);
@@ -86,14 +84,17 @@ public class UserControl extends JDialog {
 				JButton btnNewButton_1 = new JButton("Hinzuf\u00FCgen");
 				btnNewButton_1.setBounds(236, 199, 120, 23);
 				panel.add(btnNewButton_1);
+
+				JCheckBox chckbxAdmin = new JCheckBox("Admin");
+				chckbxAdmin.setBounds(6, 139, 97, 23);
+				panel.add(chckbxAdmin);
 			}
 			{
 				JPanel panel = new JPanel();
 				tabbedPane.addTab("Verwaltung", null, panel, null);
 				panel.setLayout(null);
 
-				JTextPane txtpnVerwaltenSieHier = new JTextPane();
-				txtpnVerwaltenSieHier.setEditable(false);
+				JLabel txtpnVerwaltenSieHier = new JLabel();
 				txtpnVerwaltenSieHier.setBounds(10, 11, 348, 20);
 				txtpnVerwaltenSieHier.setText("Verwalten Sie hier Ihre Benutzer-/Admineintr\u00E4ge.");
 				panel.add(txtpnVerwaltenSieHier);
@@ -130,8 +131,8 @@ public class UserControl extends JDialog {
 				Menu.userControl = null;
 			}
 		});
-
 		setLocationRelativeTo(null);
 		setResizable(false);
+		setAlwaysOnTop(true);
 	}
 }
