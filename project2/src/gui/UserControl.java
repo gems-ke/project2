@@ -1,11 +1,15 @@
 package gui;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+
+import main.Main;
+
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
@@ -26,6 +30,8 @@ public class UserControl extends JDialog {
 	 * 2. admin oder user => state
 	 */
 	ArrayList<String> userList = new ArrayList<>();
+	
+	static JList list = new JList();
 
 	// ----------------------------------------------------- //
 
@@ -84,6 +90,19 @@ public class UserControl extends JDialog {
 
 				JButton btnNewButton_1 = new JButton("Hinzuf\u00FCgen");
 				btnNewButton_1.setBounds(236, 199, 120, 23);
+				btnNewButton_1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						if(textField.getText().equals("")){
+							Popup popup = new Popup("Bitte Name eintragen!");
+						}else{
+							if(textField_1.getText().equals("")){
+								Popup popup = new Popup("Bitte Passwort eintragen!");
+							}else{
+								Main.ct.transmit("!createUser " + textField.getText() + " " + textField_1.getText() + " user");
+							}
+						}
+					}
+				});
 				panel.add(btnNewButton_1);
 			}
 			{
@@ -101,7 +120,8 @@ public class UserControl extends JDialog {
 				scrollPane.setBounds(10, 46, 348, 143);
 				panel.add(scrollPane);
 
-				JList list = new JList();
+				list = new JList();
+				updateUserList();
 				scrollPane.setViewportView(list);
 
 				JButton btnNewButton_2 = new JButton("Umbenennen");
@@ -132,5 +152,18 @@ public class UserControl extends JDialog {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setAlwaysOnTop(true);
+	}
+	
+	public static void updateUserList(){
+		
+		DefaultListModel dlm = new DefaultListModel();
+		
+		for(int i = 0; i < Menu.existingUsers.size(); i++){
+			dlm.addElement(Menu.existingUsers.get(i));
+		}
+		
+		list.setModel(dlm);
+		list.updateUI();
+		
 	}
 }

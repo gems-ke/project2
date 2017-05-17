@@ -258,6 +258,11 @@ public class Client extends JFrame {
 			Main.it.mainmenu.fillTree(userlist);
 		}
 		
+		if (response.startsWith("!updateExistingUsers")) {
+			System.out.println("updateexistingUsers gets triggered!");
+			Main.it.mainmenu.updateExistingUsers(response);
+		}
+		
 		if (response.startsWith(" You are now Connected!")){
 			System.out.println("connected.");
 			isConnected = true;
@@ -271,6 +276,18 @@ public class Client extends JFrame {
 			System.out.println("onlineusers gets triggered!1");
 			String[] userlist = response.split(" ");
 			Main.it.mainmenu.updateUserList(userlist);
+		}
+		
+		if (response.startsWith("!userAddSuccess")) {
+			Thread popup = new Thread(new Popup("Benutzer erfolgreich hinzugefügt!"));
+		}
+		
+		if (response.startsWith("!userAddExists")) {
+			Thread popup = new Thread(new Popup("Benutzer existiert bereits!"));
+		}
+		
+		if (response.startsWith("!userAddError")) {
+			Thread popup = new Thread(new Popup("Benutzererstellung ERROR!"));
 		}
 	}
 }

@@ -71,6 +71,8 @@ public class Menu extends JFrame implements MouseListener {
 	public static String activeUser = "";
 
 	public static ArrayList<String> onlineUsers = new ArrayList<String>();
+	
+	public static ArrayList<String> existingUsers = new ArrayList<String>();
 
 	// Create the nodes.
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
@@ -230,6 +232,8 @@ public class Menu extends JFrame implements MouseListener {
 		this.initTreeStuff();
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
+		Main.ct.transmit("!requestUserExistingUpdate");
+		
 		// auskommentieren, wenn du kein kevin bist
 		// simulateTransmissions();
 		/*
@@ -450,6 +454,20 @@ public class Menu extends JFrame implements MouseListener {
 		activeUser = finalString;
 		textAreaUser.setText(finalString);
 		textAreaUser.repaint();
+	}
+	
+	public static void updateExistingUsers(String message){
+		
+		String[] users = message.split("\\*");
+		
+		for(int i = 1; i < users.length; i++){
+			existingUsers.add(users[i]);
+		}
+		
+		if(userControl != null){
+			userControl.updateUserList();
+		}
+		
 	}
 
 	/**

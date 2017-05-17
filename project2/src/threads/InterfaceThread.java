@@ -70,7 +70,7 @@ public class InterfaceThread extends Thread{
 		dialog.okButton.addActionListener(new ActionListener(){
 			  public void actionPerformed(ActionEvent e)  {
 				  
-				 /* if(!ctIsRunning){
+				 if(!ctIsRunning){
 					  Main.ct.start();
 					  ctIsRunning = true;
 				  }
@@ -91,11 +91,10 @@ public class InterfaceThread extends Thread{
 				  Main.ct.transmit(message);
 				  
 				  dialog.progressBar.setValue(50);
-				  */
-				  //if kevin then do 4, if not then do 2
+				  
 				  
 				  //TODO - änder zu 2
-				  requestStateChange(4);
+				  requestStateChange(2);
 				  
 			  } 
 		});
@@ -120,7 +119,7 @@ public class InterfaceThread extends Thread{
 	
 	private void waitForResponse(String position){
 		
-		System.out.println("waiting for response...");
+		System.out.println("waiting for response..." + position);
 		
 		long frequencyMS;
 		long timeStart = System.currentTimeMillis();
@@ -139,6 +138,8 @@ public class InterfaceThread extends Thread{
 					progress++;
 					
 					String[] checkUp = Main.ct.checkResponse("login").split(" ");
+					
+					System.out.println("checkup equals: " + checkUp[0]);
 					
 					if(!checkUp[0].equals("nul")){
 						if(checkUp[0].equals("invalidUser")){
