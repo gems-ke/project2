@@ -114,6 +114,10 @@ public class Menu extends JFrame implements MouseListener {
 	private static JTableHeader tableHead;
 	private JTextField textField_3;
 	private JTextField textField_1;
+	private JTextField textField_2;
+	String[] stoffe = { "Wasser", "Schinken", "Stoff", "Test1", "Test2" };
+	JComboBox comboBox = new JComboBox(stoffe);
+	JTextArea textArea = new JTextArea();
 
 	// ---------------------------------------------------------------------------------------
 	// //
@@ -138,13 +142,6 @@ public class Menu extends JFrame implements MouseListener {
 		// Setting up the Menu + Items
 		setJMenuBar(menuBar);
 		menuBar.add(menuEntry1);
-		JSeparator separator_1 = new JSeparator();
-		menuEntry1.add(separator_1);
-		JMenuItem mntmnderungenHochladen = new JMenuItem("Änderungen speichern");
-		menuEntry1.add(mntmnderungenHochladen);
-
-		JSeparator separator = new JSeparator();
-		menuEntry1.add(separator);
 		JMenuItem mntmAusloggen = new JMenuItem("Ausloggen");
 		menuEntry1.add(mntmAusloggen);
 		JMenuItem mntmAusloggenUndBeenden = new JMenuItem("Ausloggen und Beenden");
@@ -166,6 +163,12 @@ public class Menu extends JFrame implements MouseListener {
 		menuEntry3.add(mntmEintragZwischenschieben);
 		JMenuItem mntmnderungsverlauf = new JMenuItem("\u00C4nderungsverlauf");
 		menuEntry3.add(mntmnderungsverlauf);
+
+		JSeparator separator = new JSeparator();
+		menuEntry3.add(separator);
+
+		JMenuItem mntmStatistik = new JMenuItem("Statistik...");
+		menuEntry3.add(mntmStatistik);
 		JMenuItem mntmKostenrechnung = new JMenuItem("Kostenrechnung");
 		menuEntry3.add(mntmKostenrechnung);
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
@@ -215,8 +218,6 @@ public class Menu extends JFrame implements MouseListener {
 	 * initializes the logical stuff
 	 */
 	public void init() {
-		// JTREE UPDATE STUFF! Call it to handle JTree Updates and Adds/Deletes
-
 		try {
 			tableColumnModel = tableHead.getColumnModel();
 			Menu.columnSettings(Menu.tableDynamic.get(0));
@@ -283,17 +284,14 @@ public class Menu extends JFrame implements MouseListener {
 		lblStoff.setBounds(10, 114, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblStoff);
 
-		String[] stoffe = { "Wasser", "Schinken", "Stoff", "Test1", "Test2" };
-		JComboBox comboBox = new JComboBox(stoffe);
 		comboBox.setBounds(10, 127, (int) (panel.getWidth() * 0.9), 20);
 		panel.add(comboBox);
 
 		JLabel lblBegrndung = new JLabel("Begründung");
-		lblBegrndung.setBounds(10, 204, (int) (panel.getWidth() * 0.9), 14);
+		lblBegrndung.setBounds(10, 250, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblBegrndung);
 
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(10, 220, (int) (panel.getWidth() * 0.9), 100);
+		textArea.setBounds(10, 266, (int) (panel.getWidth() * 0.9), 100);
 		panel.add(textArea);
 
 		JLabel lblEinheit = new JLabel("Einheit");
@@ -307,7 +305,7 @@ public class Menu extends JFrame implements MouseListener {
 		panel.add(textField_3);
 
 		btnSenden = new JButton("Senden");
-		btnSenden.setBounds(10, 331, (int) (panel.getWidth() * 0.9), 34);
+		btnSenden.setBounds(10, 377, (int) (panel.getWidth() * 0.9), 34);
 		panel.add(btnSenden);
 
 		textField_1 = new JTextField();
@@ -315,9 +313,18 @@ public class Menu extends JFrame implements MouseListener {
 		textField_1.setBounds(10, 173, (int) (panel.getWidth() * 0.9), 20);
 		panel.add(textField_1);
 
-		JLabel lblUhrzeitleerFr = new JLabel("Uhrzeit (leer für Systemzeit)");
+		JLabel lblUhrzeitleerFr = new JLabel("Zugabe-Uhrzeit (leer für aktuelle Uhrzeit)");
 		lblUhrzeitleerFr.setBounds(10, 158, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblUhrzeitleerFr);
+
+		textField_2 = new JTextField();
+		textField_2.setColumns(10);
+		textField_2.setBounds(10, 219, (int) (panel.getWidth() * 0.9), 20);
+		panel.add(textField_2);
+
+		JLabel lblZugabedatum = new JLabel("Zugabe-Datum (leer für aktuelles Datum)");
+		lblZugabedatum.setBounds(10, 204, (int) (panel.getWidth() * 0.9), 14);
+		panel.add(lblZugabedatum);
 
 		btnSenden.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -328,13 +335,20 @@ public class Menu extends JFrame implements MouseListener {
 
 				// Increment the Index Number
 				TableLine.incrementIndexValue(tabbedPane.getSelectedIndex());
+				String[] dateAndTime = new String[2];
 
 				// Set the new table column line
-				models.get(tabbedPane.getSelectedIndex())
-						.addRow(new Object[] { TableLine.getIndexValue(tabbedPane.getSelectedIndex()),
-								dateFormat.format(date), timeFormat.format(date), "Kevin",
-								comboBox.getSelectedItem().toString(), textField.getText().toString(),
-								textField_3.getText().toString(), textArea.getText().toString() }); // TODO
+				if (textField_2.getText().toString().equals("")) {
+					dateAndTime[0] = dateFormat.format(date);
+				} else {
+					dateAndTime[0] = textField_2.getText().toString();
+				}
+				if (textField_1.getText().toString().equals("")) {
+					dateAndTime[1] = timeFormat.format(date);
+				} else {
+					dateAndTime[1] = textField_1.getText().toString();
+				}
+				addRowData(dateAndTime[0], dateAndTime[1]);
 			}
 		});
 
@@ -359,6 +373,16 @@ public class Menu extends JFrame implements MouseListener {
 
 		// Fill the Tree with new content
 		this.fillTree(userlist2);
+	}
+
+	/**
+	 * Adds new row elements
+	 */
+	public void addRowData(String date, String time) {
+		models.get(tabbedPane.getSelectedIndex())
+				.addRow(new Object[] { TableLine.getIndexValue(tabbedPane.getSelectedIndex()), date, time, "Kevin",
+						comboBox.getSelectedItem().toString(), textField.getText().toString(),
+						textField_3.getText().toString(), textArea.getText().toString() });
 	}
 
 	/**
