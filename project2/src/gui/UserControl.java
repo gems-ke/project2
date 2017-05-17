@@ -14,6 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 public class UserControl extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -85,6 +86,10 @@ public class UserControl extends JDialog {
 				JButton btnNewButton_1 = new JButton("Hinzuf\u00FCgen");
 				btnNewButton_1.setBounds(236, 199, 120, 23);
 				panel.add(btnNewButton_1);
+				
+				JCheckBox chckbxAdmin = new JCheckBox("Admin");
+				chckbxAdmin.setBounds(6, 139, 97, 23);
+				panel.add(chckbxAdmin);
 			}
 			{
 				JPanel panel = new JPanel();
