@@ -5,6 +5,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import data.ListManager;
 import data.TableData;
 import data.TableLine;
 import main.Main;
+import networking.Client;
 
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -71,7 +74,7 @@ public class Menu extends JFrame implements MouseListener {
 	public static String activeUser = "";
 
 	public static ArrayList<String> onlineUsers = new ArrayList<String>();
-	
+
 	public static ArrayList<String> existingUsers = new ArrayList<String>();
 
 	// Create the nodes.
@@ -85,7 +88,6 @@ public class Menu extends JFrame implements MouseListener {
 	 * The JTree Object and the important child stuff
 	 */
 	private JTree tree = null;
-	private final JScrollPane scrollPane = new JScrollPane();
 	private static TableColumnModel tableColumnModel;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 	private JTabbedPane tabbedPane;
@@ -117,8 +119,8 @@ public class Menu extends JFrame implements MouseListener {
 	private JTextField textField_3;
 	private JTextField textField_1;
 	private JTextField textField_2;
-	String[] stoffe = { "Wasser", "Schinken", "Stoff", "Test1", "Test2" };
-	JComboBox comboBox = new JComboBox(stoffe);
+	ArrayList<String> stoffe = new ArrayList<String>();
+	JComboBox<?> comboBox = null;
 	JTextArea textArea = new JTextArea();
 
 	// ---------------------------------------------------------------------------------------
@@ -126,6 +128,7 @@ public class Menu extends JFrame implements MouseListener {
 	/**
 	 * Create the frame from the Constructor. ONLY VIEW STUFF ALLOWED
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Menu(String currentUser) {
 		// --------------- INIT --------------- //
 		activeUser = currentUser;
@@ -139,6 +142,11 @@ public class Menu extends JFrame implements MouseListener {
 		setContentPane(contentPane);
 		TableLine.initIndexArray(); // Set the standard index settings for
 									// tables
+		stoffe.add("TEST1");
+		stoffe.add("TEST2");
+		stoffe.add("TEST3");
+
+		this.comboBox = new JComboBox(stoffe.toArray());
 
 		// --------------- MENU --------------- //
 		// Setting up the Menu + Items
@@ -176,6 +184,18 @@ public class Menu extends JFrame implements MouseListener {
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 
 		// --------------- MENU ITEM ON CLICK --------------- //
+		mntmAusloggen.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				//TODO einfaches neustarten des programms nicht so einfach möglich
+			}
+		});	
+		
+		mntmAusloggenUndBeenden.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				System.exit(0);
+			}
+		});	
+		
 		mntmBenutzerkontrolle.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				if (userControl == null) {
@@ -231,7 +251,7 @@ public class Menu extends JFrame implements MouseListener {
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
 		Main.ct.transmit("!requestUserExistingUpdate");
-		
+
 		// auskommentieren, wenn du kein kevin bist
 		// simulateTransmissions();
 		/*
@@ -384,8 +404,8 @@ public class Menu extends JFrame implements MouseListener {
 	 */
 	public void addRowData(String date, String time) {
 		models.get(tabbedPane.getSelectedIndex())
-				.addRow(new Object[] { TableLine.getIndexValue(tabbedPane.getSelectedIndex()), date, time, "Kevin",
-						comboBox.getSelectedItem().toString(), textField.getText().toString(),
+				.addRow(new Object[] { TableLine.getIndexValue(tabbedPane.getSelectedIndex()), date, time,
+						Client.currentUserName, comboBox.getSelectedItem().toString(), textField.getText().toString(),
 						textField_3.getText().toString(), textArea.getText().toString() });
 	}
 
@@ -490,19 +510,19 @@ public class Menu extends JFrame implements MouseListener {
 		textAreaUser.setText(finalString);
 		textAreaUser.repaint();
 	}
-	
-	public static void updateExistingUsers(String message){
-		
+
+	public static void updateExistingUsers(String message) {
+
 		String[] users = message.split("\\*");
-		
-		for(int i = 1; i < users.length; i++){
+
+		for (int i = 1; i < users.length; i++) {
 			existingUsers.add(users[i]);
 		}
-		
-		if(userControl != null){
+
+		if (userControl != null) {
 			userControl.updateUserList();
 		}
-		
+
 	}
 
 	/**
@@ -526,12 +546,12 @@ public class Menu extends JFrame implements MouseListener {
 		TreeNode treeNode = (TreeNode) node;
 
 		// close the tab with MIDDLE mouse button
-		if (e.getButton() == 2) {
-			tabbedPane.removeTabAt(tabbedPane.getSelectedIndex());
-		}
+		// if (e.getButton() == 2) {
+		// tabbedPane.removeTabAt(tabbedPane.getSelectedIndex());
+		// }
 
 		if (selRow != -1) {
-			if (e.getClickCount() == 2 && treeNode.isLeaf()) {
+			if (e.getButton() == 1 && e.getClickCount() == 2 && treeNode.isLeaf()) {
 				// --------------- DOUBLE CLICK HANDLER --------------- //
 				// Create a new Tab Element w/ models
 				models.add(new DefaultTableModel());

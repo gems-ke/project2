@@ -70,7 +70,7 @@ public class InterfaceThread extends Thread {
 		dialog.okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-			/*	if (!ctIsRunning) {
+				if (!ctIsRunning) {
 					Main.ct.start();
 					ctIsRunning = true;
 				}
@@ -91,10 +91,10 @@ public class InterfaceThread extends Thread {
 				// nicht auskommentiert, auﬂer du bist kevin!
 				Main.ct.transmit(message);
 
-				dialog.progressBar.setValue(50);*/
+				dialog.progressBar.setValue(50);
 
 				// TODO - ‰nder zu 2
-				requestStateChange(4);
+				requestStateChange(2);
 
 			}
 		});

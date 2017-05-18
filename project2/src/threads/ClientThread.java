@@ -1,12 +1,10 @@
 package threads;
 
-import javax.swing.JDialog;
-
 import networking.Client;
 
 public class ClientThread extends Thread{
 	
-	static Client client;
+	public static Client client;
 	
 	private String a = "192.168.2.102";
 	private String b = "127.0.0.1";
@@ -25,7 +23,7 @@ public class ClientThread extends Thread{
 	}
 	
 	public void transmit(String message){
-		//client.sendMessage(message);
+		client.sendMessage(message);
 	}
 
 	public String checkResponse(String expectation){
