@@ -94,7 +94,7 @@ public class InterfaceThread extends Thread {
 				dialog.progressBar.setValue(50);
 
 				// TODO - änder zu 2
-				requestStateChange(4);
+				requestStateChange(2);
 
 			}
 		});
