@@ -207,10 +207,10 @@ public class TableControl extends JDialog {
 			contentPanel.add(lblNameFrDen);
 
 			textField = new JTextField();
-			textField.setBounds(10, 31, 264, 20);
+			textField.setBounds(10, 31, 145, 20);
 			contentPanel.add(textField);
 			textField.setColumns(10);
-
+			
 			JButton btnSenden = new JButton("Senden");
 			btnSenden.setBounds(154, 237, 130, 23);
 			contentPanel.add(btnSenden);
@@ -240,9 +240,13 @@ public class TableControl extends JDialog {
 			contentPanel.add(lblSpaltenEintragen);
 
 			JTextArea textArea = new JTextArea();
-			textArea.setEditable(false);
+			textArea.setEditable(true);
 			textArea.setBounds(10, 78, 264, 148);
 			contentPanel.add(textArea);
+			
+			JButton btnHinzufgen = new JButton("Hinzufuegen");
+			btnHinzufgen.setBounds(165, 30, 119, 23);
+			contentPanel.add(btnHinzufgen);
 			
 			addWindowListener(new WindowAdapter() {
 				@Override
