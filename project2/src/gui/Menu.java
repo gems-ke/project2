@@ -75,7 +75,10 @@ public class Menu extends JFrame implements MouseListener {
 
 	public static ArrayList<String> onlineUsers = new ArrayList<String>();
 
-	public static ArrayList<String> existingUsers = new ArrayList<String>();
+	public static ArrayList<String> existingUsers;
+	
+	public static ArrayList<String> tableNames;
+	ArrayList<TableData> tables = new ArrayList<TableData>();
 
 	// Create the nodes.
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
@@ -112,7 +115,6 @@ public class Menu extends JFrame implements MouseListener {
 
 	public static JButton btnSenden;
 
-	ArrayList<TableData> tables = new ArrayList<TableData>();
 	ArrayList<DefaultTableModel> models = new ArrayList<DefaultTableModel>();
 	ArrayList<JTableHeader> tableHeads = new ArrayList<JTableHeader>();
 	private static JTableHeader tableHead;
@@ -397,6 +399,7 @@ public class Menu extends JFrame implements MouseListener {
 
 		// Fill the Tree with new content
 		this.fillTree(userlist2);
+		
 	}
 
 	/**
@@ -413,6 +416,7 @@ public class Menu extends JFrame implements MouseListener {
 	 * Reload this method to save new Tree elements
 	 */
 	public void fillTree(String[] list) {
+		tableNames = new ArrayList<String>();
 		this.contentPane.remove(tree);
 		this.top.removeAllChildren();
 		DefaultMutableTreeNode node = null;
@@ -430,6 +434,7 @@ public class Menu extends JFrame implements MouseListener {
 						subNode = new DefaultMutableTreeNode(
 								list[whileIterator].replaceAll("[^A-Za-z]", "").substring(0, 1).toUpperCase()
 										+ list[whileIterator].replaceAll("[^A-Za-z]", "").substring(1));
+						tableNames.add(list[whileIterator]);
 						node.add(subNode);
 						subnodeListEntry.add(subNode);
 					} else {
@@ -446,6 +451,24 @@ public class Menu extends JFrame implements MouseListener {
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
 		}
+		
+		String sexy = "";
+		for(int i = 0; i < tableNames.size(); i++){
+			sexy += " " + tableNames.get(i);
+		}
+		
+		System.out.println("tablename length: " + tableNames.size() + "values:" + sexy);
+		
+		updateTabledata();
+	}
+
+	private void updateTabledata() {
+		
+		for(int i = 0; i < tableNames.size(); i++){
+			Main.ct.transmit("!requestTableData " + tableNames.get(i));
+		}
+		System.out.println("tabledata requested for " + tableNames.size() + " tables.");
+		
 	}
 
 	/**
@@ -512,6 +535,8 @@ public class Menu extends JFrame implements MouseListener {
 	}
 
 	public static void updateExistingUsers(String message) {
+		
+		existingUsers = new ArrayList<String>();
 
 		String[] users = message.split("\\*");
 
@@ -594,5 +619,11 @@ public class Menu extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+	}
+
+	public void updateTableData(String tableData) {
+		
+		tables.add(new TableData(tableData));
+		System.out.println("Table: " + tables.get(0).getTableName() + "column 2 name: " + tables.get(0).getColumnName(2) + "first line second column data: " + tables.get(0).getData(1, tables.get(0).getColumnName(2)));
 	}
 }

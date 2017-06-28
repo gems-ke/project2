@@ -273,9 +273,8 @@ public class Client extends JFrame {
 		}
 		
 		if (response.startsWith("!tableData")) {
-			System.out.println("onlineusers gets triggered!1");
-			String[] userlist = response.split(" ");
-			Main.it.mainmenu.updateUserList(userlist);
+			System.out.println("tableData update gets triggered for table");
+			Main.it.mainmenu.updateTableData(response);
 		}
 		
 		if (response.startsWith("!userAddSuccess")) {
