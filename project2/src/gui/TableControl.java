@@ -11,9 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import main.Main;
+
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
 
@@ -22,6 +26,8 @@ public class TableControl extends JDialog {
 	private JTextField textField;
 	private NewDirectoryDialog newDirectoryDialog = null;
 	private NewTableDialog newTableDialog = null;
+	private JPanel panel = new JPanel();
+	private JTree tree = null;
 
 	/**
 	 * Create the dialog.
@@ -33,7 +39,6 @@ public class TableControl extends JDialog {
 		setBounds(100, 100, 375, 311);
 		getContentPane().setLayout(null);
 		{
-			JPanel panel = new JPanel();
 			panel.setBounds(0, 0, 354, 272);
 			getContentPane().add(panel);
 			panel.setLayout(null);
@@ -100,7 +105,8 @@ public class TableControl extends JDialog {
 			chckbxTabelleVerstecken.setBounds(160, 197, 174, 23);
 			panel.add(chckbxTabelleVerstecken);
 
-			JTree tree = new JTree();
+			tree = new JTree(Main.it.mainmenu.top);
+			
 			tree.setBounds(10, 11, 130, 250);
 			panel.add(tree);
 		}
@@ -115,6 +121,13 @@ public class TableControl extends JDialog {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setAlwaysOnTop(true);
+	}
+	
+	public void updateTree(){
+		panel.remove(tree);
+		tree = new JTree(Main.it.mainmenu.top);
+		panel.add(tree);
+		tree.updateUI();
 	}
 
 	/**
@@ -150,6 +163,8 @@ public class TableControl extends JDialog {
 			contentPanel.add(btnSenden);
 			btnSenden.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					Main.ct.transmit("!createSubfolder " + textField.getText());
+					System.out.println("subfolder creation with name triggered: " + textField.getText());
 					setVisible(false);
 					dispose();
 					newDirectoryDialog = null;
@@ -196,7 +211,7 @@ public class TableControl extends JDialog {
 			this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			this.setVisible(true);
 			setTitle("Neue Tabelle");
-			setBounds(100, 100, 300, 300);
+			setBounds(100, 100, 300, 370);
 			getContentPane().setLayout(new BorderLayout());
 			contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 			getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -210,21 +225,9 @@ public class TableControl extends JDialog {
 			textField.setBounds(10, 31, 145, 20);
 			contentPanel.add(textField);
 			textField.setColumns(10);
-			
-			JButton btnSenden = new JButton("Senden");
-			btnSenden.setBounds(154, 237, 130, 23);
-			contentPanel.add(btnSenden);
-			btnSenden.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					setVisible(false);
-					dispose();
-					newTableDialog = null;
-					((Window) getParent()).setAlwaysOnTop(true);
-				}
-			});
 
 			JButton btnNewButton = new JButton("Abbrechen");
-			btnNewButton.setBounds(10, 237, 130, 23);
+			btnNewButton.setBounds(10, 307, 130, 23);
 			contentPanel.add(btnNewButton);
 			btnNewButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -235,18 +238,56 @@ public class TableControl extends JDialog {
 				}
 			});
 
-			JLabel lblSpaltenEintragen = new JLabel("Spalten eintragen:");
+			JLabel lblSpaltenEintragen = new JLabel("Stoffe eintragen:");
 			lblSpaltenEintragen.setBounds(10, 62, 274, 14);
 			contentPanel.add(lblSpaltenEintragen);
+			
+			JLabel lblOrdnerAuswählen = new JLabel("Tabelle in diesem Ordner speichern:");
+			lblOrdnerAuswählen.setBounds(10, 237, 274, 14);
+			contentPanel.add(lblOrdnerAuswählen);
+			
+			String[] comboEntry = new String[Main.it.mainmenu.tableFolderList.size()];
+			
+			for(int i = 0; i < Main.it.mainmenu.tableFolderList.size(); i++){
+				comboEntry[i] = Main.it.mainmenu.tableFolderList.get(i);
+			}
+			
+			JComboBox comboBox = new JComboBox(comboEntry);
+			comboBox.setBounds(10, 257, 274, 20);
+			contentPanel.add(comboBox);
 
+			//zu scrolled pane
 			JTextArea textArea = new JTextArea();
 			textArea.setEditable(true);
 			textArea.setBounds(10, 78, 264, 148);
 			contentPanel.add(textArea);
 			
-			JButton btnHinzufgen = new JButton("Hinzufuegen");
+			JButton btnSenden = new JButton("Senden");
+			btnSenden.setBounds(154, 307, 130, 23);
+			contentPanel.add(btnSenden);
+			btnSenden.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					
+					String lines[] = textArea.getText().split("\\r?\\n");
+					String columns = "Datum Uhrzeit Name";
+					
+					for(int i = 0; i < lines.length; i++){
+						columns += " " + lines[i];
+					}
+					
+					Main.ct.transmit("!createTable " + textField.getText() + " " + Main.it.mainmenu.tableFolderList.get(comboBox.getSelectedIndex()) + " " + columns + " Begründung");
+					Main.ct.transmit("!requestDirectoryUpdate");
+					Main.ct.transmit("!requestTableUpdateReset");
+					setVisible(false);
+					dispose();
+					newTableDialog = null;
+					((Window) getParent()).setAlwaysOnTop(true);
+				}
+			});
+			
+			/*JButton btnHinzufgen = new JButton("Hinzufuegen");
 			btnHinzufgen.setBounds(165, 30, 119, 23);
-			contentPanel.add(btnHinzufgen);
+			contentPanel.add(btnHinzufgen);*/
 			
 			addWindowListener(new WindowAdapter() {
 				@Override

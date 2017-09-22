@@ -7,7 +7,7 @@ public class TableLine {
 	/**
 	 * IMPORTANT 2D STRING ARRAY. IT HOLDS ALL TABLE INFORMATION
 	 */
-	static String[][] lineData;
+	String[] lineData;
 
 	static ArrayList<Integer> indexes = new ArrayList<Integer>();
 
@@ -26,11 +26,10 @@ public class TableLine {
 
 	public TableLine(String[] columnNames) {
 		this.columnNames = columnNames;
-		lineData = new String[this.columnNames.length][];
 	}
 
-	public void setEntry(String[][] data) {
-		TableLine.lineData = data;
+	public void setEntry(String[] data) {
+		this.lineData = data;
 	}
 
 	/**
@@ -42,22 +41,26 @@ public class TableLine {
 	 *            the columnt index of the element
 	 * @return the line data element from row x and column x
 	 */
-	public static String getLineDataAtPosition(int row, int column) {
-		return lineData[row][column];
+	public String getLineDataAtPosition(int column) {
+		return lineData[column];
+	}
+	
+	public String[] getLineData(){
+		return this.lineData;
 	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public static int getIndexValue(int position){
+	public int getIndexValue(int position){
 		return indexes.get(position);
 	}
 	
 	/**
 	 * 
 	 */
-	public static void incrementIndexValue(int position){
+	public void incrementIndexValue(int position){
 		indexes.set(position, indexes.get(position)+1);
 	}
 
@@ -67,7 +70,7 @@ public class TableLine {
 	 * @param column
 	 * @param element
 	 */
-	public static void setLineDataAtPosition(int row, int column, String element) {
-		lineData[row][column] = element;
+	public void setLineDataAtPosition(int row, int column, String element) {
+		//lineData[row][column] = element;
 	}
 }

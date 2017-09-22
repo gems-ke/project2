@@ -3,6 +3,8 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -11,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -70,6 +73,9 @@ public class Menu extends JFrame implements MouseListener {
 	 * The MAIN Content Panel
 	 */
 	private JPanel contentPane;
+	
+	//Array and indexcoutner to connect tabindex to tablename
+	private ArrayList<String> tabIndicator = new ArrayList<String>();
 
 	public static String activeUser = "";
 
@@ -77,11 +83,16 @@ public class Menu extends JFrame implements MouseListener {
 
 	public static ArrayList<String> existingUsers;
 	
+	public static ArrayList<ListManager> tableDataArray = new ArrayList<ListManager>();
+	public static ArrayList<String> testArray = new ArrayList<String>();
+	
 	public static ArrayList<String> tableNames;
 	ArrayList<TableData> tables = new ArrayList<TableData>();
 
 	// Create the nodes.
-	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
+	public static DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
+	
+	JPanel panel;
 
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -91,6 +102,7 @@ public class Menu extends JFrame implements MouseListener {
 	 * The JTree Object and the important child stuff
 	 */
 	private JTree tree = null;
+	@SuppressWarnings("unused")
 	private static TableColumnModel tableColumnModel;
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 	private JTabbedPane tabbedPane;
@@ -109,16 +121,20 @@ public class Menu extends JFrame implements MouseListener {
 
 	protected static UserControl userControl = null;
 	protected static TableControl tableControl = null;
-	public JComboBox<?> textField;
+	public JComboBox textField;
 
 	private static JTextArea textAreaUser;
 
 	public static JButton btnSenden;
 
+	private ArrayList<String> tableNamess = new ArrayList<String>();
+	
 	ArrayList<DefaultTableModel> models = new ArrayList<DefaultTableModel>();
 	ArrayList<JTableHeader> tableHeads = new ArrayList<JTableHeader>();
+	public static ArrayList<String> tableFolderList = new ArrayList<String>();
+	@SuppressWarnings("unused")
 	private static JTableHeader tableHead;
-	private JComboBox<?> textField_3;
+	private JComboBox textField_3;
 	private JTextField textField_1;
 	private JTextField textField_2;
 	ArrayList<String> stoffe = new ArrayList<String>();
@@ -135,7 +151,6 @@ public class Menu extends JFrame implements MouseListener {
 	/**
 	 * Create the frame from the Constructor. ONLY VIEW STUFF ALLOWED
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Menu(String currentUser) {
 		// --------------- INIT --------------- //
 		activeUser = currentUser;
@@ -248,13 +263,14 @@ public class Menu extends JFrame implements MouseListener {
 	 * initializes the logical stuff
 	 */
 	public void init() {
-		try {
+		/*try {
 			tableColumnModel = tableHead.getColumnModel();
 			Menu.columnSettings(Menu.tableDynamic.get(0));
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-		}
+		}*/
 
+		
 		this.initTreeStuff();
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
@@ -289,7 +305,7 @@ public class Menu extends JFrame implements MouseListener {
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
 		this.contentPane.add(tree);
 
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setBorder(new TitledBorder(new CompoundBorder(null, UIManager.getBorder("TitledBorder.border")),
 				"Eintrag hinzuf\u00FCgen", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel.setBounds((int) (screenSize.getWidth() * 0.83f), (int) (screenSize.getHeight() * 0.3f),
@@ -306,10 +322,40 @@ public class Menu extends JFrame implements MouseListener {
 		lblNewLabel.setBounds(10, 22, 142, 14);
 		panel.add(lblNewLabel);
 
-		// ZUGABE textfeld
-		textField = new JComboBox(stoffe.toArray());
+		// Tabelle combobvox
+		textField = new JComboBox(tableNamess.toArray());
 		textField.setBounds(10, 37, (int) (panel.getWidth() * 0.9), 20); // 281
 																			// breite
+		
+        textField.addActionListener(
+                new ActionListener(){
+                    public void actionPerformed(ActionEvent e){
+                    	String[] columnNames = new String[0];
+                    	
+                    	for(int i = 0; i < tables.size(); i++){
+                    		
+                    		System.out.println("tables value: " + tables.get(i).getTableName() + " compare to combobox value: " + textField.getSelectedItem().toString() + " result: " + tables.get(i).getTableName().equals(textField.getSelectedItem().toString()));
+                    		
+                        	if(tables.get(i).getTableName().equals(textField.getSelectedItem().toString())){
+                        		columnNames = tables.get(i).getColumnArray();
+                        	}
+                    		
+                    	}
+                    	
+                    	//textField_3 = new JComboBox(columnNames);
+                    	
+                    	textField_3.removeAllItems();
+                    	
+                    	for(int i = 0; i < columnNames.length; i++){
+                    		if(!columnNames[i].equals("Datum") && !columnNames[i].equals("Name") && !columnNames[i].equals("Uhrzeit") && !columnNames[i].equals("Begründung"))
+                    		textField_3.addItem(columnNames[i]);
+                    	}
+                    	
+                    	}
+
+                }            
+        );
+        
 		panel.add(textField);
 
 		JLabel lblStoff = new JLabel("Zugabe");
@@ -359,24 +405,31 @@ public class Menu extends JFrame implements MouseListener {
 		lblZugabedatum.setBounds(10, 204, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblZugabedatum);
 
+		//TODO zeile hinzufügen überarbeiten!
 		btnSenden.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				// Increment the Index Number
-				TableLine.incrementIndexValue(tabbedPane.getSelectedIndex());
-				String[] dateAndTime = new String[2];
+				
+				String[] data = new String[6];
+				
+				data[0] = textField.getSelectedItem().toString();
+				data[1] = textField_3.getSelectedItem().toString();
+				data[2] = comboBox.getText();
 
 				// Set the new table column line
 				if (textField_2.getText().toString().equals("")) {
-					dateAndTime[0] = dateFormat.format(date);
+					data[3] = dateFormat.format(date);
 				} else {
-					dateAndTime[0] = textField_2.getText().toString();
+					data[3] = textField_2.getText().toString();
 				}
 				if (textField_1.getText().toString().equals("")) {
-					dateAndTime[1] = timeFormat.format(date);
+					data[4] = timeFormat.format(date);
 				} else {
-					dateAndTime[1] = textField_1.getText().toString();
+					data[4] = textField_1.getText().toString();
 				}
-				addRowData(dateAndTime[0], dateAndTime[1]);
+				//addRowData(dateAndTime[0], dateAndTime[1]);
+				data[5] = textArea.getText();
+				
+				addRowData(data);
 			}
 		});
 
@@ -410,11 +463,72 @@ public class Menu extends JFrame implements MouseListener {
 	/**
 	 * Adds new row elements
 	 */
-	public void addRowData(String date, String time) {
+	//TODO addrowdata überarbeiten für neue tabledata konzept
+	public void addRowData(String[] data) {
+		
+		String message = "!appendTableLine";
+		
+		for(int i = 0; i < data.length; i++){
+			message += " " + data[i];
+		}
+		
+		System.out.println("transmitted message: " + message);
+		Main.ct.transmit(message);
+		
+		/*for(int i = 0; i < tables.size(); i++){
+			if(data[0].equals(tables.get(i).getTableName())){
+				tables.get(i).addLine(data);
+			}
+		}*/
+		
+		/*Vector<String> vec = new Vector<String>();
+		vec.add(data[3]);
+		vec.add(data[4]);
+		vec.add(Client.currentUserName);
+		
+		for(int i = 0; i < tables.size(); i++){
+			if(tables.get(i).equals(data[0])){
+				for(int x = 0; x < tables.get(i).getColumnArray().length; x++){
+					if(!tables.get(i).getColumnArray()[x].equals("Datum") && !tables.get(i).getColumnArray()[x].equals("Uhrzeit") && !tables.get(i).getColumnArray()[x].equals("Name") && !tables.get(i).getColumnArray()[x].equals("Begründung")){
+						if(data[1].equals(tables.get(i).getColumnArray()[x])){
+							vec.add(data[2]);
+						}else{
+							vec.add("");
+						}
+					}
+				}
+			}
+		}
+		
+		vec.add(data[5]);
+		
+		Object[] obj = new Object[] {data[3], data[4],
+				Client.currentUserName, comboBox.getText().toString(), textField.getSelectedItem().toString(),
+				textField_3.getSelectedItem().toString(), textArea.getText().toString() };
+		
+		Object[] row;
 		models.get(tabbedPane.getSelectedIndex())
-				.addRow(new Object[] { TableLine.getIndexValue(tabbedPane.getSelectedIndex()), date, time,
-						Client.currentUserName, comboBox.getText().toString(), textField.getSelectedItem().toString(),
-						textField_3.getSelectedItem().toString(), textArea.getText().toString() });
+				.addRow(vec);*/
+		
+		
+	}
+	
+	public void fillRowData(String[] data){
+		
+		Vector<String> vec = new Vector<String>();
+		
+		/*vec.addElement(id);
+		vec.addElement(datum);
+		vec.addElement(uhrzeit);
+		vec.addElement(name);*/
+		
+		for(int i = 0; i < data.length; i++){
+			vec.addElement(data[i]);
+		}
+		
+		//vec.addElement(begrundung);
+		
+		models.get(models.size()-1).addRow(vec);
 	}
 
 	/**
@@ -422,6 +536,7 @@ public class Menu extends JFrame implements MouseListener {
 	 */
 	public void fillTree(String[] list) {
 		tableNames = new ArrayList<String>();
+		tableFolderList = new ArrayList<String>();
 		this.contentPane.remove(tree);
 		this.top.removeAllChildren();
 		DefaultMutableTreeNode node = null;
@@ -432,6 +547,7 @@ public class Menu extends JFrame implements MouseListener {
 		for (int i = 1; i < list.length; i++) {
 			if (list[i].equals("*")) {
 				node = new DefaultMutableTreeNode(list[i + 1]);
+				tableFolderList.add(list[i + 1]);
 				int whileIterator = i + 2;
 				whileBool = true;
 				while (whileBool) {
@@ -456,32 +572,40 @@ public class Menu extends JFrame implements MouseListener {
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
 		}
+		System.out.println("tableFolderList size: " + tableFolderList.size());
+		
+		for(int i = 0; i < tableFolderList.size(); i++){
+			System.out.println("tablefolder entry: " + tableFolderList.get(i));
+		}
 		
 		String sexy = "";
 		for(int i = 0; i < tableNames.size(); i++){
 			sexy += " " + tableNames.get(i);
 		}
 		
-		System.out.println("tablename length: " + tableNames.size() + "values:" + sexy);
+		System.out.println("tablename length: " + tableNames.size() + " values:" + sexy);
+		if(!tableNames.get(0).startsWith("highelo.txt")){
+			Main.ct.transmit("!requestTableAllData");
+		}
 		
-		updateTabledata();
+		
 	}
 
-	private void updateTabledata() {
+	/*private void updateTabledata(String tablename) {
 		
 		for(int i = 0; i < tableNames.size(); i++){
 			Main.ct.transmit("!requestTableData " + tableNames.get(i));
 		}
 		System.out.println("tabledata requested for " + tableNames.size() + " tables.");
 		
-	}
+	}*/
 
 	/**
 	 * Use this function after you changed values in the ListManager class. It
 	 * repaints the table and deletes all data. SAVE it before call this
 	 * function.
 	 */
-	public static void columnSettings(JTable table) {
+	/*public static void columnSettings(JTable table) {
 		// Main Table Routine
 		for (int i = 0; i < ListManager.getColumnNameCount(); i++) {
 			if (tableColumnModel != null) {
@@ -500,7 +624,7 @@ public class Menu extends JFrame implements MouseListener {
 		} catch (NullPointerException e1) {
 			e1.printStackTrace();
 		}
-	}
+	}*/
 
 	/**
 	 * Javadoc nicht vergessen
@@ -508,6 +632,7 @@ public class Menu extends JFrame implements MouseListener {
 	 * @param userlist
 	 *            the userlist
 	 */
+	
 	public static void updateUserList(String[] userlist) {
 		onlineUsers = new ArrayList<String>();
 		ArrayList<String> admins = new ArrayList<String>();
@@ -554,6 +679,18 @@ public class Menu extends JFrame implements MouseListener {
 		}
 
 	}
+	
+	public void resetTableData(){
+		System.out.println("resetted table data!");
+		tables = new ArrayList<TableData>();
+		textField.removeAllItems();
+		testArray = new ArrayList<String>();
+		tableDataArray = new ArrayList<ListManager>();
+		
+		
+		
+		Main.ct.transmit("!requestTableAllData");
+	}
 
 	/**
 	 * javadoc vergessen
@@ -581,15 +718,44 @@ public class Menu extends JFrame implements MouseListener {
 		// }
 
 		if (selRow != -1) {
+			
 			if (e.getButton() == 1 && e.getClickCount() == 2 && treeNode.isLeaf()) {
+				
+				// add this table element to the view
+				String tabName = selPath.getLastPathComponent().toString();
+				
+				String foldername = selPath.getPathComponent(1).toString();
+				System.out.println("foldername: " + foldername);
+				
 				// --------------- DOUBLE CLICK HANDLER --------------- //
 				// Create a new Tab Element w/ models
+				if(models.size() != 0){
+					models.remove(0);
+				}
+				
+				if(this.tabbedPane.getTabCount() != 0){
+					this.tabbedPane.remove(0);
+				}
+				
+				if(tableDynamic.size() != 0){
+					tableDynamic.remove(0);
+				}
+					
 				models.add(new DefaultTableModel());
-
-				for (int i = 0; i < 8; ++i) {
-					models.get(tableDynamic.size()).addColumn(ListManager.getColumnNameElement(i));
+				
+				for(int i = 0; i < tableDataArray.size(); i++){
+					
+					System.out.println("truecheck on right tab open: " + tableDataArray.get(i).tableName.equals(foldername.toLowerCase() + "#" + tabName.toLowerCase()) + " with tabledataarray result: " + tableDataArray.get(i).tableName + " compared with: " + foldername.toLowerCase() + "#" + tabName.toLowerCase());
+					if(tableDataArray.get(i).tableName.equals(foldername.toLowerCase() + "#" + tabName.toLowerCase())){
+						for (int ix = 0; ix < tableDataArray.get(i).columnNames.size(); ++ix) {
+							models.get(tableDynamic.size()).addColumn(tableDataArray.get(i).getColumnNameElement(ix));
+						}
+					}
+					
 				}
 
+				tabIndicator.add(foldername.toLowerCase() + "#" + tabName.toLowerCase());
+				
 				this.scrollPaneDynamic.add(new JScrollPane());
 				// this.tableDynamic.add(new JTable(200,
 				// ListManager.getColumnNameCount()));
@@ -598,14 +764,34 @@ public class Menu extends JFrame implements MouseListener {
 				// initialize this tab element
 				Menu.tableDynamic.get(tableDynamic.size() - 1).setFillsViewportHeight(true);
 				Menu.tableDynamic.get(tableDynamic.size() - 1).setRowHeight(25);
-				// add this table element to the view
-				this.tabbedPane.addTab(selPath.getLastPathComponent().toString(), null,
+				
+				this.tabbedPane.addTab(tabName, null,
 						scrollPaneDynamic.get(tableDynamic.size() - 1), null);
 				this.scrollPaneDynamic.get(tableDynamic.size() - 1)
 						.setViewportView(tableDynamic.get(tableDynamic.size() - 1));
 				// tableColumnModel = tableHead.getColumnModel();
 
-				Menu.columnSettings(tableDynamic.get(tableDynamic.size() - 1));
+				System.out.println("tables size:" + tables.size());
+				
+				for(int i = 0; i < tables.size(); i++){
+					
+					System.out.println("tablename: " + foldername.toLowerCase() + "#" + tabName.toLowerCase() + "comparing string in list: " + tables.get(i).getTableName());
+					if(tables.get(i).getTableName().equals(foldername.toLowerCase() + "#" + tabName.toLowerCase())){
+						String[] testData = new String[tables.get(i).getColumnCount()];
+						
+						for(int y = 0; y < testData.length; y++){
+							testData[y] = Integer.toString(y);
+						}
+						
+						for(int x = 0; x < tables.get(i).getLineCount(); x++){
+							fillRowData(tables.get(i).getLineArray(x));
+						}
+					}
+				}
+				
+				
+				//Menu.columnSettings(tableDynamic.get(tableDynamic.size() - 1));
+				
 			}
 		}
 	}
@@ -649,7 +835,56 @@ public class Menu extends JFrame implements MouseListener {
 
 	public void updateTableData(String tableData) {
 		
+		System.out.println("tabledata string: " + tableData);
 		tables.add(new TableData(tableData));
-		System.out.println("Table: " + tables.get(0).getTableName() + "column 2 name: " + tables.get(0).getColumnName(2) + "first line second column data: " + tables.get(0).getData(1, tables.get(0).getColumnName(2)));
+		System.out.println("tables size: " + tables.size() + " last table name: " + tables.get(tables.size() - 1).getTableName() + " table last column name: " + tables.get(tables.size() -1).getColumnName(tables.get(tables.size()-1).getColumnCount()) + " first line last column data: " + tables.get(tables.size()-1).getData(1, tables.get(tables.size() -1).getColumnName(tables.get(tables.size()-1).getColumnCount())));
+		//System.out.println("Table: " + tables.get(tables.size()-1).getTableName() + " 2nd column name: " + tables.get(tables.size()).getColumnName(2) + " first line second column data: " + tables.get(0).getData(1, tables.get(tables.size()).getColumnName(2)));
+		
+		ListManager lm = new ListManager();
+		lm.tableName = tables.get(tables.size()-1).getTableName();
+		lm.columnNames = tables.get(tables.size()-1).getTableColumnStringArray();
+		
+		System.out.println("lm column size: " + lm.columnNames.size() + " lm table name: " + lm.tableName);
+		
+		//for(int i = 0; i < tables.get)
+		
+		testArray.add(lm.tableName);
+		tableDataArray.add(lm);
+		
+		
+		String foldernode = "DHR_1";
+		String tabName = "Beize";
+		
+		if(tableDataArray.size() == 1){
+			System.out.println("TDA#1: " + tableDataArray.get(0).tableName);
+			
+			System.out.println("TESTA#1: " + testArray.get(0));
+		}
+		
+		if(tableDataArray.size() == 2){
+			System.out.println("TDA#1: " + tableDataArray.get(0).tableName);
+			System.out.println("TDA#2: " + tableDataArray.get(1).tableName);
+			
+			System.out.println("TESTA#1: " + testArray.get(0));
+			System.out.println("TESTA#2: " + testArray.get(1));
+		}
+		
+		
+		for(int i = 0; i < tables.size(); i++){
+			tableNames.add(tables.get(i).getTableName());
+		}
+		
+		
+		textField.addItem(lm.tableName);
+		
+		/*for(int i = 0; i < tableDataArray.size(); i++){
+			System.out.println("the comparison of strings: " + tableDataArray.get(i).tableName.equals(foldernode.toLowerCase() + "#" + tabName.toLowerCase()) + " between tabname: " + foldernode.toLowerCase() + "#" + tabName.toLowerCase() + " and the lm array namevar: " + tableDataArray.get(i).tableName);
+			
+			if(tableDataArray.get(i).tableName.equals(foldernode.toLowerCase() + "#" + tabName.toLowerCase())){
+				System.out.println(" true triggered!!!!!");
+			}
+		}*/
+		
 	}
+	
 }

@@ -1,4 +1,3 @@
-
 package data;
 
 import java.util.ArrayList;
@@ -10,7 +9,9 @@ public class ListManager {
 	/**
 	 * The column ArrayList String
 	 */
-	static ArrayList<String> columnNames = new ArrayList<String>();
+	public ArrayList<String> columnNames = new ArrayList<String>();
+	
+	public String tableName = new String();
 
 	/**
 	 * The column ArrayList Width
@@ -24,15 +25,7 @@ public class ListManager {
 
 	// -------------------------- Definition Done -------------------------- //
 
-	public static void firstCall() {
-		columnNames.add("#ID");
-		columnNames.add("Datum");
-		columnNames.add("Uhrzeit");
-		columnNames.add("Name");
-		columnNames.add("Stoff");
-		columnNames.add("Zugabe");
-		columnNames.add("Einheit");
-		columnNames.add("Begründung");
+	public void firstCall() {
 		
 		for (int i = 0; i < columnNames.size(); ++i) {
 			columnWidth.add(50);
@@ -56,7 +49,7 @@ public class ListManager {
 	 * @param name
 	 *            the new table column header name
 	 */
-	public static void addColumnName(String name) {
+	public void addColumnName(String name) {
 		columnNames.add(name);
 	}
 
@@ -65,7 +58,7 @@ public class ListManager {
 	 * 
 	 * @return the table column size
 	 */
-	public static int getColumnNameCount() {
+	public int getColumnNameCount() {
 		return columnNames.size();
 	}
 
@@ -76,7 +69,7 @@ public class ListManager {
 	 *            the parameter value of the array
 	 * @return the element of the list
 	 */
-	public static String getColumnNameElement(int i) {
+	public String getColumnNameElement(int i) {
 		return columnNames.get(i);
 	}
 }

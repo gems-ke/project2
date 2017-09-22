@@ -13,6 +13,8 @@ import main.Main;
 import data.WinRegistry;
 
 public class InterfaceThread extends Thread {
+	
+	public static String currentUser = new String();
 
 	static WinRegistry regedit = new WinRegistry();
 
@@ -102,7 +104,8 @@ public class InterfaceThread extends Thread {
 
 	private void mainState(String currentUser) {
 
-		ListManager.firstCall();
+		this.currentUser = currentUser;
+		//ListManager.firstCall();
 		mainmenu = new Menu(currentUser);
 		mainmenu.setTitle("Benchmarking v. " + version + " - " + currentUser);
 		mainmenu.setVisible(true);

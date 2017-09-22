@@ -272,6 +272,11 @@ public class Client extends JFrame {
 			Thread popup = new Thread(new Popup("Eintrag hinzugef�gt!"));
 		}
 		
+		if (response.startsWith("!tableResetData")) {
+			System.out.println("tableData update plus reset gets triggered for table");
+			Main.it.mainmenu.resetTableData();
+		}
+		
 		if (response.startsWith("!tableData")) {
 			System.out.println("tableData update gets triggered for table");
 			Main.it.mainmenu.updateTableData(response);
