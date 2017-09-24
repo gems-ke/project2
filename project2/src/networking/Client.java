@@ -282,6 +282,11 @@ public class Client extends JFrame {
 			Main.it.mainmenu.updateTableData(response);
 		}
 		
+		if (response.startsWith("!finishedTableUpdate")) {
+			System.out.println("tableData update finished response triggered");
+			Main.it.mainmenu.currentTabRefresh();
+		}
+		
 		if (response.startsWith("!userAddSuccess")) {
 			Thread popup = new Thread(new Popup("Benutzer erfolgreich hinzugefügt!"));
 		}

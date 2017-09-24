@@ -63,6 +63,10 @@ public class Menu extends JFrame implements MouseListener {
 	 * Necessary serial ID
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static int firstrun = 1;
+	
+	private static String currentTable = "";
 	/**
 	 * Menu Bar + Menu Entries
 	 */
@@ -121,6 +125,7 @@ public class Menu extends JFrame implements MouseListener {
 
 	protected static UserControl userControl = null;
 	protected static TableControl tableControl = null;
+	protected static BegrundungsControl begrundControl = null;
 	public JComboBox textField;
 
 	private static JTextArea textAreaUser;
@@ -199,10 +204,16 @@ public class Menu extends JFrame implements MouseListener {
 		JSeparator separator = new JSeparator();
 		menuEntry3.add(separator);
 
-		JMenuItem mntmStatistik = new JMenuItem("Statistik...");
+		JMenuItem mntmStatistik = new JMenuItem("Statistik");
 		menuEntry3.add(mntmStatistik);
 		JMenuItem mntmKostenrechnung = new JMenuItem("Kostenrechnung");
 		menuEntry3.add(mntmKostenrechnung);
+		
+		menuEntry3.add(separator);
+		
+		JMenuItem mntmBergrundung = new JMenuItem("Begründungen bearbeiten");
+		menuEntry3.add(mntmBergrundung);
+		
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 
 		// --------------- MENU ITEM ON CLICK --------------- //
@@ -210,6 +221,14 @@ public class Menu extends JFrame implements MouseListener {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				// TODO einfaches neustarten des programms nicht so einfach
 				// mÃ¶glich
+			}
+		});
+		
+		mntmBergrundung.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				if (begrundControl == null) {
+					begrundControl = new BegrundungsControl();
+				}
 			}
 		});
 
@@ -513,6 +532,86 @@ public class Menu extends JFrame implements MouseListener {
 		
 	}
 	
+	public void currentTabRefresh(){
+		
+		if(this.tabbedPane.getTabCount() != 0){
+		
+				
+				this.tabbedPane.remove(0);
+				// add this table element to the view
+				
+				// --------------- DOUBLE CLICK HANDLER --------------- //
+				// Create a new Tab Element w/ models
+				if(models.size() != 0){
+					models.remove(0);
+				}
+				
+				if(tableDynamic.size() != 0){
+					tableDynamic.remove(0);
+				}
+					
+				models.add(new DefaultTableModel());
+				
+				for(int i = 0; i < tableDataArray.size(); i++){
+					
+					System.out.println("truecheck on right tab open: " + tableDataArray.get(i).tableName.equals(currentTable) + " with tabledataarray result: " + tableDataArray.get(i).tableName + " compared with: " + currentTable);
+					if(tableDataArray.get(i).tableName.equals(currentTable)){
+						for (int ix = 0; ix < tableDataArray.get(i).columnNames.size(); ++ix) {
+							models.get(tableDynamic.size()).addColumn(tableDataArray.get(i).getColumnNameElement(ix));
+						}
+					}
+					
+				}
+
+				tabIndicator.add(currentTable);
+				
+				this.scrollPaneDynamic.add(new JScrollPane());
+				// this.tableDynamic.add(new JTable(200,
+				// ListManager.getColumnNameCount()));
+				Menu.tableDynamic.add(new JTable(models.get(tableDynamic.size())));
+
+				// initialize this tab element
+				Menu.tableDynamic.get(tableDynamic.size() - 1).setFillsViewportHeight(true);
+				Menu.tableDynamic.get(tableDynamic.size() - 1).setRowHeight(25);
+				
+				System.out.println("currentTable: " + currentTable);
+				String[] tabNameR = currentTable.split("#");
+				String tabName = tabNameR[1].substring(0, 1).toUpperCase() + tabNameR[1].substring(1);
+				
+				this.tabbedPane.addTab(tabName, null,
+						scrollPaneDynamic.get(tableDynamic.size() - 1), null);
+				this.scrollPaneDynamic.get(tableDynamic.size() - 1)
+						.setViewportView(tableDynamic.get(tableDynamic.size() - 1));
+				// tableColumnModel = tableHead.getColumnModel();
+
+				System.out.println("tables size:" + tables.size());
+				
+				for(int i = 0; i < tables.size(); i++){
+					
+					System.out.println("tablename: " + currentTable + "comparing string in list: " + tables.get(i).getTableName());
+					if(tables.get(i).getTableName().equals(currentTable)){
+						
+						currentTable = tables.get(i).getTableName();
+						
+						String[] testData = new String[tables.get(i).getColumnCount()];
+						
+						for(int y = 0; y < testData.length; y++){
+							testData[y] = Integer.toString(y);
+						}
+						
+						for(int x = 0; x < tables.get(i).getLineCount(); x++){
+							fillRowData(tables.get(i).getLineArray(x));
+						}
+					}
+				}
+		}
+				
+				
+				//Menu.columnSettings(tableDynamic.get(tableDynamic.size() - 1));
+				
+		
+	}
+	
 	public void fillRowData(String[] data){
 		
 		Vector<String> vec = new Vector<String>();
@@ -585,7 +684,10 @@ public class Menu extends JFrame implements MouseListener {
 		
 		System.out.println("tablename length: " + tableNames.size() + " values:" + sexy);
 		if(!tableNames.get(0).startsWith("highelo.txt")){
-			Main.ct.transmit("!requestTableAllData");
+			if(firstrun == 1){
+				Main.ct.transmit("!requestTableAllData");
+				firstrun = 0;
+			}
 		}
 		
 		
@@ -687,8 +789,6 @@ public class Menu extends JFrame implements MouseListener {
 		testArray = new ArrayList<String>();
 		tableDataArray = new ArrayList<ListManager>();
 		
-		
-		
 		Main.ct.transmit("!requestTableAllData");
 	}
 
@@ -756,6 +856,8 @@ public class Menu extends JFrame implements MouseListener {
 
 				tabIndicator.add(foldername.toLowerCase() + "#" + tabName.toLowerCase());
 				
+				currentTable = foldername.toLowerCase() + "#" + tabName.toLowerCase();
+				
 				this.scrollPaneDynamic.add(new JScrollPane());
 				// this.tableDynamic.add(new JTable(200,
 				// ListManager.getColumnNameCount()));
@@ -777,6 +879,8 @@ public class Menu extends JFrame implements MouseListener {
 					
 					System.out.println("tablename: " + foldername.toLowerCase() + "#" + tabName.toLowerCase() + "comparing string in list: " + tables.get(i).getTableName());
 					if(tables.get(i).getTableName().equals(foldername.toLowerCase() + "#" + tabName.toLowerCase())){
+						
+						
 						String[] testData = new String[tables.get(i).getColumnCount()];
 						
 						for(int y = 0; y < testData.length; y++){
