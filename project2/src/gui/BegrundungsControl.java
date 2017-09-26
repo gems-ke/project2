@@ -103,7 +103,7 @@ public class BegrundungsControl extends JFrame {
 			getContentPane().add(contentPanel, BorderLayout.CENTER);
 			contentPanel.setLayout(null);
 
-			JLabel lblNameFrDen = new JLabel("Begründung hinzufügen (Die Zeichen + und - sind nicht erlaubt!):");
+			JLabel lblNameFrDen = new JLabel("Begründung hinzufügen:");
 			lblNameFrDen.setBounds(10, 11, 264, 20);
 			contentPanel.add(lblNameFrDen);
 
