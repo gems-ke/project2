@@ -23,6 +23,12 @@ import java.awt.event.WindowEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Button;
+import java.awt.List;
+import javax.swing.JComboBox;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class BegrundungsControl extends JFrame {
 	
@@ -44,35 +50,25 @@ public class BegrundungsControl extends JFrame {
 		this.setVisible(true);
 		this.setAlwaysOnTop(true);
 		
-		TextArea textArea = new TextArea();
-		textArea.setEditable(false);
-		textArea.setBounds(10, 31, 267, 421);
-		contentPane.add(textArea);
-		
-		TextArea textArea_1 = new TextArea();
-		textArea_1.setEditable(false);
-		textArea_1.setBounds(408, 31, 267, 421);
-		contentPane.add(textArea_1);
-		
-		JLabel lblNewLabel = new JLabel("Aktiv");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel.setBounds(126, 11, 30, 14);
-		contentPane.add(lblNewLabel);
+		JLabel lblAktiv = new JLabel("Aktiv");
+		lblAktiv.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblAktiv.setBounds(113, 11, 30, 14);
+		contentPane.add(lblAktiv);
 		
 		JLabel lblInaktiv = new JLabel("Inaktiv");
 		lblInaktiv.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblInaktiv.setBounds(522, 11, 41, 14);
+		lblInaktiv.setBounds(537, 11, 41, 14);
 		contentPane.add(lblInaktiv);
 		
-		Button button = new Button(">>");
-		button.setFont(new Font("Dialog", Font.PLAIN, 15));
-		button.setBounds(310, 117, 49, 47);
-		contentPane.add(button);
+		Button buttonDeactivate = new Button(">>");
+		buttonDeactivate.setFont(new Font("Dialog", Font.PLAIN, 15));
+		buttonDeactivate.setBounds(318, 170, 49, 47);
+		contentPane.add(buttonDeactivate);
 		
-		Button button_1 = new Button("+");
-		button_1.setFont(new Font("Dialog", Font.PLAIN, 15));
-		button_1.setBounds(310, 170, 49, 47);
-		button_1.addActionListener(new java.awt.event.ActionListener() {
+		Button buttonAdd = new Button("+");
+		buttonAdd.setFont(new Font("Dialog", Font.PLAIN, 15));
+		buttonAdd.setBounds(318, 223, 49, 47);
+		buttonAdd.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				if (newBegrundungDialog == null && newBegrundungDialog == null) {
 					setAlwaysOnTop(false);
@@ -80,12 +76,32 @@ public class BegrundungsControl extends JFrame {
 				}
 			}
 		});
-		contentPane.add(button_1);
+		contentPane.add(buttonAdd);
 		
-		Button button_2 = new Button("<<");
-		button_2.setFont(new Font("Dialog", Font.PLAIN, 15));
-		button_2.setBounds(310, 223, 49, 47);
-		contentPane.add(button_2);
+		Button buttonActivate = new Button("<<");
+		buttonActivate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		buttonActivate.setFont(new Font("Dialog", Font.PLAIN, 15));
+		buttonActivate.setBounds(318, 276, 49, 47);
+		contentPane.add(buttonActivate);
+		
+		List listActive = new List();
+		listActive.setBounds(10, 32, 235, 420);
+		contentPane.add(listActive);
+		
+		List listInactive = new List();
+		listInactive.setBounds(440, 31, 235, 420);
+		contentPane.add(listInactive);
+		
+		JComboBox comboBoxTableSelect = new JComboBox();
+		comboBoxTableSelect.setBounds(261, 88, 163, 20);
+		contentPane.add(comboBoxTableSelect);
+		
+		JLabel lblTabelle = DefaultComponentFactory.getInstance().createLabel("Tabelle");
+		lblTabelle.setBounds(325, 65, 34, 14);
+		contentPane.add(lblTabelle);
 	}
 	
 	public class NewBegrundungDialog extends JDialog {
