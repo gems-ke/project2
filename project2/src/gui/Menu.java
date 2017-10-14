@@ -92,6 +92,8 @@ public class Menu extends JFrame implements MouseListener {
 	
 	public static ArrayList<String> tableNames;
 	ArrayList<TableData> tables = new ArrayList<TableData>();
+	
+	public static String currentBegrundungsString = "";
 
 	// Create the nodes.
 	public static DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
@@ -125,7 +127,7 @@ public class Menu extends JFrame implements MouseListener {
 
 	protected static UserControl userControl = null;
 	protected static TableControl tableControl = null;
-	protected static BegrundungsControl begrundControl = null;
+	public static BegrundungsControl begrundControl = new BegrundungsControl();
 	public JComboBox textField;
 
 	private static JTextArea textAreaUser;
@@ -144,7 +146,7 @@ public class Menu extends JFrame implements MouseListener {
 	private JTextField textField_2;
 	ArrayList<String> stoffe = new ArrayList<String>();
 	JTextField comboBox = null;
-	JTextArea textArea = new JTextArea();
+	JComboBox textArea = new JComboBox();
 
 	// TIME AND DATE VAR STUFF
 	DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -226,9 +228,7 @@ public class Menu extends JFrame implements MouseListener {
 		
 		mntmBergrundung.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				if (begrundControl == null) {
-					begrundControl = new BegrundungsControl();
-				}
+					begrundControl.BegrundungsControlCreate();
 			}
 		});
 
@@ -294,6 +294,7 @@ public class Menu extends JFrame implements MouseListener {
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
 		Main.ct.transmit("!requestUserExistingUpdate");
+		Main.ct.transmit("!requestBegrundungData");
 
 		// auskommentieren, wenn du kein kevin bist
 		// simulateTransmissions();
@@ -370,6 +371,22 @@ public class Menu extends JFrame implements MouseListener {
                     		textField_3.addItem(columnNames[i]);
                     	}
                     	
+                    	
+                    	textArea.removeAllItems();
+                    	
+                    	for(int i = 0; i < begrundControl.begrundDataList.size(); i++){
+                    		
+                    		if(begrundControl.begrundDataList.get(i).getTableName().equals("global") || begrundControl.begrundDataList.get(i).getTableName().equals(textField.getSelectedItem().toString())){
+                    			for(int c = 0; c < begrundControl.begrundDataList.get(i).getActives().size(); c++){
+                            		textArea.addItem(begrundControl.begrundDataList.get(i).getActives().get(c));
+                    			}
+                        	}
+                    		
+                    		System.out.println("begrunds value: " + begrundControl.begrundDataList.get(i).getTableName() + " compare to combobox value: " + textField.getSelectedItem().toString() + " result: " + begrundControl.begrundDataList.get(i).getTableName().equals(textField.getSelectedItem().toString()));
+                    		
+                    		
+                    	}
+                    	
                     	}
 
                 }            
@@ -388,7 +405,7 @@ public class Menu extends JFrame implements MouseListener {
 		lblBegrndung.setBounds(10, 250, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblBegrndung);
 
-		textArea.setBounds(10, 266, (int) (panel.getWidth() * 0.9), 100);
+		textArea.setBounds(10, 266, (int) (panel.getWidth() * 0.9), 20);
 		panel.add(textArea);
 
 		JLabel lblEinheit = new JLabel("Stoff");
@@ -446,7 +463,7 @@ public class Menu extends JFrame implements MouseListener {
 					data[4] = textField_1.getText().toString();
 				}
 				//addRowData(dateAndTime[0], dateAndTime[1]);
-				data[5] = textArea.getText();
+				data[5] = textArea.getSelectedItem().toString();
 				
 				addRowData(data);
 			}
@@ -785,7 +802,6 @@ public class Menu extends JFrame implements MouseListener {
 	public void resetTableData(){
 		System.out.println("resetted table data!");
 		tables = new ArrayList<TableData>();
-		textField.removeAllItems();
 		testArray = new ArrayList<String>();
 		tableDataArray = new ArrayList<ListManager>();
 		

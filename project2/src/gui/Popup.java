@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -13,10 +14,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.Toolkit;
 
 public class Popup extends JFrame implements Runnable{
 
 	private JPanel contentPane;
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	/**
 	 * Launch the application.
@@ -26,7 +29,8 @@ public class Popup extends JFrame implements Runnable{
 	 * Create the frame.
 	 */
 	public Popup(String message) {
-		setBounds(100, 100, 333, 195);
+		setBounds((int)(screenSize.getWidth()/2)-150, (int)(screenSize.getHeight()/2)-100, 333, 195);
+		setAlwaysOnTop(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

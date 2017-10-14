@@ -298,5 +298,10 @@ public class Client extends JFrame {
 		if (response.startsWith("!userAddError")) {
 			Thread popup = new Thread(new Popup("Benutzererstellung ERROR!"));
 		}
+		
+		if(response.startsWith("!begrunddata")){
+			Main.it.mainmenu.currentBegrundungsString = response;
+			Main.it.mainmenu.begrundControl.fillBegrundungsDataExternal(Main.it.mainmenu.currentBegrundungsString);
+		}
 	}
 }
