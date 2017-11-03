@@ -24,6 +24,8 @@ public class Client extends JFrame {
 	public static String currentUserName = "nul";
 	public static String currentUserStatus = "nul";
 	public static boolean isConnected = false;
+	
+	private static Thread popup;
 
 	public Client(String host) {
 
@@ -254,8 +256,18 @@ public class Client extends JFrame {
 		
 		if (response.startsWith("!updateDirectory")) {
 			System.out.println("updatedirectory gets triggered!");
-			String[] userlist = response.split(" ");
-			Main.it.mainmenu.fillTree(userlist);
+			String[] directoryStringRaw = response.split("#");
+			directoryStringRaw[0] = directoryStringRaw[0] + "#";
+			String[] directoryString = directoryStringRaw[0].split(" ");
+			Main.it.mainmenu.setTableMetaData(directoryString[1]);
+			
+			System.out.println("directorystring : " + directoryStringRaw[0]);
+			Main.it.mainmenu.fillTree(directoryString);
+			Main.it.mainmenu.setdirectorystring(directoryString);
+		}
+		
+		if(response.startsWith("!substancerenamesuccess")){
+			Thread popup = new Thread(new Popup("Stoff erfolgreich umbenannt."));
 		}
 		
 		if (response.startsWith("!updateExistingUsers")) {
@@ -269,7 +281,12 @@ public class Client extends JFrame {
 		}
 		
 		if (response.startsWith("!appendedLine")) {
-			Thread popup = new Thread(new Popup("Eintrag hinzugef�gt!"));
+			//TODO proper spam handling (no multipopup)
+			if(popup != null){
+				popup = new Thread(new Popup("Eintrag hinzugef�gt!"));
+			}else{
+				popup = new Thread(new Popup("Eintrag hinzugef�gt!"));
+			}
 		}
 		
 		if (response.startsWith("!tableResetData")) {
@@ -280,6 +297,11 @@ public class Client extends JFrame {
 		if (response.startsWith("!tableData")) {
 			System.out.println("tableData update gets triggered for table");
 			Main.it.mainmenu.updateTableData(response);
+		}
+		
+		if (response.startsWith("!hiddenData")) {
+			System.out.println("hiddenData update gets triggered for table");
+			Main.it.mainmenu.updateHiddenData(response);
 		}
 		
 		if (response.startsWith("!finishedTableUpdate")) {
@@ -302,6 +324,14 @@ public class Client extends JFrame {
 		if(response.startsWith("!begrunddata")){
 			Main.it.mainmenu.currentBegrundungsString = response;
 			Main.it.mainmenu.begrundControl.fillBegrundungsDataExternal(Main.it.mainmenu.currentBegrundungsString);
+		}
+		
+		if(response.startsWith("!deleterequestsuccess")){
+			Thread popup = new Thread(new Popup("Anfrage versendet!"));
+		}
+		
+		if(response.startsWith("!tableCreateDuplicate")){
+			Thread popup = new Thread(new Popup("Es existiert ein Bad mit diesem Namen in dieser Halle."));
 		}
 	}
 }

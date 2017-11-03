@@ -12,10 +12,11 @@ public class TableData {
 	//größe abfragen
 	//addrows und columns nach doppelklick
 
-	public TableData(String tableDataMessage) {
+	public TableData(String tableDataMessage, ArrayList<String> substanceshidden, String currentUserStatus) {
 		convert(tableDataMessage);
 	}
 	
+
 	public ArrayList<String> getTableColumnStringArray(){
 		return columnNames;
 	}
@@ -26,25 +27,21 @@ public class TableData {
 		this.tableName = tableDataMessage.split("&")[1].replaceAll("\\*", "");
 
 		String[] columnDataArray = columnData.split("\\*");
-		System.out.println("cda lenght: " + columnDataArray.length);
 		
 		for(int i = 0; i < columnDataArray.length; i++){
 			columnNames.add(columnDataArray[i]);
 		}
 		
-		System.out.println("cn size: " + columnNames.size());
 
 		TableLine line;
 		String[] lineData;
 		for (int i = 1; i < tableData.length; i++) {
-			System.out.println("tabledata i: " + tableData[i]);
 			lineData = tableData[i].split("\\*");
 			line = new TableLine(columnDataArray);
 			line.setEntry(lineData);
 			lineList.add(line);
 		}
 		
-		System.out.println("linelist size: " + lineList.size());
 	}
 
 	public String getTableName() {
@@ -55,7 +52,6 @@ public class TableData {
 		String columnName = "";
 		
 		try{
-			System.out.println("columnnumber size: " + columnNumber + "and " + columnNames.size());
 			columnName = columnNames.get(columnNumber-1);
 		}catch(ArrayIndexOutOfBoundsException exception){
 			columnName = "invalid!";
@@ -69,7 +65,6 @@ public class TableData {
 		
 		int columnNumber = -1;
 		for(int i = 0; i < columnNames.size(); i++){
-			System.out.println("comparing columnNames: " + columnNames.get(i) + " to input: " + column);
 			if(columnNames.get(i).equals(column)){
 				columnNumber = i;
 			}
@@ -120,5 +115,9 @@ public class TableData {
 		tl.setEntry(newLine);
 		
 		lineList.add(tl);		
+	}
+	
+	public void deleteLine(int id){
+		lineList.remove(id);
 	}
 }

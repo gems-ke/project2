@@ -1,20 +1,30 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import main.Main;
 
@@ -28,11 +38,17 @@ public class TableControl extends JDialog {
 	private NewTableDialog newTableDialog = null;
 	private JPanel panel = new JPanel();
 	private JTree tree = null;
+	private JScrollPane scroll = null;
+	DefaultMutableTreeNode top;
 
 	/**
 	 * Create the dialog.
+	 * @param substanceshidden 
 	 */
-	public TableControl() {
+	public TableControl(DefaultMutableTreeNode top, ArrayList<String> halls, ArrayList<String> baths, ArrayList<String> substances, ArrayList<String> bathshidden, ArrayList<String> substanceshidden) {
+		
+		this.top = top;
+		tree = new JTree(this.top);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 		setTitle("Tabellenverwaltung - Tabelle: TESTNAME.TXT");
@@ -45,14 +61,6 @@ public class TableControl extends JDialog {
 
 			JButton btnNewButton_1 = new JButton("Ok");
 			btnNewButton_1.setBounds(150, 230, 194, 31);
-			panel.add(btnNewButton_1);
-			btnNewButton_1.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					setVisible(false);
-					dispose();
-					Menu.tableControl = null;
-				}
-			});
 
 			JPanel panel_1 = new JPanel();
 			panel_1.setBorder(
@@ -100,15 +108,121 @@ public class TableControl extends JDialog {
 				}
 			});
 
-			JCheckBox chckbxTabelleVerstecken = new JCheckBox("Tabelle verstecken");
+			JCheckBox chckbxTabelleVerstecken = new JCheckBox("verstecken/ anzeigen");
 			chckbxTabelleVerstecken.setHorizontalAlignment(SwingConstants.CENTER);
 			chckbxTabelleVerstecken.setBounds(160, 197, 174, 23);
 			panel.add(chckbxTabelleVerstecken);
-
-			tree = new JTree(Main.it.mainmenu.top);
 			
-			tree.setBounds(10, 11, 130, 250);
-			panel.add(tree);
+			//tree.setBounds(10, 11, 130, 250);
+
+	        scroll = new JScrollPane(this.tree);
+	        scroll.setBounds(10, 11, 130, 250);
+			panel.add(scroll);
+			
+			btnNewButton_1.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					
+					if(chckbxTabelleVerstecken.isSelected()){
+						
+						if(tree.getSelectionPath().getPathCount() == 3){
+							Main.ct.transmit("!tablehide " + tree.getSelectionPath().getPathComponent(1).toString() + "#" + tree.getSelectionPath().getLastPathComponent().toString().toLowerCase());
+						}
+						
+					}
+					
+					setVisible(false);
+					dispose();
+					Menu.tableControl = null;
+				}
+			});
+			panel.add(btnNewButton_1);
+			
+	        this.tree.setCellRenderer(new DefaultTreeCellRenderer() {
+	            private ImageIcon baseIcon = new ImageIcon("resources/base.jpg");
+	            private ImageIcon hallIcon = new ImageIcon("resources/hall.png");
+	            private ImageIcon tableIcon = new ImageIcon("resources/table.png");
+	            private ImageIcon tubeIcon = new ImageIcon("resources/tube.png");
+	            private ImageIcon hiddenTableIcon = new ImageIcon("resources/tablehidden.png");
+	            private ImageIcon hiddenTubeIcon = new ImageIcon("resources/tubehidden.png");
+	            
+	            @Override
+	            public Component getTreeCellRendererComponent(JTree tree,
+	                    Object value, boolean selected, boolean expanded,
+	                    boolean isLeaf, int row, boolean focused) {
+	                Component c = super.getTreeCellRendererComponent(tree, value,
+	                        selected, expanded, isLeaf, row, focused);
+	                
+	                //first base icon
+	                if (row == 0){
+	                    setIcon(baseIcon);
+	                }
+
+	                if(halls.contains(value.toString())){
+	                	setIcon(hallIcon);
+	                }
+	                
+	                if(baths.contains(value.toString())){
+	                	
+	                	TreePath pathPointer = tree.getPathForRow(row);
+	                	
+	                	if(pathPointer != null){
+	                    	System.out.println("pathcount: " + pathPointer.getPathCount());
+	                    	
+	                    	if(pathPointer.getPathCount() == 3){
+	                    		
+	                        	System.out.println("pathPointerresult: " + pathPointer.getPathComponent(1).toString() + "#" + value.toString().toLowerCase());
+	                        	
+	                        	if(bathshidden.size() > 0 && bathshidden.contains(pathPointer.getPathComponent(1).toString() + "#" + value.toString().toLowerCase())){
+	                        		System.out.println("bathshiddenentry: " + bathshidden.get(0) + " test object identity: " + bathshidden.contains(pathPointer.getPathComponent(1).toString() + "#" + value.toString().toLowerCase()) + "with: " + pathPointer.getPathComponent(1).toString() + "#" + value.toString().toLowerCase());
+	                        		setIcon(hiddenTableIcon);
+	                        	}else{
+	                        		
+	                        		setIcon(tableIcon);
+	                        	}
+	                    		
+	                    	}
+	                	}
+	                	
+	                }
+	                
+	                if(substances.contains(value.toString())){
+	                	
+	                	TreePath pathPointer = tree.getPathForRow(row);
+	                	
+	                	if(pathPointer != null){
+	                    	System.out.println("pathcount: " + pathPointer.getPathCount());
+	                    	
+	                    	if(pathPointer.getPathCount() > 3){
+	                    		
+	                        	System.out.println("pathPointerresult: " + pathPointer.getPathComponent(1).toString() + "#" + pathPointer.getPathComponent(2).toString() + "#" + value.toString());
+	                        	
+	                        	if(substanceshidden.size() > 0 && substanceshidden.contains(pathPointer.getPathComponent(1).toString() + "#" + pathPointer.getPathComponent(2).toString().toLowerCase() + "#" + value.toString())){
+	                        		System.out.println("substanceshiddenentry: " + substanceshidden.get(0) + " test object identity: " + substanceshidden.contains(pathPointer.getPathComponent(1).toString() + "#" + pathPointer.getPathComponent(2).toString().toLowerCase() + "#" + value.toString()) + "with: " + pathPointer.getPathComponent(1).toString() + "#" + pathPointer.getPathComponent(2).toString().toLowerCase() + "#" + value.toString());
+	                        		setIcon(hiddenTubeIcon);
+	                        	}else{
+	                        		
+	                        		setIcon(tubeIcon);
+	                        	}
+	                    		
+	                    	}
+	                	}
+
+	                }
+
+	                
+	                return c;
+	            }
+	        });
+	        
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				tree.expandRow(i);
+			}
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				System.out.println("path component count: " + tree.getPathForRow(i).getPathCount());
+				if(tree.getPathForRow(i).getPathCount() > 2){
+			         tree.collapseRow(i);
+				}
+			}
 		}
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -123,11 +237,21 @@ public class TableControl extends JDialog {
 		setAlwaysOnTop(true);
 	}
 	
-	public void updateTree(){
-		panel.remove(tree);
-		tree = new JTree(Main.it.mainmenu.top);
-		panel.add(tree);
-		tree.updateUI();
+	public void updateTree(DefaultMutableTreeNode top){
+		//new top and icon etc
+		this.top = top;
+		System.out.println("LEAF COUNT: " + top.getLeafCount());
+		
+        tree.updateUI();
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
+		}
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			System.out.println("path component count: " + tree.getPathForRow(i).getPathCount());
+			if(tree.getPathForRow(i).getPathCount() > 2){
+		         tree.collapseRow(i);
+			}
+		}
 	}
 
 	/**
@@ -256,11 +380,14 @@ public class TableControl extends JDialog {
 			comboBox.setBounds(10, 257, 274, 20);
 			contentPanel.add(comboBox);
 
-			//zu scrolled pane
+			//TODO zu scrolled pane
+			
 			JTextArea textArea = new JTextArea();
+			JScrollPane scroll = new JScrollPane (textArea);
+			scroll.setVisible(true);
 			textArea.setEditable(true);
-			textArea.setBounds(10, 78, 264, 148);
-			contentPanel.add(textArea);
+			scroll.setBounds(10, 78, 264, 148);
+			contentPanel.add(scroll);
 			
 			JButton btnSenden = new JButton("Senden");
 			btnSenden.setBounds(154, 307, 130, 23);
@@ -269,19 +396,35 @@ public class TableControl extends JDialog {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					
 					String lines[] = textArea.getText().split("\\r?\\n");
-					String columns = "Datum Uhrzeit Name";
 					
-					for(int i = 0; i < lines.length; i++){
-						columns += " " + lines[i];
-					}
+				    Set<String> set = new HashSet<>();
+				    
+				    boolean duplicateSubstance = false;
+
+				    for (String t: lines){
+				        if (!set.add(t)){
+				        	Popup popEmptyID = new Popup("Stoff(e) doppelt vorhanden!");
+				        	duplicateSubstance = true;
+				        }
+				    
+				    }
+				    
+				    if(!duplicateSubstance){
+						String columns = "Datum Uhrzeit Name";
+						
+						for(int i = 0; i < lines.length; i++){
+							columns += " " + lines[i];
+						}
+						
+						Main.ct.transmit("!createTable " + textField.getText() + " " + Main.it.mainmenu.tableFolderList.get(comboBox.getSelectedIndex()) + " " + columns + " Begründung");
+						Main.ct.transmit("!requestDirectoryUpdate");
+						Main.ct.transmit("!requestTableUpdateReset");
+						setVisible(false);
+						dispose();
+						newTableDialog = null;
+						((Window) getParent()).setAlwaysOnTop(true);
+				    }
 					
-					Main.ct.transmit("!createTable " + textField.getText() + " " + Main.it.mainmenu.tableFolderList.get(comboBox.getSelectedIndex()) + " " + columns + " Begründung");
-					Main.ct.transmit("!requestDirectoryUpdate");
-					Main.ct.transmit("!requestTableUpdateReset");
-					setVisible(false);
-					dispose();
-					newTableDialog = null;
-					((Window) getParent()).setAlwaysOnTop(true);
 				}
 			});
 			

@@ -5,17 +5,28 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,12 +36,14 @@ import javax.swing.JMenu;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -52,6 +65,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JComboBox;
 import javax.swing.UIManager;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.border.CompoundBorder;
 
 /**
@@ -73,6 +88,7 @@ public class Menu extends JFrame implements MouseListener {
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenu menuEntry1 = new JMenu("Aktion");
 	private JMenu menuEntry3 = new JMenu("Admin");
+	private JMenu menuEntry4 = new JMenu("Benutzer");
 	/**
 	 * The MAIN Content Panel
 	 */
@@ -98,6 +114,15 @@ public class Menu extends JFrame implements MouseListener {
 	// Create the nodes.
 	public static DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
 	
+	//treedata
+	private static ArrayList<String> halls = new ArrayList<String>();
+	private static ArrayList<String> baths = new ArrayList<String>();
+	private static ArrayList<String> bathshidden = new ArrayList<String>();
+	private static ArrayList<String> substances = new ArrayList<String>();
+	private static ArrayList<String> substanceshidden = new ArrayList<String>();
+	
+	private static TableData deletedata = null;
+	
 	JPanel panel;
 
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -113,8 +138,9 @@ public class Menu extends JFrame implements MouseListener {
 	private static DefaultTableCellRenderer rightRenderer, leftRenderer, centerRenderer;
 	private JTabbedPane tabbedPane;
 
-	private String response2 = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt **";
-	private String[] userlist2 = response2.split(" ");
+	private String responseDirectoryData = "!updateDirectory * instinct highelo.txt legend.txt master.txt * rendem lol.txt lul.txt * tyler1 hehexdbitch.txt #";
+	private String responseTableColumnFiller = "";
+	private String[] tabledirectorystring = responseDirectoryData.split(" ");
 	/**
 	 * Saved Instance objects of the (sub)nodes
 	 */
@@ -127,6 +153,8 @@ public class Menu extends JFrame implements MouseListener {
 
 	protected static UserControl userControl = null;
 	protected static TableControl tableControl = null;
+	protected static LineRemoveWindow lineRemoveWindow = null;
+	protected static RowDeleteQueueWindow rdqw = null;
 	public static BegrundungsControl begrundControl = new BegrundungsControl();
 	public JComboBox textField;
 
@@ -142,16 +170,31 @@ public class Menu extends JFrame implements MouseListener {
 	@SuppressWarnings("unused")
 	private static JTableHeader tableHead;
 	private JComboBox textField_3;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField textField_hour;
+	private JTextField textField_minute;
+	private JTextField textField_day;
+	private JTextField textField_month;
+	private JTextField textField_year;
 	ArrayList<String> stoffe = new ArrayList<String>();
 	JTextField comboBox = null;
 	JComboBox textArea = new JComboBox();
 
 	// TIME AND DATE VAR STUFF
-	DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-	DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+	DateFormat timeFormatMinute = new SimpleDateFormat("mm");
+	DateFormat timeFormatHour = new SimpleDateFormat("HH");
+	
+	DateFormat dateFormatDay = new SimpleDateFormat("dd");
+	DateFormat dateFormatMonth = new SimpleDateFormat("MM");
+	DateFormat dateFormatYear = new SimpleDateFormat("yyyy");
+	
 	Date date = new Date();
+	
+	JScrollPane scroll;
+	
+	//substance window initialization
+	SubstanceEdit sub;
+	
+	Treetestscrollpane ttest;
 
 	// ---------------------------------------------------------------------------------------
 	// //
@@ -185,22 +228,32 @@ public class Menu extends JFrame implements MouseListener {
 		menuEntry1.add(mntmAusloggen);
 		JMenuItem mntmAusloggenUndBeenden = new JMenuItem("Ausloggen und Beenden");
 		menuEntry1.add(mntmAusloggenUndBeenden);
-		menuBar.add(menuEntry3);
+		if(Main.ct.client.currentUserStatus.equals("Admin")){
+			menuBar.add(menuEntry3);
+		}
+		
+		//if(Main.ct.client.currentUserStatus.equals("Benutzer")){
+			menuBar.add(menuEntry4);
+			
+		JMenuItem mntmEintragLoschenB = new JMenuItem("Eintrag Löschen Anfrage");
+		menuEntry4.add(mntmEintragLoschenB);
+		
 		JMenuItem mntmBenutzerkontrolle = new JMenuItem("Benutzerverwaltung");
 		menuEntry3.add(mntmBenutzerkontrolle);
 
 		JMenuItem mntmTabelleVerwalten = new JMenuItem("Tabellenverwaltung");
 		menuEntry3.add(mntmTabelleVerwalten);
+		
+		JMenuItem mntmBergrundung = new JMenuItem("Begründungsverwaltung");
+		menuEntry3.add(mntmBergrundung);
 
-		JMenuItem mntmBackupVerwalten = new JMenuItem("Backupverwaltung");
-		menuEntry3.add(mntmBackupVerwalten);
+		//JMenuItem mntmBackupVerwalten = new JMenuItem("Backupverwaltung");
+		//menuEntry3.add(mntmBackupVerwalten);
 
 		JSeparator separator_2 = new JSeparator();
 		menuEntry3.add(separator_2);
 
-		JMenuItem mntmEintragZwischenschieben = new JMenuItem("Eintrag zwischenschieben");
-		menuEntry3.add(mntmEintragZwischenschieben);
-		JMenuItem mntmnderungsverlauf = new JMenuItem("\u00C4nderungsverlauf");
+		JMenuItem mntmnderungsverlauf = new JMenuItem("Löschungsanfragen");
 		menuEntry3.add(mntmnderungsverlauf);
 
 		JSeparator separator = new JSeparator();
@@ -213,8 +266,8 @@ public class Menu extends JFrame implements MouseListener {
 		
 		menuEntry3.add(separator);
 		
-		JMenuItem mntmBergrundung = new JMenuItem("Begründungen bearbeiten");
-		menuEntry3.add(mntmBergrundung);
+		JMenuItem mntmEintragLoschen = new JMenuItem("Eintrag Löschen");
+		menuEntry3.add(mntmEintragLoschen);
 		
 		contentPane.setBorder(new EmptyBorder(5, 0, 0, 0));
 
@@ -228,7 +281,8 @@ public class Menu extends JFrame implements MouseListener {
 		
 		mntmBergrundung.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-					begrundControl.BegrundungsControlCreate();
+				
+				begrundControl.BegrundungsControlCreate();
 			}
 		});
 
@@ -242,15 +296,95 @@ public class Menu extends JFrame implements MouseListener {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				if (userControl == null) {
 					userControl = new UserControl();
+				}else{
+					userControl.toFront();
 				}
+			}
+		});
+		
+		mntmnderungsverlauf.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				//tabellendaten
+				if(rdqw == null){
+					rdqw = new RowDeleteQueueWindow(deletedata, tables);
+				}else{
+					rdqw.toFront();
+				}
+				
 			}
 		});
 
 		mntmTabelleVerwalten.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				if (tableControl == null) {
-					tableControl = new TableControl();
+				if (tableControl == null){
+					//ttest = new Treetestscrollpane(tree, halls, baths, substances);
+					tableControl = new TableControl(top, halls, baths, substances, bathshidden, substanceshidden);
+				}else{
+					tableControl.toFront();
 				}
+			}
+		});
+		
+		mntmEintragLoschen.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				//tabellendaten
+				if(lineRemoveWindow == null){
+					
+					String selectedItem = "";
+					if(tree.getSelectionPath() != null){
+						if(tree.getSelectionPath().getPathCount() == 3){
+							selectedItem = tree.getSelectionPath().getPathComponent(1).toString().toLowerCase() + "#" + tree.getSelectionPath().getPathComponent(2).toString().toLowerCase();
+							System.out.println(tree.getSelectionPath().getPathComponent(1).toString().toLowerCase());
+							System.out.println(tree.getSelectionPath().getPathComponent(2).toString().toLowerCase());
+						}
+					}
+					
+					//get selected row for ID
+					int selectedID = -1;
+					if(tableDynamic.size() != 0){
+						int currentRow = tableDynamic.get(0).getSelectedRow();
+						if(currentRow != -1){
+							selectedID = Integer.parseInt(tableDynamic.get(0).getValueAt(currentRow, 0).toString());
+						}
+					}
+					
+					lineRemoveWindow = new LineRemoveWindow(tables, selectedItem, true, selectedID);
+				}else{
+					lineRemoveWindow.toFront();
+				}
+				
+				
+			}
+		});
+		
+		mntmEintragLoschenB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				//tabellendaten
+				if(lineRemoveWindow == null){
+					
+					String selectedItem = "";
+					if(tree.getSelectionPath() != null){
+						if(tree.getSelectionPath().getPathCount() == 3){
+							selectedItem = tree.getSelectionPath().getPathComponent(1).toString().toLowerCase() + "#" + tree.getSelectionPath().getPathComponent(2).toString().toLowerCase();
+							System.out.println(tree.getSelectionPath().getPathComponent(1).toString().toLowerCase());
+							System.out.println(tree.getSelectionPath().getPathComponent(2).toString().toLowerCase());
+						}
+					}
+					
+					//get selected row for ID
+					int selectedID = -1;
+					if(tableDynamic.size() != 0){
+						int currentRow = tableDynamic.get(0).getSelectedRow();
+						if(currentRow != -1){
+							selectedID = Integer.parseInt(tableDynamic.get(0).getValueAt(currentRow, 0).toString());
+						}
+					}
+					
+					lineRemoveWindow = new LineRemoveWindow(tables, selectedItem, false, selectedID);
+				}else{
+					lineRemoveWindow.toFront();
+				}
+				
 			}
 		});
 
@@ -291,6 +425,7 @@ public class Menu extends JFrame implements MouseListener {
 
 		
 		this.initTreeStuff();
+		Main.ct.transmit("!requestHiddenData");
 		Main.ct.transmit("!requestUserlistUpdate");
 		Main.ct.transmit("!requestDirectoryUpdate");
 		Main.ct.transmit("!requestUserExistingUpdate");
@@ -314,16 +449,23 @@ public class Menu extends JFrame implements MouseListener {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initTreeStuff() {
+		
 		// Create the JTree Object and the action listener
 		this.tree = new JTree(this.top);
-		tree.setBounds(10, 11, (int) (screenSize.getWidth() * 0.1f),
-				(int) (screenSize.getHeight() * 0.897f - taskBarSize));
+		//tree.setBounds(10, 11, (int) (screenSize.getWidth() * 0.1f), (int) (screenSize.getHeight() * 0.897f - taskBarSize));
 		// 1920 breite - 1080 hÃ¶he
 		// (int) screenSize.getWidth(), (int) screenSize.getHeight()
 		this.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.tree.addMouseListener(this);
 		this.tree.setBorder(BorderFactory.createEtchedBorder());
-		this.contentPane.add(tree);
+		
+		//TODO scroll pane for tree
+		scroll = new JScrollPane();
+		scroll.setBounds(10, 11, (int) (screenSize.getWidth() * 0.1f), (int) (screenSize.getHeight() * 0.897f - taskBarSize));
+		//scroll.setVisible(true);
+		scroll.setViewportView(tree);
+		this.contentPane.add(scroll);
+		
 
 		panel = new JPanel();
 		panel.setBorder(new TitledBorder(new CompoundBorder(null, UIManager.getBorder("TitledBorder.border")),
@@ -367,7 +509,7 @@ public class Menu extends JFrame implements MouseListener {
                     	textField_3.removeAllItems();
                     	
                     	for(int i = 0; i < columnNames.length; i++){
-                    		if(!columnNames[i].equals("Datum") && !columnNames[i].equals("Name") && !columnNames[i].equals("Uhrzeit") && !columnNames[i].equals("Begründung"))
+                    		if(!columnNames[i].equals("ID") && !columnNames[i].equals("Datum") && !columnNames[i].equals("Name") && !columnNames[i].equals("Uhrzeit") && !columnNames[i].equals("Begründung"))
                     		textField_3.addItem(columnNames[i]);
                     	}
                     	
@@ -421,23 +563,64 @@ public class Menu extends JFrame implements MouseListener {
 		btnSenden.setBounds(10, 377, (int) (panel.getWidth() * 0.9), 34);
 		panel.add(btnSenden);
 
-		textField_1 = new JTextField(); // uhrzeit
-		textField_1.setColumns(10);
-		textField_1.setBounds(10, 173, (int) (panel.getWidth() * 0.9), 20);
-		panel.add(textField_1);
-		textField_1.setText(timeFormat.format(date));
+		textField_minute = new JTextField(); // uhrzeit
+		textField_minute.setColumns(10);
+		textField_minute.addKeyListener(new KeyAdapter() {
+		    public void keyTyped(KeyEvent e) { 
+		        if (textField_minute.getText().length() >= 2 )
+		            e.consume(); 
+		    }  
+		});
+		textField_minute.setBounds(40, 173, 20, 20);
+		textField_minute.setText(timeFormatMinute.format(date));
+		panel.add(textField_minute);
+		
+		JLabel lblcolon = new JLabel(":");
+		lblcolon.setBounds(33, 175, 20, 14);
+		panel.add(lblcolon);
+		
+		textField_hour = new JTextField(); // uhrzeit stunde
+		textField_hour.setColumns(10);
+		textField_hour.setBounds(10, 173, 20, 20);
+		textField_hour.addKeyListener(new KeyAdapter() {
+		    public void keyTyped(KeyEvent e) { 
+		        if (textField_hour.getText().length() >= 2 )
+		            e.consume();
+		    }  
+		});
+		panel.add(textField_hour);
+		textField_hour.setText(timeFormatHour.format(date));
 
-		JLabel lblUhrzeitleerFr = new JLabel("Zugabe-Uhrzeit");
+		JLabel lblUhrzeitleerFr = new JLabel("Zugabe-Uhrzeit (HH:mm)");
 		lblUhrzeitleerFr.setBounds(10, 158, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblUhrzeitleerFr);
 
-		textField_2 = new JTextField(); // datum
-		textField_2.setColumns(10);
-		textField_2.setBounds(10, 219, (int) (panel.getWidth() * 0.9), 20);
-		panel.add(textField_2);
-		textField_2.setText(dateFormat.format(date));
+		textField_day = new JTextField(); // datum tag
+		//textField_day.setColumns(10);
+		textField_day.setBounds(10, 219, 20, 20);
+		panel.add(textField_day);
+		textField_day.setText(dateFormatDay.format(date));
+		
+		JLabel lbldot1 = new JLabel(".");
+		lbldot1.setBounds(33, 219, 20, 20);
+		panel.add(lbldot1);
+		
+		textField_month = new JTextField(); // datum monat
+		textField_month.setBounds(40, 219, 20, 20);
+		panel.add(textField_month);
+		textField_month.setText(dateFormatMonth.format(date));
+		
+		JLabel lbldot2 = new JLabel(".");
+		lbldot2.setBounds(63, 219, 20, 20);
+		panel.add(lbldot2);
+		
+		textField_year = new JTextField(); // datum jahr
+		textField_year.setBounds(70, 219, 35, 20);
+		panel.add(textField_year);
+		textField_year.setText(dateFormatYear.format(date));
+		//textField_2.setText(dateFormat.format(date));
 
-		JLabel lblZugabedatum = new JLabel("Zugabe-Datum");
+		JLabel lblZugabedatum = new JLabel("Zugabe-Datum (dd.MM.yyyy)");
 		lblZugabedatum.setBounds(10, 204, (int) (panel.getWidth() * 0.9), 14);
 		panel.add(lblZugabedatum);
 
@@ -445,32 +628,73 @@ public class Menu extends JFrame implements MouseListener {
 		btnSenden.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				
-				String[] data = new String[6];
+				boolean validRequest = true;
 				
-				data[0] = textField.getSelectedItem().toString();
-				data[1] = textField_3.getSelectedItem().toString();
-				data[2] = comboBox.getText();
+				
+				/*
+				 * Validity check for time inputs
+				 */
+				//TODO check if integer & print out error messages in popup!
+				if(Integer.parseInt(textField_minute.getText().toString()) >= 0 && Integer.parseInt(textField_minute.getText().toString()) < 60){
+					System.out.println("validity check for minute accepted!");
+				}else{
+					System.out.println("validity check for minute failed!");
+					Popup minuteValidityErrorWindow = new Popup("Minutenzahl inkorrekt!");
+					validRequest = false;
+				}
+				
+				if(Integer.parseInt(textField_hour.getText().toString()) >= 0 && Integer.parseInt(textField_hour.getText().toString()) < 24){
+					System.out.println("validity check for hour accepted!");
+				}else{
+					System.out.println("validity check for hour failed!");
+					Popup minuteValidityErrorWindow = new Popup("Stundenzahl inkorrekt! Bitte für das 24-Stunden Format (0-23) angleichen.");
+					validRequest = false;
+				}
+				
+				try{
+					Calendar c = new GregorianCalendar();
+					c.setLenient(false);
+					c.set(Integer.parseInt(textField_year.getText().toString()), Integer.parseInt(textField_month.getText().toString())-1, Integer.parseInt(textField_day.getText().toString()));
+					c.getTime();
+					System.out.println("validity check for date accepted!");
+				}catch(IllegalArgumentException e){
+					System.out.println("validity check for date failed!");
+					Popup minuteValidityErrorWindow = new Popup("Datum inkorrekt!");
+					validRequest = false;
+					e.printStackTrace();
+				}
+				
+				if(validRequest){
+					
+					String[] data = new String[6];
+					
+					data[0] = textField.getSelectedItem().toString();
+					data[1] = textField_3.getSelectedItem().toString();
+					data[2] = comboBox.getText();
 
-				// Set the new table column line
-				if (textField_2.getText().toString().equals("")) {
-					data[3] = dateFormat.format(date);
-				} else {
-					data[3] = textField_2.getText().toString();
+					// Set the new table column line
+					if (textField_day.getText().toString().equals("")) {
+						
+					} else {
+						data[3] = textField_day.getText().toString() + "." + textField_month.getText().toString() + "." + textField_year.getText().toString();
+					}
+					if (textField_hour.getText().toString().equals("")) {
+						
+					} else {
+						data[4] = textField_hour.getText().toString() + ":" + textField_minute.getText().toString();
+					}
+					//addRowData(dateAndTime[0], dateAndTime[1]);
+					data[5] = textArea.getSelectedItem().toString();
+					
+					addRowData(data);
+					
 				}
-				if (textField_1.getText().toString().equals("")) {
-					data[4] = timeFormat.format(date);
-				} else {
-					data[4] = textField_1.getText().toString();
-				}
-				//addRowData(dateAndTime[0], dateAndTime[1]);
-				data[5] = textArea.getSelectedItem().toString();
-				
-				addRowData(data);
+
 			}
 		});
 
 		// Start timer thread to update text date ui
-		new TimerThread().start();
+		//new TimerThread().start();
 
 		// ----------------------------- ------------------------ //
 
@@ -489,12 +713,11 @@ public class Menu extends JFrame implements MouseListener {
 				+(int) (panel_1.getWidth() * 0.94f), (int) (panel_1.getHeight() * 0.9f));
 
 		panel_1.add(textAreaUser);
+		
 		this.top.setUserObject("Benchmark Tree");
-
-		// Fill the Tree with new content
-		this.fillTree(userlist2);
 		
 	}
+	
 
 	/**
 	 * Adds new row elements
@@ -567,7 +790,14 @@ public class Menu extends JFrame implements MouseListener {
 					tableDynamic.remove(0);
 				}
 					
-				models.add(new DefaultTableModel());
+				models.add(new DefaultTableModel() {
+
+				    @Override
+				    public boolean isCellEditable(int row, int column) {
+				       //all cells false
+				       return false;
+				    }
+				});
 				
 				for(int i = 0; i < tableDataArray.size(); i++){
 					
@@ -601,11 +831,9 @@ public class Menu extends JFrame implements MouseListener {
 						.setViewportView(tableDynamic.get(tableDynamic.size() - 1));
 				// tableColumnModel = tableHead.getColumnModel();
 
-				System.out.println("tables size:" + tables.size());
 				
 				for(int i = 0; i < tables.size(); i++){
 					
-					System.out.println("tablename: " + currentTable + "comparing string in list: " + tables.get(i).getTableName());
 					if(tables.get(i).getTableName().equals(currentTable)){
 						
 						currentTable = tables.get(i).getTableName();
@@ -622,7 +850,9 @@ public class Menu extends JFrame implements MouseListener {
 					}
 				}
 		}
-				
+		
+		// Fill the Tree with new content
+		this.fillTree(tabledirectorystring);
 				
 				//Menu.columnSettings(tableDynamic.get(tableDynamic.size() - 1));
 				
@@ -647,16 +877,23 @@ public class Menu extends JFrame implements MouseListener {
 		models.get(models.size()-1).addRow(vec);
 	}
 
+	public void setTableMetaData(String metastring){
+		
+		responseTableColumnFiller = metastring;
+		
+	}
+	
+	
 	/**
 	 * Reload this method to save new Tree elements
 	 */
 	public void fillTree(String[] list) {
 		tableNames = new ArrayList<String>();
 		tableFolderList = new ArrayList<String>();
-		this.contentPane.remove(tree);
 		this.top.removeAllChildren();
 		DefaultMutableTreeNode node = null;
 		DefaultMutableTreeNode subNode = null;
+		DefaultMutableTreeNode subSubNode = null;
 		boolean whileBool = true;
 
 		// Load all Nodes/Leafs for the JTree Structure
@@ -667,12 +904,53 @@ public class Menu extends JFrame implements MouseListener {
 				int whileIterator = i + 2;
 				whileBool = true;
 				while (whileBool) {
-					if (!list[whileIterator].equals("*") && !list[whileIterator].equals("**")) {
+					if (!list[whileIterator].equals("*") && !list[whileIterator].equals("#")) {
 						subNode = new DefaultMutableTreeNode(
 								list[whileIterator].replaceAll("[^A-Za-z]", "").substring(0, 1).toUpperCase()
 										+ list[whileIterator].replaceAll("[^A-Za-z]", "").substring(1));
 						tableNames.add(list[whileIterator]);
-						node.add(subNode);
+						
+						//add subsubnodes to subnode (stoffe zu tabellen)
+						
+						for(int c = 0; c < tables.size(); c++){
+							
+							String tablesDataTableName = tables.get(c).getTableName().split("#")[1].toLowerCase();
+							String tablesDataFolderName = tables.get(c).getTableName().split("#")[0].toLowerCase();
+							
+							if(node.toString().toLowerCase().equals(tablesDataFolderName) && subNode.toString().toLowerCase().equals(tablesDataTableName)){
+								//loop through all columns to add stoffs
+								for(int x = 1; x < tables.get(c).getColumnCount(); x++){
+									
+									if(!tables.get(c).getColumnName(x).equals("ID") && !tables.get(c).getColumnName(x).equals("Datum") && !tables.get(c).getColumnName(x).equals("Uhrzeit") && !tables.get(c).getColumnName(x).equals("Name") && !tables.get(c).getColumnName(x).equals("Begründung")){
+										subSubNode = new DefaultMutableTreeNode(tables.get(c).getColumnName(x));
+										
+								        String checkname = node.toString() + "#" + subNode.toString().toLowerCase() + "#" + subSubNode.toString();
+								        if(substanceshidden.contains(checkname)){
+									        if(Main.ct.client.currentUserStatus.equals("Admin")){
+												subNode.add(subSubNode);
+												substances.add(subSubNode.toString());
+												
+									        }
+								        }else{
+											subNode.add(subSubNode);
+											substances.add(subSubNode.toString());
+											
+								        }
+								        
+									}
+									
+									
+								}
+							}
+						
+						}
+						//subSubNode = new DefaultMutableTreeNode("Stoff 1");
+						//subNode.add(subSubNode);
+						
+						if(subNode.getChildCount() > 0){
+							node.add(subNode);
+						}
+						baths.add(subNode.toString());
 						subnodeListEntry.add(subNode);
 					} else {
 						whileBool = false;
@@ -680,18 +958,86 @@ public class Menu extends JFrame implements MouseListener {
 					whileIterator++;
 				}
 				nodeListEntry.add(node);
+				halls.add(node.toString());
 				this.top.add(node);
 			}
 		}
-		this.contentPane.add(tree);
 		tree.updateUI();
+        tree.setCellRenderer(new DefaultTreeCellRenderer() {
+            private ImageIcon baseIcon = new ImageIcon("resources/base.jpg");
+            private ImageIcon hallIcon = new ImageIcon("resources/hall.png");
+            private ImageIcon tableIcon = new ImageIcon("resources/table.png");
+            private ImageIcon hiddenTableIcon = new ImageIcon("resources/tablehidden.png");
+            private ImageIcon tubeIcon = new ImageIcon("resources/tube.png");
+            private ImageIcon hiddenTubeIcon = new ImageIcon("resources/tubehidden.png");
+            
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree,
+                    Object value, boolean selected, boolean expanded,
+                    boolean isLeaf, int row, boolean focused) {
+                Component c = super.getTreeCellRendererComponent(tree, value,
+                        selected, expanded, isLeaf, row, focused);
+                
+                //first base icon
+                if (row == 0){
+                    setIcon(baseIcon);
+                }
+
+                if(halls.contains(value.toString())){
+                	setIcon(hallIcon);
+                }
+                
+                if(baths.contains(value.toString())){
+                	
+                	TreePath pathPointer = tree.getPathForRow(row);
+                	
+                	if(pathPointer != null){
+                    	
+                    	if(pathPointer.getPathCount() == 3){
+                    		
+                        	
+                        	if(bathshidden.size() > 0 && bathshidden.contains(pathPointer.getPathComponent(1).toString() + "#" + value.toString().toLowerCase())){
+                        		
+                        		setIcon(hiddenTableIcon);
+                        	}else{
+                        		
+                        		setIcon(tableIcon);
+                        	}
+                    		
+                    	}
+                	}
+                	
+                }
+                
+                if(substances.contains(value.toString())){
+                	
+                	TreePath pathPointer = tree.getPathForRow(row);
+                	
+                	if(pathPointer != null){
+                    	
+                    	if(pathPointer.getPathCount() > 3){
+                    		
+                        	
+                        	if(substanceshidden.size() > 0 && substanceshidden.contains(pathPointer.getPathComponent(1).toString() + "#" + pathPointer.getPathComponent(2).toString().toLowerCase() + "#" + value.toString())){
+                        		
+                        		setIcon(hiddenTubeIcon);
+                        	}else{
+                        		
+                        		setIcon(tubeIcon);
+                        	}
+                    		
+                    	}
+                	}
+
+                }
+
+                
+                return c;
+            }
+        });
+		
 		for (int i = 0; i < tree.getRowCount(); i++) {
 			tree.expandRow(i);
-		}
-		System.out.println("tableFolderList size: " + tableFolderList.size());
-		
-		for(int i = 0; i < tableFolderList.size(); i++){
-			System.out.println("tablefolder entry: " + tableFolderList.get(i));
 		}
 		
 		String sexy = "";
@@ -699,15 +1045,38 @@ public class Menu extends JFrame implements MouseListener {
 			sexy += " " + tableNames.get(i);
 		}
 		
-		System.out.println("tablename length: " + tableNames.size() + " values:" + sexy);
-		if(!tableNames.get(0).startsWith("highelo.txt")){
-			if(firstrun == 1){
-				Main.ct.transmit("!requestTableAllData");
-				firstrun = 0;
+		
+		try {
+		
+			if(!tableNames.get(0).startsWith("highelo.txt")){
+				if(firstrun == 1){
+					Main.ct.transmit("!requestTableAllData");
+					firstrun = 0;
+				}
 			}
+			
+		}catch(IndexOutOfBoundsException ex){
+			ex.printStackTrace();
+			System.err.println("tabledata empty!");
 		}
 		
 		
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			
+			if(tree.getPathForRow(i).getPathCount() > 2){
+		         tree.collapseRow(i);
+			}
+		}
+		
+		System.out.println("ACTIVEUSER: " + Main.ct.client.currentUserStatus);
+		
+		System.out.println("TOP COUNT!: " + top.getLeafCount());
+		if(tableControl != null){
+			tableControl.updateTree(top);
+		}
+		if(deletedata != null){
+			System.out.println("DELETEDATA LINECOUNT: " + deletedata.getLineCount());
+		}
 	}
 
 	/*private void updateTabledata(String tablename) {
@@ -835,7 +1204,9 @@ public class Menu extends JFrame implements MouseListener {
 
 		if (selRow != -1) {
 			
-			if (e.getButton() == 1 && e.getClickCount() == 2 && treeNode.isLeaf()) {
+			System.out.println("treeNode: " + tree.getRowCount());
+			System.out.println(selPath.getPathCount());
+			if (e.getButton() == 1 && e.getClickCount() == 1 && selPath.getPathCount()==3) {
 				
 				// add this table element to the view
 				String tabName = selPath.getLastPathComponent().toString();
@@ -857,7 +1228,14 @@ public class Menu extends JFrame implements MouseListener {
 					tableDynamic.remove(0);
 				}
 					
-				models.add(new DefaultTableModel());
+				models.add(new DefaultTableModel() {
+
+				    @Override
+				    public boolean isCellEditable(int row, int column) {
+				       //all cells false
+				       return false;
+				    }
+				});
 				
 				for(int i = 0; i < tableDataArray.size(); i++){
 					
@@ -869,7 +1247,7 @@ public class Menu extends JFrame implements MouseListener {
 					}
 					
 				}
-
+				textField.setSelectedItem(foldername.toLowerCase() + "#" + tabName.toLowerCase());
 				tabIndicator.add(foldername.toLowerCase() + "#" + tabName.toLowerCase());
 				
 				currentTable = foldername.toLowerCase() + "#" + tabName.toLowerCase();
@@ -878,10 +1256,24 @@ public class Menu extends JFrame implements MouseListener {
 				// this.tableDynamic.add(new JTable(200,
 				// ListManager.getColumnNameCount()));
 				Menu.tableDynamic.add(new JTable(models.get(tableDynamic.size())));
+				
 
 				// initialize this tab element
 				Menu.tableDynamic.get(tableDynamic.size() - 1).setFillsViewportHeight(true);
 				Menu.tableDynamic.get(tableDynamic.size() - 1).setRowHeight(25);
+				
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(0).setMinWidth(70);
+				
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(1).setMinWidth(25);
+				
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(2).setMinWidth(100);
+				
+				//all other cells width to at least 50! for loop!
+				
+				Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumn(Menu.tableDynamic.get(tableDynamic.size() - 1).getColumnModel().getColumnCount()-1).setPreferredWidth(1000);
 				
 				this.tabbedPane.addTab(tabName, null,
 						scrollPaneDynamic.get(tableDynamic.size() - 1), null);
@@ -913,20 +1305,127 @@ public class Menu extends JFrame implements MouseListener {
 				//Menu.columnSettings(tableDynamic.get(tableDynamic.size() - 1));
 				
 			}
+			
+			System.out.println("button int: " + e.getButton());
+			
+			if (e.getButton() == 3 && e.getClickCount() == 1 && selPath.getPathCount()==3) {
+				
+				String tablename = selPath.getPathComponent(1).toString() + "#" + selPath.getPathComponent(2).toString().toLowerCase();
+				
+				System.out.println("CHILDREN COUNT: " + Collections.list(((DefaultMutableTreeNode)selPath.getPathComponent(1)).children()));
+				ArrayList<String> tablelist = Collections.list(((DefaultMutableTreeNode)selPath.getPathComponent(1)).children());
+				
+				TableMove tm = new TableMove(tablename, tablelist);
+			}
+			
+			if (e.getButton() == 1 && e.getClickCount() == 2 && selPath.getPathCount()==4) {
+				String tabName = selPath.getLastPathComponent().toString();
+				System.out.println("requested change on item: " + tabName);
+				
+				String foldername = selPath.getPathComponent(1).toString();
+				String tablerawname = selPath.getPathComponent(2).toString().toLowerCase();
+				
+				String tablename = foldername + "#" + tablerawname;
+				
+				System.out.println("substanceedit tablename final: " + tablename);
+				
+				ArrayList<String> relatedSubstances = new ArrayList<String>();
+				
+				//fill list with all substances from that table
+					
+				boolean atStart = false;
+				int i = 0;
+				while(!atStart){
+					
+					i++;
+					if(tree.getPathForRow(tree.getRowForPath(selPath) - i).getPathCount() != 4){
+						i--;
+						atStart = true;
+					}
+					
+				}
+					
+				boolean done = false;
+				while(!done){
+					if(tree.getPathForRow(tree.getRowForPath(selPath) - i).getPathCount() != 4){
+						done = true;
+					}else{
+						relatedSubstances.add(tree.getPathForRow(tree.getRowForPath(selPath) - i).getLastPathComponent().toString());
+						i--;
+					}
+				}
+					
+				tree.getRowForPath(selPath);
+				
+				//for(int i = 0; i < selPath.; i++){
+					
+				
+				
+				if(sub == null){
+					sub = new SubstanceEdit(tabName, tablename, relatedSubstances);
+					sub.addWindowListener(new WindowListener() {
+						
+						@Override
+						public void windowOpened(WindowEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void windowIconified(WindowEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void windowDeiconified(WindowEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void windowDeactivated(WindowEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void windowClosing(WindowEvent e) {
+							sub = null;
+							
+						}
+						
+						@Override
+						public void windowClosed(WindowEvent e) {
+							sub = null;
+							
+						}
+						
+						@Override
+						public void windowActivated(WindowEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+					});
+				}else{
+					System.out.println("substatus: " + sub.toString());
+					//TODO handling
+				}
+			}
 		}
 	}
 
 	/**
 	 * Class to handle async callbacks for actual time
 	 */
-	private class TimerThread extends Thread {
+	/*private class TimerThread extends Thread {
 		public void run() {
 			while (true) {
-				timeFormat = new SimpleDateFormat("HH:mm");
+				timeFormat = new SimpleDateFormat("HH");
 				date = new Date();
-				textField_1.setText(timeFormat.format(date));
-				textField_1.validate();
-				textField_1.repaint();
+				textField_hour.setText(timeFormat.format(date));
+				textField_hour.validate();
+				textField_hour.repaint();
 
 				try {
 					sleep(1000);
@@ -935,7 +1434,7 @@ public class Menu extends JFrame implements MouseListener {
 				}
 			}
 		}
-	}
+	}*/
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -955,18 +1454,23 @@ public class Menu extends JFrame implements MouseListener {
 
 	public void updateTableData(String tableData) {
 		
-		System.out.println("tabledata string: " + tableData);
-		tables.add(new TableData(tableData));
-		System.out.println("tables size: " + tables.size() + " last table name: " + tables.get(tables.size() - 1).getTableName() + " table last column name: " + tables.get(tables.size() -1).getColumnName(tables.get(tables.size()-1).getColumnCount()) + " first line last column data: " + tables.get(tables.size()-1).getData(1, tables.get(tables.size() -1).getColumnName(tables.get(tables.size()-1).getColumnCount())));
+		
+		tables.add(new TableData(tableData, substanceshidden, Main.ct.client.currentUserStatus));
+		
+		if(tables.get(tables.size()-1).getTableName().equals("deletedata")){
+			deletedata = tables.get(tables.size()-1);
+			tables.remove(tables.size()-1);
+		}else{
 		//System.out.println("Table: " + tables.get(tables.size()-1).getTableName() + " 2nd column name: " + tables.get(tables.size()).getColumnName(2) + " first line second column data: " + tables.get(0).getData(1, tables.get(tables.size()).getColumnName(2)));
 		
 		ListManager lm = new ListManager();
 		lm.tableName = tables.get(tables.size()-1).getTableName();
 		lm.columnNames = tables.get(tables.size()-1).getTableColumnStringArray();
 		
-		System.out.println("lm column size: " + lm.columnNames.size() + " lm table name: " + lm.tableName);
 		
 		//for(int i = 0; i < tables.get)
+		
+		System.out.println("ADDING FOLLOWING LM: " + lm.tableName);
 		
 		testArray.add(lm.tableName);
 		tableDataArray.add(lm);
@@ -975,27 +1479,28 @@ public class Menu extends JFrame implements MouseListener {
 		String foldernode = "DHR_1";
 		String tabName = "Beize";
 		
-		if(tableDataArray.size() == 1){
-			System.out.println("TDA#1: " + tableDataArray.get(0).tableName);
-			
-			System.out.println("TESTA#1: " + testArray.get(0));
-		}
-		
-		if(tableDataArray.size() == 2){
-			System.out.println("TDA#1: " + tableDataArray.get(0).tableName);
-			System.out.println("TDA#2: " + tableDataArray.get(1).tableName);
-			
-			System.out.println("TESTA#1: " + testArray.get(0));
-			System.out.println("TESTA#2: " + testArray.get(1));
-		}
-		
 		
 		for(int i = 0; i < tables.size(); i++){
-			tableNames.add(tables.get(i).getTableName());
+			if(tableNames.contains(tables.get(i).getTableName())){
+				
+			}else{
+				
+				tableNames.add(tables.get(i).getTableName());
+			}
+			
 		}
 		
+		boolean isDuplicate = false;
+		for(int i = 0; i < textField.getItemCount(); i++){
+			if(textField.getItemAt(i).equals(lm.tableName)){
+				isDuplicate = true;
+			}
+		}
 		
-		textField.addItem(lm.tableName);
+		System.out.println("isDuplicate: " + isDuplicate);
+		if(!isDuplicate){
+			textField.addItem(lm.tableName);
+		}
 		
 		/*for(int i = 0; i < tableDataArray.size(); i++){
 			System.out.println("the comparison of strings: " + tableDataArray.get(i).tableName.equals(foldernode.toLowerCase() + "#" + tabName.toLowerCase()) + " between tabname: " + foldernode.toLowerCase() + "#" + tabName.toLowerCase() + " and the lm array namevar: " + tableDataArray.get(i).tableName);
@@ -1004,7 +1509,36 @@ public class Menu extends JFrame implements MouseListener {
 				System.out.println(" true triggered!!!!!");
 			}
 		}*/
+		}
+	}
+	
+	public void updateHiddenData(String data){
 		
+		bathshidden = new ArrayList<String>();
+		substanceshidden = new ArrayList<String>();
+		
+		if(data.split("%")[0] != null){
+			String[] hiddenTableData = data.split("%")[0].split(" ");
+			
+			for(int i = 1; i < hiddenTableData.length; i++){
+				bathshidden.add(hiddenTableData[i]);
+			}
+		}
+		
+		if(data.split("%").length > 1){
+			String[] hiddenSubstanceData = data.split("%")[1].split(" ");
+			
+			for(int i = 1; i < hiddenSubstanceData.length; i++){
+				System.out.println("adding to hidden substances: " + hiddenSubstanceData[i]);
+				substanceshidden.add(hiddenSubstanceData[i]);
+			}
+		}
+		
+		
+	}
+	
+	public void setdirectorystring(String[] ds){
+		this.tabledirectorystring = ds;
 	}
 	
 }

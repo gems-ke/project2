@@ -153,7 +153,6 @@ public class BegrundungsControl extends JFrame {
 		
 		begrundDataList.removeAll(begrundDataList);
 		
-		System.out.println("current begrund data strin: " + message);
 		
 		BegrundData begrunddata;
 		
@@ -174,10 +173,8 @@ public class BegrundungsControl extends JFrame {
 			for(int c = 1; c < refinedMessageData.length; c++){
 				
 				if(refinedMessageData[c].substring(refinedMessageData[c].length()-1).equals("+")){
-					System.out.println("extracting to activedata: " + refinedMessageData[c].substring(0, refinedMessageData[c].length()-1));
 					activeData.add(refinedMessageData[c].substring(0, refinedMessageData[c].length()-1));
 				}else{
-					System.out.println("extracting to inactivedata: " + refinedMessageData[c].substring(0, refinedMessageData[c].length()-1));
 					inactiveData.add(refinedMessageData[c].substring(0, refinedMessageData[c].length()-1));
 				}
 				
@@ -199,8 +196,6 @@ public class BegrundungsControl extends JFrame {
 public void fillBegrundungsDataExternal(String message){
 		
 		begrundDataList.removeAll(begrundDataList);
-		
-		System.out.println("current begrund data strin: " + message);
 		
 		BegrundData begrunddata;
 		
