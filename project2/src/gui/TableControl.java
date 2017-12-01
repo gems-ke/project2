@@ -410,7 +410,7 @@ public class TableControl extends JDialog {
 				    }
 				    
 				    if(!duplicateSubstance){
-						String columns = "Datum Uhrzeit Name";
+						String columns = "Datum Uhrzeit Name Absendedatum Absendeuhrzeit";
 						
 						for(int i = 0; i < lines.length; i++){
 							columns += " " + lines[i];

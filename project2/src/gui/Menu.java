@@ -154,6 +154,7 @@ public class Menu extends JFrame implements MouseListener {
 	protected static UserControl userControl = null;
 	protected static TableControl tableControl = null;
 	protected static LineRemoveWindow lineRemoveWindow = null;
+	protected static MultisendWindow mswindow = null;
 	protected static RowDeleteQueueWindow rdqw = null;
 	public static BegrundungsControl begrundControl = new BegrundungsControl();
 	public JComboBox textField;
@@ -161,6 +162,7 @@ public class Menu extends JFrame implements MouseListener {
 	private static JTextArea textAreaUser;
 
 	public static JButton btnSenden;
+	public static JButton btnMultiSenden;
 
 	private ArrayList<String> tableNamess = new ArrayList<String>();
 	
@@ -560,8 +562,21 @@ public class Menu extends JFrame implements MouseListener {
 		panel.add(textField_3);
 
 		btnSenden = new JButton("Senden");
-		btnSenden.setBounds(10, 377, (int) (panel.getWidth() * 0.9), 34);
+		btnSenden.setBounds(10, 307, (int) (panel.getWidth() * 0.9), 34);
 		panel.add(btnSenden);
+		
+		btnMultiSenden = new JButton("Mehrere Stoffe...");
+		btnMultiSenden.setBounds(10, 367, (int) (panel.getWidth() * 0.9), 34);
+		panel.add(btnMultiSenden);
+		
+		btnMultiSenden.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				
+				//open multisend window
+				mswindow = new MultisendWindow();
+				
+			}});
+			
 
 		textField_minute = new JTextField(); // uhrzeit
 		textField_minute.setColumns(10);
@@ -732,6 +747,7 @@ public class Menu extends JFrame implements MouseListener {
 		}
 		
 		System.out.println("transmitted message: " + message);
+		
 		Main.ct.transmit(message);
 		
 		/*for(int i = 0; i < tables.size(); i++){
@@ -921,7 +937,7 @@ public class Menu extends JFrame implements MouseListener {
 								//loop through all columns to add stoffs
 								for(int x = 1; x < tables.get(c).getColumnCount(); x++){
 									
-									if(!tables.get(c).getColumnName(x).equals("ID") && !tables.get(c).getColumnName(x).equals("Datum") && !tables.get(c).getColumnName(x).equals("Uhrzeit") && !tables.get(c).getColumnName(x).equals("Name") && !tables.get(c).getColumnName(x).equals("Begründung")){
+									if(!tables.get(c).getColumnName(x).equals("ID") && !tables.get(c).getColumnName(x).equals("Datum") && !tables.get(c).getColumnName(x).equals("Uhrzeit") && !tables.get(c).getColumnName(x).equals("Name") && !tables.get(c).getColumnName(x).equals("Absendedatum") && !tables.get(c).getColumnName(x).equals("Absendeuhrzeit") && !tables.get(c).getColumnName(x).equals("Begründung")){
 										subSubNode = new DefaultMutableTreeNode(tables.get(c).getColumnName(x));
 										
 								        String checkname = node.toString() + "#" + subNode.toString().toLowerCase() + "#" + subSubNode.toString();
@@ -1245,7 +1261,7 @@ public class Menu extends JFrame implements MouseListener {
 							models.get(tableDynamic.size()).addColumn(tableDataArray.get(i).getColumnNameElement(ix));
 						}
 					}
-					
+				
 				}
 				textField.setSelectedItem(foldername.toLowerCase() + "#" + tabName.toLowerCase());
 				tabIndicator.add(foldername.toLowerCase() + "#" + tabName.toLowerCase());
