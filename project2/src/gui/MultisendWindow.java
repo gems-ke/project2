@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import main.Main;
@@ -41,6 +42,7 @@ public class MultisendWindow extends JFrame {
 	 */
 	public MultisendWindow(String tablename, ArrayList<String> stoffe, ArrayList<String> begrundungen) {
 		setTitle("Eintrag senden als: " + Main.it.currentUser);
+		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1180, 234);
 		contentPane = new JPanel();
@@ -50,6 +52,7 @@ public class MultisendWindow extends JFrame {
 		
 		JComboBox comboBox = new JComboBox();
 		comboBox.setBounds(10, 21, 145, 20);
+		comboBox.addItem(tablename);
 		contentPane.add(comboBox);
 		
 		JLabel lblTabelle = new JLabel("Tabelle:");
@@ -118,10 +121,20 @@ public class MultisendWindow extends JFrame {
 		scrollPane.setBounds(172, 17, 982, 168);
 		contentPane.add(scrollPane);
 		
-		table = new JTable();
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("lol");
+		model.addColumn("lel");
+		
+		String[] data = new String[2];
+		data[0] = "haha";
+		data[1] = "hehe";
+		
+		model.addRow(data);
+		
+		table = new JTable(model);
 		scrollPane.setViewportView(table);
 		
-		TableModel dataModel = new MyTableModel();
-		table.setModel(dataModel);
+		/*TableModel dataModel = new MyTableModel();
+		table.setModel(dataModel);*/
 	}
 }

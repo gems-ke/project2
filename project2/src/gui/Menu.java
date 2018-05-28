@@ -571,9 +571,10 @@ public class Menu extends JFrame implements MouseListener {
 		
 		btnMultiSenden.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				
+				ArrayList<String> stoffe = new ArrayList<String>();
+				ArrayList<String> begrundungen = new ArrayList<String>();
 				//open multisend window
-				mswindow = new MultisendWindow();
+				mswindow = new MultisendWindow(textField.getSelectedItem().toString(), stoffe, begrundungen);
 				
 			}});
 			
